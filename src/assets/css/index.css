@@ -1,0 +1,21 @@
+@import "./font.css";
+/* ////////////// */
+@tailwind components;
+@tailwind utilities;
+@tailwind base;
+/* //////////////// */
+@layer base {
+  body {
+    font-size: 16px;
+  }
+  * {
+    user-select: none; /* Non-prefixed version, currently*/
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -webkit-user-drag: none;
+    scroll-behavior: smooth;
+  }
+}

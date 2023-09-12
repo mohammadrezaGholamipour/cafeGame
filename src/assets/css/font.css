@@ -1,0 +1,18 @@
+@font-face {
+  font-family: dana;
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/dana/eot/dana-fanum-regular.eot")
+      format("embedded-opentype"),
+    url("../fonts/dana/woff2/dana-fanum-regular.woff2") format("woff2"),
+    url("../fonts/dana/woff/dana-fanum-regular.woff") format("woff");
+}
+@font-face {
+  font-family: kalameh;
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/kalameh/eot/KalamehWeb(FaNum)-Regular.eot")
+      format("embedded-opentype"),
+    url("../fonts/kalameh/woff2/KalamehWeb(FaNum)-Regular.woff2") format("woff2"),
+    url("../fonts/kalameh/woff/KalamehWeb(FaNum)-Regular.woff") format("woff");
+}

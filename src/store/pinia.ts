@@ -8,7 +8,7 @@ export const usePinia = defineStore("pinia", () => {
       textMain: "",
       textHeader: "",
       status: false,
-      name: "",
+      name: "warning",
       timer: 3000,
     } as Notification,
   });

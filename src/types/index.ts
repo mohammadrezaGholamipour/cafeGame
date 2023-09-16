@@ -28,4 +28,5 @@ export interface DropList {
 export interface DropListProps {
   data: DropList[];
   space: string;
+  status: boolean;
 }

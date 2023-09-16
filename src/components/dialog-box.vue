@@ -1,21 +1,9 @@
 <script setup lang="ts">
+import type { DialogProps } from "@/types/index";
 import { ref, watch } from "vue";
 ////////////////////////////////
-interface DialogProps {
-  status: boolean;
-  header: boolean;
-  width: number;
-  headerText?: string;
-  footer: boolean;
-  btnAccept?: boolean;
-  btnCancel?: boolean;
-  btnAcceptText?: string;
-  btnCancelText?: string;
-}
 const props = defineProps<DialogProps>();
-const emit = defineEmits<{
-  changeStatus: [status: boolean];
-}>();
+const emit = defineEmits<{ changeStatus: [status: boolean] }>();
 /////////////////////////////////////////
 const dialog = ref<HTMLDivElement | null>();
 ////////////////////////////

@@ -30,6 +30,9 @@ const handleLogin = (): void => {
 <template>
   <div class="parent-layout">
     <Header />
+    <main>
+      <router-view />
+    </main>
   </div>
 </template>
 <style scoped>
@@ -37,6 +40,6 @@ const handleLogin = (): void => {
   @apply w-screen h-screen flex flex-col justify-start items-center bg-white min-w-[300px];
 }
 main {
-  @apply w-full h-full;
+  @apply flex justify-start items-start w-full h-full;
 }
 </style>

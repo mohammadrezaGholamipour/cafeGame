@@ -5,3 +5,7 @@ export interface Notification {
   name: string;
   timer: number;
 }
+export interface LoginResponse {
+  userState: number;
+  token: string;
+}

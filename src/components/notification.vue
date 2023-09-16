@@ -14,37 +14,43 @@ onMounted(() => {
 watch(
   () => pinia.state.notification.status,
   (value) => {
+    clearTimeout(timer);
     if (value && notification.value) {
       const app = document.getElementById("app") as HTMLDivElement;
       app.insertBefore(notification.value, app.firstChild);
       setTimeout(() => {
         notification.value?.classList.remove("disable");
         notification.value?.classList.add("active");
+        handleTimer();
       }, 0);
     } else {
-      handleCloseNotification();
+      notification.value?.classList.remove("active");
+      notification.value?.classList.add("disable");
+      setTimeout(() => {
+        notification.value?.remove();
+      }, 100);
     }
   }
 );
-//////////////////////////////////////
-const handleCloseNotification = (): void => {
-  if (pinia.state.notification.status) {
-    notification.value?.classList.remove("active");
-    notification.value?.classList.add("disable");
-    setTimeout(() => {
-      notification.value?.remove();
-      pinia.handleNotification({
-        ...pinia.state.notification,
-        status: false,
-      });
-    }, 100);
-  }
+////////////////////////////////
+const handleTimer = () => {
+  timer = setTimeout(() => {
+    pinia.handleNotification({
+      ...pinia.state.notification,
+      status: false,
+    });
+  }, pinia.state.notification.timer);
 };
 </script>
 <template>
   <div
     :class="[`parent-notification disable ${pinia.state.notification.name}`]"
-    @click="handleCloseNotification"
+    @click="
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        status: false,
+      })
+    "
     ref="notification"
   >
     <div>

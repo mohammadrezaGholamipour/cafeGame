@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LoginResponse } from "@/types/index";
 import Header from "@/components/header/index.vue";
 import tokenService from "@/utils/token-service";
 import { usePinia } from "@/store/pinia";
@@ -18,26 +19,17 @@ const handleLogin = (): void => {
   };
   accountApi
     .login(data)
-    .then((response) => {
+    .then((response: LoginResponse) => {
       tokenService.setToken(response.token);
     })
-    .catch((error) => {
+    .catch((error: string) => {
       console.log(error);
     });
-};
-const handleNotification = (): void => {
-  pinia.handleNotification({
-    ...pinia.state.notification,
-    status: !pinia.state.notification.status,
-  });
 };
 </script>
 <template>
   <div class="parent-layout">
     <Header />
-    <button @click="handleNotification" class="button bg-[#7CC078]">
-      notificatin
-    </button>
   </div>
 </template>
 <style scoped>

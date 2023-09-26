@@ -5,10 +5,9 @@ const props = defineProps<DropListProps>();
 const emit = defineEmits(["close"]);
 ////////////////////////
 document.addEventListener("click", (event) => {
-  const userElement: HTMLDivElement | null =
-    document.querySelector(".parent-user");
+  const userElement = document.querySelector(".parent-user") as HTMLElement;
   ////////////////////////////////////////////////////////
-  if (!userElement?.contains(event.target as Node)) {
+  if (!userElement.contains(event.target as Node)) {
     emit("close");
   }
 });
@@ -20,11 +19,7 @@ document.addEventListener("click", (event) => {
       class="parent-drop-list"
       v-if="props.status"
     >
-      <div
-        class="flex flex-col w-full"
-        v-for="(item, index) in props.data"
-        :key="item.id"
-      >
+      <div class="w-full" v-for="(item, index) in props.data" :key="item.id">
         <div class="item-drop-list">
           <p>{{ item.name }}</p>
           <img :src="item.image" />
@@ -36,7 +31,7 @@ document.addEventListener("click", (event) => {
 </template>
 <style scoped>
 .parent-drop-list {
-  @apply flex flex-col justify-start min-w-[70px] items-center absolute p-[7px] bg-[#1D5B79] rounded-[6px];
+  @apply flex flex-col cursor-default justify-start min-w-[70px] items-center absolute p-[7px] bg-[#1D5B79] rounded-[6px];
   box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.25);
 }
 .item-drop-list {

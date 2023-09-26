@@ -11,6 +11,7 @@ export const usePinia = defineStore("pinia", () => {
       name: "success",
       timer: 3000,
     } as Notification,
+    appWidth: 0,
   });
   ////////////////////////////
   const handleNotification = (data: Notification): void => {

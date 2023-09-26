@@ -37,7 +37,7 @@ const handleLogin = (): void => {
 </template>
 <style scoped>
 .parent-layout {
-  @apply w-screen h-screen flex flex-col justify-start items-center bg-white min-w-[300px];
+  @apply w-screen h-screen flex flex-col justify-start items-center bg-white;
 }
 main {
   @apply flex justify-start items-start w-full h-full;

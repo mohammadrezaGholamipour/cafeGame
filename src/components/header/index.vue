@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import FreeConsole from "./components/free-concole.vue";
-import User from "./components/user.vue";
+import freeConsole from "./components/free-concole.vue";
+import user from "./components/user.vue";
 </script>
 <template>
   <header class="parent-header">
-    <FreeConsole />
-    <User />
+    <freeConsole />
+    <user />
   </header>
 </template>
 <style scoped>

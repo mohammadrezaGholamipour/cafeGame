@@ -19,7 +19,7 @@ const translateTab = computed(() => {
 </template>
 <style scoped>
 .parent-account-tab {
-  @apply w-[300px] relative rounded-[33px] p-[5px] h-[50px] flex justify-between items-center;
+  @apply w-[300px] relative rounded-[33px] p-[5px] min-h-[50px] flex justify-between items-center;
   background: rgba(29, 91, 121, 0.1);
 }
 .parent-account-tab > p {

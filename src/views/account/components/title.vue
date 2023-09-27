@@ -7,9 +7,9 @@
 </template>
 <style scoped>
 .parent-title {
-  @apply w-full h-full flex justify-between items-center;
+  @apply w-full max-w-[300px] flex justify-between items-center;
 }
 .parent-title p {
-  @apply font-[kalameh] text-[#656565];
+  @apply font-[kalameh] whitespace-nowrap text-[#656565];
 }
 </style>

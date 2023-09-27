@@ -1,39 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
 import { usePinia } from "@/store/pinia";
+import { ref, watch, nextTick } from "vue";
 import type { Ref } from "vue";
 //////////////////////////////////////
 const notification: Ref<HTMLDivElement | null> = ref(null);
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
-////////////////////////////
-onMounted(() => {
-  if (!pinia.state.notification.status) notification.value?.remove();
-});
 //////////////////////////////////
 watch(
   () => pinia.state.notification.status,
-  (value) => {
-    clearTimeout(timer);
-    if (value && notification.value) {
-      const app = document.getElementById("app") as HTMLDivElement;
-      app.insertBefore(notification.value, app.firstChild);
-      setTimeout(() => {
-        notification.value?.classList.remove("disable");
-        notification.value?.classList.add("active");
-        handleTimer();
-      }, 0);
+  async (value) => {
+    if (value) {
+      await nextTick();
+      notification.value?.classList.remove("disable");
+      notification.value?.classList.add("active");
+      handleCloseTimer();
     } else {
+      clearTimeout(timer);
       notification.value?.classList.remove("active");
       notification.value?.classList.add("disable");
-      setTimeout(() => {
-        notification.value?.remove();
-      }, 100);
     }
   }
 );
 ////////////////////////////////
-const handleTimer = () => {
+const handleCloseTimer = () => {
   timer = setTimeout(() => {
     pinia.handleNotification({
       ...pinia.state.notification,
@@ -54,8 +44,8 @@ const handleTimer = () => {
     ref="notification"
   >
     <div>
-      <p>با موفقیت انجام شد</p>
-      <p>خوراکی ها با موفقیت ثبت شد</p>
+      <p>{{ pinia.state.notification.textHeader }}</p>
+      <p>{{ pinia.state.notification.textMain }}</p>
     </div>
     <img
       :src="`src/assets/image/notification/${pinia.state.notification.name}.svg`"

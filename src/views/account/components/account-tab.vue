@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 ////////////////////////////////////////
+const emit = defineEmits<{ changeTab: [Tab: string] }>();
 const state = reactive({
   status: "login",
 });
 const translateTab = computed(() => {
-  return state.status === "login" ? "translate-x-[0%]" : "translate-x-[-100%]";
+  return state.status === "login" ? "translate-x-[-100%]" : "translate-x-[0%]";
 });
+/////////////////////////////////////
+watch(
+  () => state.status,
+  () => {
+    console.log(state.status);
+    emit("changeTab", state.status);
+  }
+);
 </script>
 <template>
   <div class="parent-account-tab">
-    <p @click="state.status = 'login'">ثبت نام</p>
-    <p @click="state.status = 'register'">وارد شدن</p>
+    <p @click="state.status = 'register'">ثبت نام</p>
+    <p @click="state.status = 'login'">وارد شدن</p>
     <div :class="['tab-selected', translateTab]">
       <p>{{ state.status === "login" ? "وارد شدن" : "ثبت نام" }}</p>
     </div>

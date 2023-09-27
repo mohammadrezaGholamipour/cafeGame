@@ -1,6 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Login from './login.vue';
+</script>
 <template>
   <div class="parent-account">
+    <Login />
   </div>
 </template>
 <style scoped>

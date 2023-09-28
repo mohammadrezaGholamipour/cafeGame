@@ -30,3 +30,10 @@ export interface DropListProps {
   space: string;
   status: boolean;
 }
+export interface Register {
+  userName: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+  mobile: string;
+}

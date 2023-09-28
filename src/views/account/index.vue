@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import type { LoginResponse, register } from "@/types/index";
 import AccountTab from "./components/account-tab.vue";
-import type { LoginResponse } from "@/types/index";
 import tokenService from "@/utils/token-service";
 import Slider from "./components/slider.vue";
 import Title from "./components/title.vue";
 import AccountApi from "@/api/account.js";
 import { usePinia } from "@/store/pinia";
+import { useRouter } from "vue-router";
 import Register from "./register.vue";
 import Login from "./login.vue";
 import { reactive } from "vue";
 ///////////////////////////////
+const router = useRouter();
 const pinia = usePinia();
 const state = reactive({
   requestLoading: false,
@@ -21,6 +23,7 @@ const requestLogin = (data: object): void => {
   AccountApi.login(data)
     .then((response: LoginResponse) => {
       tokenService.setToken(response.token);
+      router.push("/");
     })
     .catch(() => {
       pinia.handleNotification({
@@ -28,7 +31,27 @@ const requestLogin = (data: object): void => {
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: 'مجوز ورود ندارید',
+        textMain: "مجوز ورود ندارید",
+      });
+    })
+    .finally(() => {
+      state.requestLoading = false;
+    });
+};
+/////////////////////////////
+const requestRegister = (data: register): void => {
+  state.requestLoading = true;
+  AccountApi.register(data)
+    .then((response: object) => {
+      console.log(response);
+    })
+    .catch(() => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "ثبت نام انجام نشد",
       });
     })
     .finally(() => {
@@ -48,7 +71,11 @@ const requestLogin = (data: object): void => {
           :loading="state.requestLoading"
           @login="requestLogin"
         />
-        <Register :loading="state.requestLoading" v-else />
+        <Register
+          :loading="state.requestLoading"
+          @register="requestRegister"
+          v-else
+        />
       </transition-scale>
     </div>
     <!-- ///////////////////////// -->

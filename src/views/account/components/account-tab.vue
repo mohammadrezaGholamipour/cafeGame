@@ -12,7 +12,6 @@ const translateTab = computed(() => {
 watch(
   () => state.status,
   () => {
-    console.log(state.status);
     emit("changeTab", state.status);
   }
 );

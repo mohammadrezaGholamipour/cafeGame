@@ -1,16 +1,40 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import AccountTab from "./components/account-tab.vue";
+import type { LoginResponse } from "@/types/index";
+import tokenService from "@/utils/token-service";
 import Slider from "./components/slider.vue";
 import Title from "./components/title.vue";
+import AccountApi from "@/api/account.js";
 import { usePinia } from "@/store/pinia";
 import Register from "./register.vue";
 import Login from "./login.vue";
+import { reactive } from "vue";
 ///////////////////////////////
 const pinia = usePinia();
 const state = reactive({
+  requestLoading: false,
   tabSelected: "login",
 });
+/////////////////////////////
+const requestLogin = (data: object): void => {
+  state.requestLoading = true;
+  AccountApi.login(data)
+    .then((response: LoginResponse) => {
+      tokenService.setToken(response.token);
+    })
+    .catch(() => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: 'مجوز ورود ندارید',
+      });
+    })
+    .finally(() => {
+      state.requestLoading = false;
+    });
+};
 </script>
 <template>
   <div class="parent-account">
@@ -19,8 +43,12 @@ const state = reactive({
       <Title />
       <AccountTab @changeTab="state.tabSelected = $event" />
       <transition-scale group>
-        <Login v-if="state.tabSelected === 'login'" />
-        <Register v-else />
+        <Login
+          v-if="state.tabSelected === 'login'"
+          :loading="state.requestLoading"
+          @login="requestLogin"
+        />
+        <Register :loading="state.requestLoading" v-else />
       </transition-scale>
     </div>
     <!-- ///////////////////////// -->

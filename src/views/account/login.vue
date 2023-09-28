@@ -4,6 +4,13 @@ import { usePinia } from "@/store/pinia";
 import { reactive } from "vue";
 import * as yup from "yup";
 //////////////////////////////
+const emit = defineEmits<{ login: [data: object] }>();
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    required: true,
+  },
+});
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
 const state = reactive({
@@ -35,7 +42,7 @@ const handleLogin = () => {
   clearTimeout(timer);
   timer = setTimeout(
     handleSubmit((values: object) => {
-      console.log(values);
+      emit("login", values);
     }, onInvalidSubmit),
     1000
   );
@@ -63,8 +70,18 @@ const handleLogin = () => {
       </div>
     </div>
     <!-- //////////////////////// -->
-    <button class="button bg-[#75ca71] text-white" @click="handleLogin">
-      وارد شدن
+    <button
+      :disabled="props.loading"
+      :class="[
+        'button bg-[#75ca71] text-white',
+        { 'bg-gray-400 !cursor-not-allowed': props.loading },
+      ]"
+      @click="handleLogin"
+    >
+      <transition-fade class="flex" group>
+        <span v-if="props.loading" class="loader"></span>
+        <p v-else>وارد شدن</p>
+      </transition-fade>
     </button>
   </div>
 </template>

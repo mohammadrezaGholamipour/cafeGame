@@ -1,4 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// email
+// : 
+// "mrzgp20165@gmail.com"
+// password
+// : 
+// "123456"
+// phoneNumber
+// : 
+// "09127578451"
+// userName
+// : 
+// "helen"
+</script>
 <template>
   <div class="parent-register">
     <!-- //////////////////////// -->

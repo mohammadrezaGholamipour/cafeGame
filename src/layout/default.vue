@@ -1,31 +1,6 @@
 <script setup lang="ts">
-import type { LoginResponse } from "@/types/index";
 import Header from "@/components/header/index.vue";
-import tokenService from "@/utils/token-service";
-import { usePinia } from "@/store/pinia";
-import accountApi from "@/api/account";
-import { onMounted } from "vue";
 /////////////////////////////////////////////////
-const pinia = usePinia();
-/////////////////////////////////////////////////
-onMounted(() => {
-  handleLogin();
-});
-/////////////////////////////////////////////////
-const handleLogin = (): void => {
-  const data = {
-    email: "mrzgp2016@gmail.com",
-    password: "scorpion2018",
-  };
-  accountApi
-    .login(data)
-    .then((response: LoginResponse) => {
-      tokenService.setToken(response.token);
-    })
-    .catch((error: string) => {
-      console.log(error);
-    });
-};
 </script>
 <template>
   <div class="parent-layout">

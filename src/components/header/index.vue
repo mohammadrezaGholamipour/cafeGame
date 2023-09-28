@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import freeConsole from "./components/free-concole.vue";
-import user from "./components/user.vue";
+import Exit from "./components/exit.vue";
 </script>
 <template>
   <header class="parent-header">
     <freeConsole />
-    <user />
+    <Exit />
   </header>
 </template>
 <style scoped>

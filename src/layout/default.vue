@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Header from "@/components/header/index.vue";
+import Menu from "../components/menu.vue";
 /////////////////////////////////////////////////
 </script>
 <template>
@@ -8,6 +9,7 @@ import Header from "@/components/header/index.vue";
     <main>
       <router-view />
     </main>
+    <Menu />
   </div>
 </template>
 <style scoped>

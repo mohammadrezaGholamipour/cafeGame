@@ -42,7 +42,7 @@ const state = reactive({
 /////////////////////////
 const handleMenuClass = computed(() => {
   if (pinia.state.appWidth > 500) {
-    return "mb-5 rounded-[5px]";
+    return "mb-2 rounded-[5px]";
   } else {
     return "rounded-t-[10px]";
   }

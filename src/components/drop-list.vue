@@ -5,7 +5,7 @@ const props = defineProps<DropListProps>();
 const emit = defineEmits(["close"]);
 ////////////////////////
 document.addEventListener("click", (event) => {
-  const userElement = document.querySelector(".parent-user") as HTMLElement;
+  const userElement = document.getElementById(props.element) as HTMLElement;
   ////////////////////////////////////////////////////////
   if (!userElement.contains(event.target as Node)) {
     emit("close");
@@ -13,7 +13,7 @@ document.addEventListener("click", (event) => {
 });
 </script>
 <template>
-  <transition-fade>
+  <transition-expand>
     <div
       :style="{ top: props.space }"
       class="parent-drop-list"
@@ -27,11 +27,11 @@ document.addEventListener("click", (event) => {
         <div v-if="index < props.data.length - 1" class="line"></div>
       </div>
     </div>
-  </transition-fade>
+  </transition-expand>
 </template>
 <style scoped>
 .parent-drop-list {
-  @apply flex flex-col cursor-default justify-start min-w-[70px] items-center absolute p-[7px] bg-[#1D5B79] rounded-[6px];
+  @apply flex flex-col z-[9999] cursor-default justify-start min-w-[70px] items-center absolute p-[7px] bg-[#1D5B79] rounded-[6px];
   box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.25);
 }
 .item-drop-list {

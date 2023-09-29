@@ -29,6 +29,7 @@ export interface DropListProps {
   data: DropList[];
   space: string;
   status: boolean;
+  element: string;
 }
 export interface Register {
   userName: string;

@@ -2,7 +2,7 @@
 <template>
   <div class="parent-title">
     <p>به برنامه کافه گیم خوش آمدید :)</p>
-    <img src="@/assets/image/account/account-logo.svg" />
+    <img width="100" src="@/assets/image/cafegame.png" />
   </div>
 </template>
 <style scoped>

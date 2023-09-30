@@ -22,7 +22,7 @@ document.addEventListener("click", (event) => {
       <div class="w-full" v-for="(item, index) in props.data" :key="item.id">
         <div class="item-drop-list">
           <p>{{ item.name }}</p>
-          <img :src="item.image" />
+          <img v-if="item.image" :src="item.image" />
         </div>
         <div v-if="index < props.data.length - 1" class="line"></div>
       </div>
@@ -31,14 +31,17 @@ document.addEventListener("click", (event) => {
 </template>
 <style scoped>
 .parent-drop-list {
-  @apply flex flex-col z-[9999] cursor-default justify-start min-w-[70px] items-center absolute p-[7px] bg-[#1D5B79] rounded-[6px];
+  @apply flex flex-col z-[9999] cursor-default justify-start p-[7px] min-w-[70px] items-center absolute  bg-[#1D5B79] rounded-[6px];
   box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.25);
 }
 .item-drop-list {
   @apply w-full flex justify-between gap-x-5 items-center cursor-pointer;
 }
 .item-drop-list p {
-  @apply font-[kalameh] text-[0.85rem] text-white;
+  @apply w-full font-[kalameh] p-1 text-[0.85rem] text-white;
+}
+.item-drop-list:hover {
+  @apply bg-slate-500 rounded-md transition-all;
 }
 .line {
   border: 1px solid #ffffff;

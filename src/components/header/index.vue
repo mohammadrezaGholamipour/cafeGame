@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import freeConsole from "./components/free-concole.vue";
 import Exit from "./components/exit.vue";
 </script>
 <template>
   <header class="parent-header">
-    <freeConsole />
+    <a class="animate-pulse" href="/">
+      <img width="100" src="@/assets/image/cafegame.png" />
+    </a>
     <Exit />
   </header>
 </template>

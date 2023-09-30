@@ -70,7 +70,7 @@ const handleMenuClass = computed(() => {
   @apply flex justify-between items-center w-[330px] bg-[#1D5B79] p-[10px] min-h-[74px];
 }
 .menu-item {
-  @apply flex flex-col transition-all gap-y-[6px] justify-center items-center cursor-pointer;
+  @apply flex flex-col transition-all gap-y-[6px] justify-center items-center cursor-pointer hover:opacity-70;
 }
 .menu-item p {
   @apply text-white font-[kalameh] text-[0.75rem] whitespace-nowrap;

@@ -54,7 +54,7 @@ const state = reactive({
 </template>
 <style scoped>
 .parent-tools {
-  @apply w-full shadow-sm justify-center flex items-center h-[40px] gap-x-[10px];
+  @apply w-full bg-white shadow-sm justify-center flex items-center h-[40px] gap-x-[10px];
 }
 .tools-item {
   @apply flex justify-center items-center gap-x-[5px] cursor-pointer relative;

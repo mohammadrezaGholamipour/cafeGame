@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import console from "./components/console.vue";
+import consoleLine from "./components/console-line.vue";
+import consoleBox from "./components/console-box.vue";
+import loading from "./components/loading.vue";
 import tools from "./components/tools.vue";
+import { onMounted, reactive } from "vue";
+///////////////////////////////
+const state = reactive({
+  displayMode: 2,
+});
+/////////////////////////
 </script>
 <template>
   <div class="parent-home">
-    <tools />
-    <div class="main-home">
-      <console />
-    </div>
+    <tools @displayMode="state.displayMode = $event" />
+    <transition-fade group class="w-full h-full">
+      <component
+        :is="state.displayMode === 1 ? consoleLine : consoleBox"
+        v-if="true"
+      />
+      <loading v-else />
+    </transition-fade>
   </div>
 </template>
 <style scoped>
 .parent-home {
   @apply w-full h-full flex flex-col justify-start items-start;
-}
-.main-home {
-  @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start pt-[30px] p-[10px];
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 </style>

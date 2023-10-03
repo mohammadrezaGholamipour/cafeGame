@@ -2,8 +2,8 @@
 import type { DialogProps } from "@/types/index";
 import { ref, watch } from "vue";
 ////////////////////////////////
-const props = defineProps<DialogProps>();
 const emit = defineEmits<{ changeStatus: [status: boolean] }>();
+const props = defineProps<DialogProps>();
 /////////////////////////////////////////
 const dialog = ref<HTMLDivElement | null>();
 ////////////////////////////

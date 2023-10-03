@@ -6,6 +6,6 @@ export default {
     window.localStorage.setItem("cafeGame", token);
   },
   removeToken: (): void => {
-    window.localStorage.removeItem("tokenWebApp");
+    window.localStorage.removeItem("cafeGame");
   },
 };

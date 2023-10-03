@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePinia } from "../store/pinia";
+import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
 import { useRoute } from "vue-router";
 /////////////////////////////////////////

@@ -65,6 +65,7 @@ const handleLogin = () => {
         <input
           placeholder="رمز عبور خود را وارد کنید"
           v-model="password"
+          type="password"
           class="input"
         />
       </div>

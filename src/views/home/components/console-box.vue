@@ -7,63 +7,74 @@ const state = reactive({
 /////////////////////
 </script>
 <template>
-  <div
-    :class="['parent-console', state.status ? 'active-color' : 'disable-color']"
-    v-for="item in 20"
-    :key="item"
-  >
-    <!-- ///////////////////////// -->
+  <div class="parent-console-box">
     <div
       :class="[
-        'console-number',
-        state.status ? 'bg-[#1D5B79]' : 'bg-[#C0C0C0]',
+        'parent-console',
+        state.status ? 'active-color' : 'disable-color',
       ]"
+      v-for="item in 20"
+      :key="item"
     >
-      <p>{{ item }}</p>
-    </div>
-    <!-- //////////////////////// -->
-    <transition-slide group class="h-full flex justify-start items-center">
-      <div v-if="state.status" class="console-main">
-        <div class="console-timer">
-          <p>2:45:37</p>
-          <img src="@/assets/image/home/timer.svg" />
-        </div>
-        <!-- //////////////////////// -->
-        <div class="console-money">
-          <p>150,000</p>
-          <p>تومان</p>
-        </div>
-      </div>
-      <p v-else class="text-[#565656] font-[kalameh]">دستگاه خالی میباشد :(</p>
-    </transition-slide>
-    <!-- //////////////////////// -->
-    <transition-scale group>
-      <div v-if="state.status" class="console-footer">
-        <button
-          class="button bg-[#EF6262] text-white"
-          @click="state.status = false"
-        >
-          پایان
-        </button>
-        <button class="button border-[1.5px] border-[#1D5B79] text-[#1D5B79]">
-          امکانات
-        </button>
-      </div>
-      <button
-        v-else
-        class="button bg-[#7CC078] text-white"
-        @click="state.status = true"
+      <!-- ///////////////////////// -->
+      <div
+        :class="[
+          'console-number',
+          state.status ? 'bg-[#1D5B79]' : 'bg-[#C0C0C0]',
+        ]"
       >
-        <div class="flex items-center gap-x-[5px]">
-          <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
-          <img src="@/assets/image/home/start.svg" />
+        <p>{{ item }}</p>
+      </div>
+      <!-- //////////////////////// -->
+      <transition-slide group class="h-full flex justify-start items-center">
+        <div v-if="state.status" class="console-main">
+          <div class="console-timer">
+            <p>2:45:37</p>
+            <img src="@/assets/image/home/timer.svg" />
+          </div>
+          <!-- //////////////////////// -->
+          <div class="console-money">
+            <p>150,000</p>
+            <p>تومان</p>
+          </div>
         </div>
-      </button>
-    </transition-scale>
-    <!-- //////////////////////// -->
+        <p v-else class="text-[#565656] font-[kalameh]">
+          دستگاه خالی میباشد :(
+        </p>
+      </transition-slide>
+      <!-- //////////////////////// -->
+      <transition-scale group>
+        <div v-if="state.status" class="console-footer">
+          <button
+            class="button bg-[#EF6262] text-white"
+            @click="state.status = false"
+          >
+            پایان
+          </button>
+          <button class="button border-[1.5px] border-[#1D5B79] text-[#1D5B79]">
+            امکانات
+          </button>
+        </div>
+        <button
+          v-else
+          class="button bg-[#7CC078] text-white"
+          @click="state.status = true"
+        >
+          <div class="flex items-center gap-x-[5px]">
+            <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
+            <img src="@/assets/image/home/start.svg" />
+          </div>
+        </button>
+      </transition-scale>
+      <!-- //////////////////////// -->
+    </div>
   </div>
 </template>
 <style scoped>
+.parent-console-box {
+  @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start pt-[30px] p-[10px];
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 .parent-console {
   @apply relative transition-all pb-[10px] pt-[30px] gap-y-[3px] w-[300px] h-[130px] rounded-[10px] flex flex-col justify-start items-center;
   box-shadow: 0px 0px 5px 0px rgba(56, 56, 56, 0.25);

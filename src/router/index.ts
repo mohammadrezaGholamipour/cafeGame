@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import tokenService from "@/utils/token-service";
 import account from "@/views/account/index.vue";
 import console from "@/views/console/index.vue";
 import notFound from "@/views/not-found.vue";
@@ -55,5 +56,16 @@ const router = createRouter({
     },
   ],
 });
-
+/////////////////////
+router.beforeEach((to, from, next) => {
+  const token = tokenService.getToken();
+  if (to.name === "account" && token) {
+    next({ path: "/" });
+  } else if (to.name !== "account" && !token) {
+    next({ name: "account" });
+  } else {
+    next();
+  }
+});
+/////////////////////
 export default router;

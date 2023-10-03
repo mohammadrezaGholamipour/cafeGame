@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import type { DropList } from "@/types/index";
+import { Exact } from "utility-types";
 import { reactive } from "vue";
 ///////////////////////
+const emit = defineEmits<{ displayMode: [mood: number] }>();
 const state = reactive({
   sortConsole: [
     { id: 1, name: "شماره دستگاه" },
@@ -30,7 +33,7 @@ const state = reactive({
         :status="state.sortConsoleStatus"
         :data="state.sortConsole"
         element="sort-console"
-        :space="'30px'"
+        :space="'32px'"
       />
     </div>
     <!-- /////////////////////// -->
@@ -43,10 +46,11 @@ const state = reactive({
       <img src="@/assets/image/home/display.svg" />
       <DropList
         @close="state.displayConsoleStatus = false"
+        @selected="emit('displayMode', $event)"
         :status="state.displayConsoleStatus"
         :data="state.displayConsole"
         element="display-console"
-        :space="'30px'"
+        :space="'32px'"
       />
     </div>
     <!-- /////////////////////// -->
@@ -54,7 +58,7 @@ const state = reactive({
 </template>
 <style scoped>
 .parent-tools {
-  @apply w-full bg-white shadow-sm justify-center flex items-center h-[40px] gap-x-[10px];
+  @apply w-full bg-white shadow-sm justify-center flex items-center min-h-[40px] gap-x-[10px];
 }
 .tools-item {
   @apply flex justify-center items-center gap-x-[5px] cursor-pointer relative;

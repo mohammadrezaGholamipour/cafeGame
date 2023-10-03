@@ -1,4 +1,5 @@
-﻿import axios from 'axios';
+﻿import tokenService from "./token-service";
+import axios from 'axios';
 ////////////////////////////////
 const HttpClient = axios.create({
   baseURL: 'https://cafegameapi.iran.liara.run/api/',
@@ -12,7 +13,7 @@ const HttpClient = axios.create({
 ///////////////////////////////////
 HttpClient.interceptors.request.use(
   (config) => {
-    config.headers['authorization'] = `Bearer`;
+    config.headers['authorization'] = `Bearer ${tokenService.getToken()}`;
     return config;
   },
   (error) => {
@@ -32,6 +33,8 @@ HttpClient.interceptors.response.use(
         case 400:
           break;
         case 401:
+          tokenService.removeToken()
+          window.location.href = "/account"
           break;
         case 403:
           break;

@@ -38,3 +38,8 @@ export interface Register {
   repeatPassword: string;
   mobile: string;
 }
+export interface console {
+  status: boolean;
+  dropListStatus: boolean;
+  moneySelected: {id:number,};
+}

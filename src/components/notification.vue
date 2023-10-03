@@ -54,7 +54,7 @@ const handleCloseTimer = () => {
 </template>
 <style scoped>
 .parent-notification {
-  @apply flex fixed justify-between w-[300px] p-[20px] rounded-l-[12px] transition-all cursor-pointer;
+  @apply flex fixed justify-between w-[300px] p-[20px] rounded-l-[12px] transition-all cursor-pointer z-[99999];
 }
 .parent-notification > div {
   @apply flex flex-col items-start gap-y-[4px];

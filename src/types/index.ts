@@ -16,7 +16,7 @@ export interface Notification {
   name: string;
   timer: number;
 }
-export interface LoginResponse {
+export interface AccountResponse {
   userState: number;
   token: string;
 }
@@ -38,8 +38,33 @@ export interface Register {
   repeatPassword: string;
   mobile: string;
 }
-export interface console {
+export interface home {
+  consoleId: number;
+  billId: number;
+  name: string;
   status: boolean;
   dropListStatus: boolean;
-  moneySelected: {id:number,};
+  hourRate: number;
+  interval?: number;
+  costPlayed: number;
+  loading: boolean;
+  timer: { hours: number; minutes: number; seconds: number };
+}
+export interface console {
+  id: number;
+  name: string;
+}
+export interface hourRate {
+  id: number;
+  rate: number;
+}
+export interface bill {
+  billFoods: { id: number; count: number; foodId: number; billId: number }[];
+  endTime: string;
+  finalCost: number;
+  hourRateId: number;
+  id: number;
+  paymentMethod: number;
+  startTime: string;
+  systemId: number;
 }

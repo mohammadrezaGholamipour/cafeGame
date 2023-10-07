@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoginResponse, register } from "@/types/index";
+import type { AccountResponse, register } from "@/types/index";
 import AccountTab from "./components/account-tab.vue";
 import tokenService from "@/utils/token-service";
 import Slider from "./components/slider.vue";
@@ -21,7 +21,7 @@ const state = reactive({
 const requestLogin = (data: object): void => {
   state.requestLoading = true;
   AccountApi.login(data)
-    .then((response: LoginResponse) => {
+    .then((response: AccountResponse) => {
       tokenService.setToken(response.token);
       router.push("/");
     })
@@ -42,8 +42,9 @@ const requestLogin = (data: object): void => {
 const requestRegister = (data: register): void => {
   state.requestLoading = true;
   AccountApi.register(data)
-    .then((response: object) => {
-      console.log(response);
+    .then((response: AccountResponse) => {
+      tokenService.setToken(response.token);
+      router.push("/");
     })
     .catch(() => {
       pinia.handleNotification({

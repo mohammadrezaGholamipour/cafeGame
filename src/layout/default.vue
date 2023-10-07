@@ -6,21 +6,10 @@ import { onMounted } from "vue";
 /////////////////////////////////
 const pinia = usePinia();
 onMounted(async () => {
-  try {
-    await Promise.all([
-      pinia.requestGetConsole(),
-      pinia.requestGetMoney(),
-      pinia.requestGetFood(),
-    ]);
-  } catch (error) {
-    pinia.handleNotification({
-      ...pinia.state.notification,
-      name: "error",
-      status: true,
-      textHeader: "خطا",
-      textMain: "دریافت اطلاعات با خطا مواجه شد",
-    });
-  }
+  await pinia.requestGetConsole(),
+    await pinia.requestGetHourRate(),
+    await pinia.requestGetFood(),
+    await pinia.requestGetBill();
 });
 </script>
 <template>

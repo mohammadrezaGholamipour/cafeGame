@@ -80,7 +80,7 @@ const handleLogin = () => {
       @click="handleLogin"
     >
       <transition-fade class="flex" group>
-        <span v-if="props.loading" class="loader"></span>
+        <span v-if="props.loading" class="btn-loader"></span>
         <p v-else>وارد شدن</p>
       </transition-fade>
     </button>

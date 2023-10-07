@@ -38,7 +38,7 @@
   .input {
     @apply min-w-[300px] w-full flex justify-center items-center text-[#656565] rounded-[5px] caret-blue-600 h-[40px] px-[18px] bg-[#DEDEDE] font-[kalameh] outline-none;
   }
-  .loader {
+  .btn-loader {
     width: 30px;
     height: 30px;
     border: 3px dotted #fff;
@@ -49,7 +49,7 @@
     box-sizing: border-box;
     animation: rotation 2s linear infinite;
   }
-  .loader::after {
+  .btn-loader::after {
     content: "";
     box-sizing: border-box;
     position: absolute;
@@ -81,6 +81,77 @@
     }
     100% {
       transform: rotate(-360deg);
+    }
+  }
+  .parent-console-loader {
+    @apply absolute inset-0 flex justify-center bg-[#1d5a7959] backdrop-blur-[1.5px] rounded-md items-center w-full h-full;
+  }
+  .console-loader {
+    width: 220px;
+    height: 25px;
+    border-radius: 20px;
+    color: #1d5b79;
+    border: 2px solid;
+    position: relative;
+  }
+  .console-loader::before {
+    content: "";
+    position: absolute;
+    margin: 2px;
+    inset: 0 100% 0 0;
+    border-radius: inherit;
+    background: currentColor;
+    animation: l6 2s infinite;
+  }
+  @keyframes l6 {
+    100% {
+      inset: 0;
+    }
+  }
+  .money-loader {
+    display: block;
+    position: relative;
+    height: 20px;
+    width: 140px;
+    background-image: linear-gradient(#fff 20px, transparent 0),
+      linear-gradient(#fff 20px, transparent 0),
+      linear-gradient(#fff 20px, transparent 0),
+      linear-gradient(#fff 20px, transparent 0);
+    background-repeat: no-repeat;
+    background-size: 20px auto;
+    background-position: 0 0, 40px 0, 80px 0, 120px 0;
+    animation: pgfill 1s linear infinite;
+  }
+  @keyframes pgfill {
+    0% {
+      background-image: linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0);
+    }
+    25% {
+      background-image: linear-gradient(#ff3d00 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0);
+    }
+    50% {
+      background-image: linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#ff3d00 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0);
+    }
+    75% {
+      background-image: linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#ff3d00 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0);
+    }
+    100% {
+      background-image: linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#fff 20px, transparent 0),
+        linear-gradient(#ff3d00 20px, transparent 0);
     }
   }
 }

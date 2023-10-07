@@ -98,6 +98,7 @@ const handleRegister = () => {
         <input
           placeholder="رمز عبور خود را وارد کنید"
           v-model="password"
+          type="password"
           class="input"
         />
       </div>
@@ -106,6 +107,7 @@ const handleRegister = () => {
         <input
           placeholder="رمز عبور خود را تکرار کنید"
           v-model="repeatPassword"
+          type="password"
           class="input"
         />
       </div>
@@ -128,7 +130,7 @@ const handleRegister = () => {
       @click="handleRegister"
     >
       <transition-fade class="flex" group>
-        <span v-if="props.loading" class="loader"></span>
+        <span v-if="props.loading" class="btn-loader"></span>
         <p v-else>ثبت نام</p>
       </transition-fade>
     </button>

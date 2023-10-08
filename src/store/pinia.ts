@@ -123,11 +123,17 @@ export const usePinia = defineStore("pinia", () => {
         name,
       }));
       ////////////////////////////////////////////////////////////////
-      const unclosedBills = state.bill.filter((item) => !!!item.endTime);
+      const uniqueSystemIds = new Set();
+      const unclosedBills = state.bill.filter(
+        (item) =>
+          !item.endTime &&
+          !uniqueSystemIds.has(item.systemId) &&
+          uniqueSystemIds.add(item.systemId)
+      );
       ////////////////////////////////////////////////////////////////
       for (let { hourRateId, startTime, systemId, id } of unclosedBills) {
         for (let console of state.home) {
-          if (systemId === console.consoleId) {
+          if (systemId === console.consoleId && !console.interval) {
             const hourRateSelected = state.hourRate.find(
               (item) => item.id === hourRateId
             );

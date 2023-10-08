@@ -23,7 +23,7 @@ const requestCloseBill = (billId: number): void => {
   handleConsoleLoading(billId);
   billApi
     .close(billId, new Date().toISOString())
-    // .then(() => pinia.requestGetBill())
+    .then(() => pinia.requestGetBill())
     .catch(() => {
       handleConsoleLoading(billId);
       pinia.handleNotification({

@@ -38,7 +38,7 @@ const props = defineProps<home>();
           <p class="!text-[0.8rem]" v-if="!props.costPlayed">
             درحال محاسبه ...
           </p>
-          <div class="w-full flex justify-center" v-else>
+          <div class="w-full flex items-center justify-center gap-x-[5px]" v-else>
             <p>
               {{ props.costPlayed.toLocaleString() }}
             </p>

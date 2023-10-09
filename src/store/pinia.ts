@@ -61,15 +61,15 @@ export const usePinia = defineStore("pinia", () => {
   ///////////////////////////////////////////////////
   const requestGetHourRate = async (): Promise<void> => {
     try {
-      const response: hourRate[] = await hourRateApi.get();
-      state.hourRate = response;
+      const response: [] = await hourRateApi.get();
+      state.hourRate = response.map(({ id, rate }) => ({ id, name: rate }));
     } catch (error) {
       handleNotification({
         ...state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "لیست هزنیه بازی دریافت نشد",
+        textMain: "لیست هزینه بازی دریافت نشد",
       });
     }
   };
@@ -137,8 +137,8 @@ export const usePinia = defineStore("pinia", () => {
             const hourRateSelected = state.hourRate.find(
               (item) => item.id === hourRateId
             );
-            console.hourRate = hourRateSelected?.rate
-              ? hourRateSelected?.rate
+            console.hourRate = hourRateSelected?.name
+              ? hourRateSelected?.name
               : 0;
             ////////////////////////////////////////
             handleConsoleTimer(console);

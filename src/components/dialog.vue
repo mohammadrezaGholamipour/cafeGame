@@ -27,7 +27,7 @@ const handleDialogStatus = (status: boolean) => {
 </script>
 
 <template>
-  <transition name="fade-scale">
+  <transition  name="fade-scale">
     <div class="dialog-back-ground" v-show="props.status" ref="dialog">
       <div :style="{ width: `${props.width}px` }" class="dialog-card">
         <!-- ///////////////////////// -->
@@ -48,23 +48,23 @@ const handleDialogStatus = (status: boolean) => {
           </svg>
         </div>
         <!-- ////////////////////////// -->
-        <div class="line"></div>
+        <div v-if="props.header" class="line"></div>
         <!-- ////////////////////////// -->
         <slot />
         <!-- ////////////////////////// -->
-        <div class="line"></div>
+        <div v-if="props.footer" class="line"></div>
         <!-- ////////////////////////// -->
         <div v-if="props.footer" class="dialog-footer">
           <button
+            class="button bg-[#7CC078] text-white"
             @click="handleDialogStatus(true)"
-            class="button bg-[#7CC078]"
             v-if="props.btnAccept"
           >
             {{ props.btnAcceptText }}
           </button>
           <button
+            class="button bg-[#C0C0C0] text-white"
             @click="handleDialogStatus(false)"
-            class="button bg-[#C0C0C0]"
             v-if="props.btnCancel"
           >
             {{ props.btnCancelText }}

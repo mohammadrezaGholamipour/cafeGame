@@ -22,8 +22,8 @@ export interface AccountResponse {
 }
 export interface DropList {
   id: number;
-  name: string;
-  image: string;
+  name: string | number;
+  image?: string;
 }
 export interface DropListProps {
   data: DropList[];
@@ -56,7 +56,7 @@ export interface console {
 }
 export interface hourRate {
   id: number;
-  rate: number;
+  name: number;
 }
 export interface bill {
   billFoods: { id: number; count: number; foodId: number; billId: number }[];

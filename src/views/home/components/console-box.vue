@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { home } from "@/types/index";
 //////////////////////////////
-const emit = defineEmits<{ close: [billId: number] }>();
+const emit = defineEmits<{
+  start: [consoleId: number];
+  close: [billId: number];
+}>();
 const props = defineProps<home>();
 /////////////////////
 </script>
@@ -38,11 +41,14 @@ const props = defineProps<home>();
           <p class="!text-[0.8rem]" v-if="!props.costPlayed">
             درحال محاسبه ...
           </p>
-          <div class="w-full flex items-center justify-center gap-x-[5px]" v-else>
+          <div
+            class="w-full flex items-center justify-center gap-x-[3px]"
+            v-else
+          >
             <p>
               {{ props.costPlayed.toLocaleString() }}
             </p>
-            <p>تومان</p>
+            <p class="!font-[400]">تومان</p>
           </div>
         </transition-fade>
       </div>
@@ -59,7 +65,11 @@ const props = defineProps<home>();
         </button>
         <button class="button bg-[#3ea6da] text-white">امکانات</button>
       </div>
-      <button v-else class="button bg-[#7CC078] text-white">
+      <button
+        @click="emit('start', props.consoleId)"
+        v-else
+        class="button bg-[#7CC078] text-white"
+      >
         <div class="flex items-center gap-x-[5px]">
           <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
           <img src="@/assets/image/home/start.svg" />
@@ -99,15 +109,9 @@ const props = defineProps<home>();
   @apply w-full justify-center flex items-center gap-x-[3px] h-[30px];
 }
 .console-money p {
-  @apply font-[dana] font-bold text-[1.2rem];
+  @apply font-[dana] font-bold text-[15px];
 }
 .console-footer {
   @apply flex gap-x-[7px] items-center;
-}
-.active-color {
-  background: rgba(29, 91, 121, 0.1);
-}
-.disable-color {
-  background: rgba(222, 222, 222, 0.5);
 }
 </style>

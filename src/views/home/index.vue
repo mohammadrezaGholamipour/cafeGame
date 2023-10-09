@@ -3,7 +3,6 @@ import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
 import loading from "./components/loading.vue";
 import tools from "./components/tools.vue";
-import type { home } from "@/types/index";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
 import billApi from "@/api/bill.js";
@@ -11,6 +10,12 @@ import billApi from "@/api/bill.js";
 const pinia = usePinia();
 const state = reactive({
   displayMode: 2,
+  startBill: {
+    dropListStatus: false,
+    hourRateSelected: 0,
+    dialogStatus: false,
+    consoleId: 0,
+  },
 });
 ////////////////////////////////
 const HomeData = computed(() => {
@@ -18,7 +23,22 @@ const HomeData = computed(() => {
     return pinia.state.home;
   }
 });
-///////////////////////////////////////
+/////////////////////////////////////////////////
+const requestStartBill = (): void => {
+  billApi
+    .start()
+    .then(() => pinia.requestGetBill())
+    .catch(() => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "شروع فاکتور انجام نشد",
+      });
+    });
+};
+/////////////////////////////////////////////////
 const requestCloseBill = (billId: number): void => {
   handleConsoleLoading(billId);
   billApi
@@ -37,6 +57,11 @@ const requestCloseBill = (billId: number): void => {
     .finally(() => {
       handleConsoleLoading(billId);
     });
+};
+///////////////////////////////////////////////
+const handleShowDialog = (consoleId: number): void => {
+  state.startBill.consoleId = consoleId;
+  state.startBill.dialogStatus = true;
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (billId: number) => {
@@ -60,6 +85,7 @@ const handleConsoleLoading = (billId: number) => {
           :consoleId="item.consoleId"
           @close="requestCloseBill"
           :hourRate="item.hourRate"
+          @start="handleShowDialog"
           v-for="item in HomeData"
           :loading="item.loading"
           :status="item.status"
@@ -71,6 +97,33 @@ const handleConsoleLoading = (billId: number) => {
       </div>
       <loading v-else />
     </transition-fade>
+    <!-- //////////////////////////////////// -->
+    <!-- <Dialog
+      :status="state.startBill.dialogStatus"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'شروع'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
+      <div class="flex w-full flex-col items-center justify-center">
+        <div id="start-bill" class="flex w-full items-center justify-between">
+          <div class="flex items-center">
+            <p>قیمت واحد را انتخاب کنید</p>
+            <p>(اجباری)</p>
+          </div>
+          <DropList
+            @close="state.startBill.dropListStatus = false"
+            :status="state.startBill.dropListStatus"
+            :data="pinia.state.hourRate"
+            element="start-bill"
+            :space="'32px'"
+          />
+        </div>
+      </div>
+    </Dialog> -->
     <!-- //////////////////////////////////// -->
   </div>
 </template>

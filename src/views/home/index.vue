@@ -29,11 +29,24 @@ const HomeData = computed(() => {
   }
 });
 /////////////////////////////////////////////////
+const handleConsoleStatus = (
+  info: { billId: number; consoleId: number },
+  status: boolean
+) => {
+  (status ? handleShowDialogStartBill : requestCloseBill)(info);
+};
+/////////////////////////////////////////////////
 const requestStartBill = (): void => {
+  handleConsoleLoading(state.startBill.consoleId, true);
   billApi
-    .start(state.startBill.consoleId, state.startBill.hourRateSelected)
+    .start(
+      state.startBill.consoleId,
+      state.startBill.hourRateSelected.id,
+      new Date().toISOString()
+    )
     .then(() => pinia.requestGetBill())
     .catch(() => {
+      handleConsoleLoading(state.startBill.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -44,13 +57,16 @@ const requestStartBill = (): void => {
     });
 };
 /////////////////////////////////////////////////
-const requestCloseBill = (billId: number): void => {
-  handleConsoleLoading(billId);
+const requestCloseBill = (info: {
+  billId: number;
+  consoleId: number;
+}): void => {
+  handleConsoleLoading(info.consoleId, true);
   billApi
-    .close(billId, new Date().toISOString())
+    .close(info.billId, new Date().toISOString())
     .then(() => pinia.requestGetBill())
     .catch(() => {
-      handleConsoleLoading(billId);
+      handleConsoleLoading(info.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -58,28 +74,44 @@ const requestCloseBill = (billId: number): void => {
         textHeader: "خطا",
         textMain: "فاکتور مورد نظر بسته نشد",
       });
-    })
-    .finally(() => {
-      handleConsoleLoading(billId);
     });
 };
 ///////////////////////////////////////////////
-const handleShowDialogStartBill = (consoleId: number): void => {
-  state.startBill.consoleId = consoleId;
+const handleShowDialogStartBill = (info: {
+  billId: number;
+  consoleId: number;
+}): void => {
+  state.startBill.consoleId = info.consoleId;
   state.startBill.dialogStatus = true;
 };
 ///////////////////////////////////////////////
 const handleDialogStartBill = (status: boolean) => {
-  if (status && state.startBill.hourRateSelected) {
-    requestStartBill();
+  if (status) {
+    if (state.startBill.hourRateSelected.id) {
+      state.startBill.dialogStatus = false;
+      requestStartBill();
+    } else {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "لطفا قیمت واحد را انتخاب کنید",
+      });
+    }
+  } else {
+    state.startBill.dialogStatus = false;
+    setTimeout(() => {
+      state.startBill.consoleId = 0;
+      state.startBill.hourRateSelected = { id: 0, name: 0 };
+    }, 500);
   }
-  state.startBill.dialogStatus = false;
 };
 ///////////////////////////////////////////////
-const handleConsoleLoading = (billId: number) => {
+const handleConsoleLoading = (consoleId: number, status: boolean) => {
   if (Array.isArray(pinia.state.home)) {
-    let console = pinia.state.home.find((item) => item.billId === billId);
-    if (console) console.loading = !console.loading;
+    let console = pinia.state.home.find((item) => item.consoleId === consoleId);
+    if (console) console.loading = status;
   }
 };
 </script>
@@ -93,10 +125,9 @@ const handleConsoleLoading = (billId: number) => {
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
-          @start="handleShowDialogStartBill"
+          @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
-          @close="requestCloseBill"
           :hourRate="item.hourRate"
           v-for="item in HomeData"
           :loading="item.loading"

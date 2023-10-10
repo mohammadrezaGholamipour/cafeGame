@@ -2,8 +2,7 @@
 import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
-  start: [consoleId: number];
-  close: [billId: number];
+  status: [info: { billId: number; consoleId: number }, status: boolean];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -59,16 +58,28 @@ const props = defineProps<home>();
       <div v-if="props.status" class="console-footer">
         <button
           class="button bg-[#EF6262] text-white"
-          @click="emit('close', props?.billId)"
+          @click="
+            emit(
+              'status',
+              { billId: props.billId, consoleId: props.consoleId },
+              false
+            )
+          "
         >
           پایان
         </button>
         <button class="button bg-[#3ea6da] text-white">امکانات</button>
       </div>
       <button
-        @click="emit('start', props.consoleId)"
-        v-else
         class="button bg-[#7CC078] text-white"
+        @click="
+          emit(
+            'status',
+            { billId: props.billId, consoleId: props.consoleId },
+            true
+          )
+        "
+        v-else
       >
         <div class="flex items-center gap-x-[5px]">
           <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>

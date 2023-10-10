@@ -50,11 +50,21 @@ const props = defineProps<home>();
     <transition-slide group>
       <div v-if="props.status" class="console-left">
         <button class="button bg-[#3ea6da] text-white">امکانات</button>
-        <button class="button bg-[#EF6262] text-white">پایان</button>
+        <button
+          class="button bg-[#EF6262] text-white"
+          @click="emit('close', props?.billId)"
+        >
+          پایان
+        </button>
       </div>
       <button v-else class="button bg-[#7CC078] text-white">
         <div class="flex items-center gap-x-[5px]">
-          <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
+          <p
+            class="text-white font-[kalameh] text-[0.75rem] mb-1"
+            @click="emit('start', props.consoleId)"
+          >
+            شروع
+          </p>
           <img src="@/assets/image/home/start.svg" />
         </div>
       </button>

@@ -30,14 +30,13 @@ export const usePinia = defineStore("pinia", () => {
   });
   ////////////////////////////
   window.onfocus = () => {
+    state.home = false;
     requestGetBill();
   };
   ////////////////////////////
   watch(
     () => state.bill,
-    () => {
-      (state.home = false), handleHomeData();
-    }
+    () => handleHomeData()
   );
   ////////////////////////////
   const handleNotification = (data: Notification): void => {

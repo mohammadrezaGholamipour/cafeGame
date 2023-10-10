@@ -68,3 +68,9 @@ export interface bill {
   startTime: string;
   systemId: number;
 }
+export interface StartBillProps {
+  dropListStatus: boolean;
+  hourRateSelected: { id: number; name: number };
+  dialogStatus: boolean;
+  consoleId: number;
+}

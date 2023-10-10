@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { DropList } from "@/types/index";
-import { Exact } from "utility-types";
 import { reactive } from "vue";
 ///////////////////////
 const emit = defineEmits<{ displayMode: [mood: number] }>();
@@ -58,13 +56,13 @@ const state = reactive({
 </template>
 <style scoped>
 .parent-tools {
-  @apply w-full bg-white shadow-sm justify-center flex items-center min-h-[40px] gap-x-[10px];
+  @apply w-full bg-white shadow-sm justify-center flex-wrap flex items-center p-[10px] h-auto gap-[10px];
 }
 .tools-item {
   @apply flex justify-center items-center gap-x-[5px] cursor-pointer relative;
 }
 .tools-item p {
-  @apply text-black font-[kalameh];
+  @apply text-black font-[kalameh] whitespace-nowrap;
 }
 .line {
   border: 1px solid #c4bcab;

@@ -27,7 +27,7 @@ const handleDialogStatus = (status: boolean) => {
 </script>
 
 <template>
-  <transition  name="fade-scale">
+  <transition name="fade-scale">
     <div class="dialog-back-ground" v-show="props.status" ref="dialog">
       <div :style="{ width: `${props.width}px` }" class="dialog-card">
         <!-- ///////////////////////// -->
@@ -77,7 +77,7 @@ const handleDialogStatus = (status: boolean) => {
 </template>
 <style scoped>
 .dialog-back-ground {
-  background-color: white;
+  @apply backdrop-blur-sm;
   justify-content: center;
   align-items: center;
   position: absolute;

@@ -1,35 +1,79 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { home } from "@/types/index";
+//////////////////////////////
+const emit = defineEmits<{
+  start: [consoleId: number];
+  close: [billId: number];
+}>();
+const props = defineProps<home>();
+/////////////////////
+</script>
 <template>
-  <div class="console active-color">
-    <div class="console-left">
-      <div class="console-number">1</div>
-      <div class="parent-money-and-timer">
-        <div class="console-money">
-          <p>100.000</p>
-          <p class="!font-[400]">تومان</p>
-        </div>
-        <div class="console-timer">
-          <p>2:37:45</p>
-        </div>
-      </div>
-    </div>
+  <div
+    :class="[
+      'console',
+      props.status
+        ? 'active-color  border-[#1d5b79]'
+        : 'disable-color  border-[#C0C0C0]',
+    ]"
+  >
     <div class="console-right">
-      <button class="button bg-[#3ea6da] text-white">امکانات</button>
-      <button class="button bg-[#EF6262] text-white">پایان</button>
+      <div
+        :class="[
+          props.status ? 'bg-[#1D5B79]' : 'bg-[#C0C0C0]',
+          'console-number',
+        ]"
+        v-if="!props.loading"
+      >
+        <p>{{ props.name }}</p>
+      </div>
+      <transition-fade group>
+        <div v-if="$props.status" class="parent-money-and-timer">
+          <div class="console-money">
+            <p>{{ props.costPlayed.toLocaleString() }}</p>
+            <p class="!font-[400]">تومان</p>
+          </div>
+          <div class="console-timer">
+            <p>
+              {{
+                `${props.timer.hours}:${props.timer.minutes}:${props.timer.seconds}`
+              }}
+            </p>
+            <img src="@/assets/image/home/timer.svg" />
+          </div>
+        </div>
+        <p v-else class="text-[#565656] font-[kalameh]">
+          دستگاه خالی میباشد :(
+        </p>
+      </transition-fade>
     </div>
+    <transition-slide group>
+      <div v-if="props.status" class="console-left">
+        <button class="button bg-[#3ea6da] text-white">امکانات</button>
+        <button class="button bg-[#EF6262] text-white">پایان</button>
+      </div>
+      <button v-else class="button bg-[#7CC078] text-white">
+        <div class="flex items-center gap-x-[5px]">
+          <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
+          <img src="@/assets/image/home/start.svg" />
+        </div>
+      </button>
+    </transition-slide>
   </div>
 </template>
 <style scoped>
 .console {
-  @apply min-w-[300px] pl-[10px] w-[300px] rounded-[5px] min-h-[75px] h-[75px] overflow-hidden flex justify-between items-center;
+  @apply min-w-[300px] border-l-[3px] pl-[10px] transition-all w-[300px] rounded-[5px] min-h-[80px] h-[80px] overflow-hidden flex justify-between items-center;
   box-shadow: 0px 0px 5px 0px rgba(135, 135, 135, 0.25);
-border-left: 3px solid var(--blue, #1D5B79);
 }
-.console-left {
+.console-right {
   @apply flex h-full items-center gap-x-[10px];
 }
 .console-number {
-  @apply flex bg-[#1D5B79] text-white min-w-[29px] h-full items-center justify-center;
+  @apply flex text-white min-w-[29px] h-full items-center justify-center;
+}
+.console-number p {
+  @apply text-white font-[kalameh];
 }
 .console-money {
   @apply flex items-center gap-x-[3px];
@@ -41,12 +85,12 @@ border-left: 3px solid var(--blue, #1D5B79);
   @apply flex items-center gap-x-[5px];
 }
 .console-timer p {
-  @apply text-black  font-[dana];
+  @apply text-black mt-1 font-[dana];
 }
 .parent-money-and-timer {
-  @apply flex h-full gap-y-[10px] flex-col justify-center items-center;
+  @apply flex h-full gap-y-[5px] flex-col justify-center items-start;
 }
-.console-right {
-  @apply flex flex-col justify-center items-center h-full gap-y-[4px];
+.console-left {
+  @apply flex flex-col justify-center items-center h-full gap-y-[5px];
 }
 </style>

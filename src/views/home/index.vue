@@ -101,11 +101,11 @@ const handleDialogStartBill = (status: boolean) => {
     }
   } else {
     state.startBill.dialogStatus = false;
-    setTimeout(() => {
-      state.startBill.consoleId = 0;
-      state.startBill.hourRateSelected = { id: 0, name: 0 };
-    }, 500);
   }
+  setTimeout(() => {
+    state.startBill.consoleId = 0;
+    state.startBill.hourRateSelected = { id: 0, name: 0 };
+  }, 500);
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
@@ -120,7 +120,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     <!-- //////////////////////////////////// -->
     <tools @displayMode="state.displayMode = $event" />
     <!-- //////////////////////////////////// -->
-    <transition-fade group class="w-full h-full">
+    <transition-fade group class="w-full overflow-y-auto h-full">
       <div v-if="pinia.state.home" class="parent-console">
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
@@ -170,7 +170,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
   @apply w-full h-full flex flex-col justify-start items-start;
 }
 .parent-console {
-  @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start py-[30px] p-[10px];
+  @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start pt-[30px] pb-[10px] p-[10px];
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 </style>

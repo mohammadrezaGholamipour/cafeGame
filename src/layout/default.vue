@@ -18,7 +18,11 @@ onMounted(async () => {
     <Header />
     <!-- ///////////////// -->
     <main>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
     <!-- ///////////////// -->
     <Menu />
@@ -31,5 +35,14 @@ onMounted(async () => {
 }
 main {
   @apply flex justify-start items-start w-full h-full overflow-hidden pb-[5px];
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

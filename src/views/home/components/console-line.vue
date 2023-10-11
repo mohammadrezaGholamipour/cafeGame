@@ -2,8 +2,7 @@
 import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
-  start: [consoleId: number];
-  close: [billId: number];
+  status: [info: { billId: number; consoleId: number }, status: boolean];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -23,16 +22,20 @@ const props = defineProps<home>();
           props.status ? 'bg-[#1D5B79]' : 'bg-[#C0C0C0]',
           'console-number',
         ]"
-        v-if="!props.loading"
       >
         <p>{{ props.name }}</p>
       </div>
-      <transition-fade group>
+      <transition-fade class="h-full flex items-center" group>
         <div v-if="$props.status" class="parent-money-and-timer">
-          <div class="console-money">
-            <p>{{ props.costPlayed.toLocaleString() }}</p>
-            <p class="!font-[400]">تومان</p>
-          </div>
+          <transition-fade group class="console-money">
+            <p class="!text-[0.8rem]" v-if="!props.costPlayed">
+              درحال محاسبه ...
+            </p>
+            <div v-else class="flex items-center gap-x-[5px]">
+              <p>{{ props.costPlayed.toLocaleString() }}</p>
+              <p class="!font-[400]">تومان</p>
+            </div>
+          </transition-fade>
           <div class="console-timer">
             <p>
               {{
@@ -52,7 +55,13 @@ const props = defineProps<home>();
         <button class="button bg-[#3ea6da] text-white">امکانات</button>
         <button
           class="button bg-[#EF6262] text-white"
-          @click="emit('close', props?.billId)"
+          @click="
+            emit(
+              'status',
+              { billId: props.billId, consoleId: props.consoleId },
+              false
+            )
+          "
         >
           پایان
         </button>
@@ -61,7 +70,13 @@ const props = defineProps<home>();
         <div class="flex items-center gap-x-[5px]">
           <p
             class="text-white font-[kalameh] text-[0.75rem] mb-1"
-            @click="emit('start', props.consoleId)"
+            @click="
+              emit(
+                'status',
+                { billId: props.billId, consoleId: props.consoleId },
+                true
+              )
+            "
           >
             شروع
           </p>
@@ -69,11 +84,18 @@ const props = defineProps<home>();
         </div>
       </button>
     </transition-slide>
+    <!-- ///////////////////////////// -->
+    <transition-fade>
+      <div v-if="props.loading" class="parent-console-loader">
+        <span class="console-loader" />
+      </div>
+    </transition-fade>
+    <!-- ///////////////////////////// -->
   </div>
 </template>
 <style scoped>
 .console {
-  @apply min-w-[300px] border-l-[3px] pl-[10px] transition-all w-[300px] rounded-[5px] min-h-[80px] h-[80px] overflow-hidden flex justify-between items-center;
+  @apply min-w-[300px] relative border-l-[3px] pl-[10px] transition-all w-[300px] rounded-[5px] min-h-[80px] h-[80px] overflow-hidden flex justify-between items-center;
   box-shadow: 0px 0px 5px 0px rgba(135, 135, 135, 0.25);
 }
 .console-right {

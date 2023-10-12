@@ -1,8 +1,9 @@
 import type {
   Notification,
   home,
-  console,
+  consoleTypeApi,
   bill,
+  food,
   hourRate,
 } from "@/types/index";
 import hourRateApi from "@/api/hourRate.js";
@@ -22,17 +23,12 @@ export const usePinia = defineStore("pinia", () => {
       timer: 3000,
     } as Notification,
     appWidth: 0,
-    console: false as boolean | console[],
+    console: false as boolean | consoleTypeApi[],
     hourRate: false as boolean | hourRate[],
-    food: false as boolean | [],
+    food: false as boolean | food[],
     bill: false as boolean | bill[],
     home: false as boolean | home[],
   });
-  ////////////////////////////
-  window.onfocus = () => {
-    state.home = false;
-    requestGetBill();
-  };
   ////////////////////////////
   watch(
     () => state.bill,
@@ -45,7 +41,7 @@ export const usePinia = defineStore("pinia", () => {
   ////////////////////////////
   const requestGetConsole = async (): Promise<void | []> => {
     try {
-      const response: console[] = await consoleApi.get();
+      const response: consoleTypeApi[] = await consoleApi.get();
       state.console = response;
     } catch (error) {
       handleNotification({
@@ -75,7 +71,7 @@ export const usePinia = defineStore("pinia", () => {
   ////////////////////////////////////
   const requestGetFood = async (): Promise<void> => {
     try {
-      const response = await foodApi.get();
+      const response: food[] = await foodApi.get();
       state.food = response;
     } catch (error) {
       handleNotification({
@@ -87,11 +83,14 @@ export const usePinia = defineStore("pinia", () => {
       });
     }
   };
-  //////////////////////////
+  //////////////////////////////////////////////////
   const requestGetBill = async (): Promise<void> => {
     try {
       const response: bill[] = await billApi.get();
-      state.bill = response;
+      state.bill = response.map((bill) => ({
+        ...bill,
+        foodCost: calculateFoodCost(bill),
+      }));
     } catch (error) {
       handleNotification({
         ...state.notification,
@@ -102,7 +101,7 @@ export const usePinia = defineStore("pinia", () => {
       });
     }
   };
-  ////////////////////////////
+  //////////////////////////////////
   const handleHomeData = async () => {
     if (
       Array.isArray(state.console) &&
@@ -163,6 +162,22 @@ export const usePinia = defineStore("pinia", () => {
       }
     }
   };
+  //////////////////////////////////
+  const calculateFoodCost = (bill: bill): number => {
+    let foodCost = 0;
+    if (Array.isArray(state.food) && bill.billFoods.length) {
+      for (const foodBill of bill.billFoods) {
+        for (const food of state.food) {
+          if (foodBill.foodId === food.id) {
+            foodCost += foodBill.count * food.cost;
+            break;
+          }
+        }
+      }
+    }
+    return foodCost;
+  };
+
   //////////////////////////
   const handleConsoleTimer = (console: home): void => {
     let { hourRate, timer } = console;

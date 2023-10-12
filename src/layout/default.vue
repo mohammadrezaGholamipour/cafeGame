@@ -11,6 +11,11 @@ onMounted(async () => {
     await pinia.requestGetFood(),
     await pinia.requestGetBill();
 });
+///////////////////////////////
+window.onfocus = () => {
+  pinia.state.home = false;
+  pinia.requestGetBill();
+};
 </script>
 <template>
   <div class="parent-layout">

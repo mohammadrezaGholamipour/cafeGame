@@ -2,7 +2,7 @@
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
-import loading from "./components/loading.vue";
+import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
@@ -17,10 +17,6 @@ const state = reactive({
     dialogStatus: false,
     consoleId: 0,
   },
-  displayConsole: [
-    { id: 1, name: "خطی" },
-    { id: 2, name: "باکسی" },
-  ],
 });
 ////////////////////////////////
 const HomeData = computed(() => {
@@ -116,7 +112,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
 };
 </script>
 <template>
-  <div class="parent-home">
+  <div class="parent-home-page">
     <!-- //////////////////////////////////// -->
     <tools @displayMode="state.displayMode = $event" />
     <!-- //////////////////////////////////// -->
@@ -166,11 +162,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
   </div>
 </template>
 <style scoped>
-.parent-home {
+.parent-home-page {
   @apply w-full h-full flex flex-col justify-start items-start;
-}
-.parent-console {
-  @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start pt-[30px] pb-[10px] p-[10px];
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 </style>

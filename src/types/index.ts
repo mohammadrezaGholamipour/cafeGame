@@ -50,9 +50,20 @@ export interface home {
   loading: boolean;
   timer: { hours: number; minutes: number; seconds: number };
 }
-export interface console {
+export interface consoleTypeApi {
   id: number;
   name: string;
+}
+export interface consolePage {
+  id: number;
+  name: string;
+  playedCost: number;
+  playedTime: { hours: number; minutes: number; seconds: number };
+}
+export interface food {
+  id: number;
+  name: string;
+  cost: number;
 }
 export interface hourRate {
   id: number;
@@ -65,6 +76,7 @@ export interface bill {
   hourRateId: number;
   id: number;
   paymentMethod: number;
+  foodCost: number;
   startTime: string;
   systemId: number;
 }

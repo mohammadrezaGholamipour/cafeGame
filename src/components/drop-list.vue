@@ -47,8 +47,8 @@ document.addEventListener("click", (event) => {
 .item-drop-list p {
   @apply w-full font-[kalameh] p-1 text-center text-[0.85rem] text-white;
 }
-.item-drop-list:hover {
-  @apply bg-slate-400 rounded-md transition-all;
+.item-drop-list p:hover {
+  @apply text-slate-200 transition-all;
 }
 .line {
   border: 1px solid #ffffff;

@@ -160,4 +160,8 @@
   .disable-color {
     background: rgba(222, 222, 222, 0.5);
   }
+  .parent-console {
+    @apply w-full h-full overflow-hidden overflow-y-auto grid justify-center gap-[25px] justify-items-center items-start content-start pt-[30px] pb-[10px] p-[10px];
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
 }

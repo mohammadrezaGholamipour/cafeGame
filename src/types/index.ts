@@ -58,6 +58,7 @@ export interface consolePage {
   id: number;
   name: string;
   playedCost: number;
+  loading: boolean;
   playedTime: { hours: number; minutes: number; seconds: number };
 }
 export interface food {

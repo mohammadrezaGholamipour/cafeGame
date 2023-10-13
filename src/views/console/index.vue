@@ -4,26 +4,34 @@ import ConsoleLine from "./components/console-line.vue";
 import ConsoleBox from "./components/console-box.vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
+import consoleApi from "@/api/console.js";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
 /////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
+  requestLoading: false,
   displayMode: 2,
-  console: false as boolean | consolePage[],
+  removeConsole: {
+    consoleSelected: {
+      id: 0,
+      name: "",
+    },
+    dialogStatus: false,
+  },
 });
 ///////////////////////////
 const consoleData = computed(() => {
   if (Array.isArray(pinia.state.console) && Array.isArray(pinia.state.bill)) {
     return pinia.state.console.map(({ id, name }: consoleTypeApi) => {
-      /////////////////////////
+      /////////////////////////////
       const item = {
         id: 0,
         name: "",
         playedCost: 0,
         playedTime: { hours: 0, minutes: 0, seconds: 0 },
       };
-      /////////////////////////
+      ////////////////////////////
       const billData = pinia.state.bill as bill[];
       const closedBills = billData.filter((bill: bill) => bill.endTime);
       /////////////////////////
@@ -63,24 +71,116 @@ const consoleData = computed(() => {
   }
 });
 ///////////////////////////
+const requestRemoveConsole = () => {
+  state.requestLoading = true;
+  consoleApi
+    .delete(state.removeConsole.consoleSelected.id)
+    .then(() => {
+      pinia.requestGetConsole();
+    })
+    .catch(() => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "امکان حذف دستگاه وجود ندارد",
+      });
+    })
+    .finally(() => {
+      state.requestLoading = false;
+    });
+};
+///////////////////////////
+const requestNewConsole = () => {
+  state.requestLoading = true;
+  consoleApi
+    .new({
+      id: 0,
+      name: String((consoleData.value?.length || 0) + 1),
+    })
+    .then(() => {
+      pinia.requestGetConsole();
+    })
+    .catch(() => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "دستگاه جدید افزوده نشد",
+      });
+    })
+    .finally(() => {
+      state.requestLoading = false;
+    });
+};
+///////////////////////////
+const handleStatusDialog = (status: boolean) => {
+  if (status) {
+    requestRemoveConsole();
+  }
+  state.removeConsole.dialogStatus = false;
+  setTimeout(() => {
+    state.removeConsole.consoleSelected = {
+      id: 0,
+      name: "",
+    };
+  }, 500);
+};
+///////////////////////////
 </script>
 <template>
   <div class="parent-console-page">
-    <tools @displayMode="state.displayMode = $event" />
+    <!-- /////////////////////////////////////// -->
+    <tools
+      @displayMode="state.displayMode = $event"
+      :loading="state.requestLoading"
+      @new="requestNewConsole"
+    />
+    <!-- ////////////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="pinia.state.home" class="parent-console">
+      <div v-if="consoleData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? ConsoleLine : ConsoleBox"
+          @remove="
+            (state.removeConsole.consoleSelected = console),
+              (state.removeConsole.dialogStatus = true)
+          "
           :playedCost="console.playedCost"
           :playedTime="console.playedTime"
+          :loading="state.requestLoading"
           v-for="console in consoleData"
           :name="console.name"
           :id="console.id"
           :key="console.id"
         />
       </div>
+      <img
+        src="@/assets/image/noData.svg"
+        v-else-if="consoleData"
+        class="w-full h-full"
+      />
       <loading v-else />
     </transition-fade>
+    <!-- //////////////////////////////////////// -->
+    <Dialog
+      :status="state.removeConsole.dialogStatus"
+      @changeStatus="handleStatusDialog"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
+      <p class="font-bold">
+        {{
+          `دستگاه شماره ${state.removeConsole.consoleSelected.name} حذف شود؟`
+        }}
+      </p>
+    </Dialog>
   </div>
 </template>
 <style scoped>

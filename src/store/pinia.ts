@@ -43,6 +43,7 @@ export const usePinia = defineStore("pinia", () => {
     try {
       const response: consoleTypeApi[] = await consoleApi.get();
       state.console = response;
+      handleHomeData();
     } catch (error) {
       handleNotification({
         ...state.notification,

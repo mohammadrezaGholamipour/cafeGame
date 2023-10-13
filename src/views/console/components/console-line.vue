@@ -31,7 +31,19 @@ const props = defineProps<consolePage>();
       </div>
     </div>
     <div class="console-left">
-      <button class="button bg-[#EF6262] text-white">حذف</button>
+      <button
+        :disabled="props.loading"
+        :class="[
+          'button bg-[#EF6262] text-white',
+          { 'bg-gray-400 !cursor-not-allowed': props.loading },
+        ]"
+        @click="emit('remove')"
+      >
+        <transition-fade class="flex" group>
+          <span v-if="props.loading" class="btn-loader"></span>
+          <p v-else>حذف</p>
+        </transition-fade>
+      </button>
     </div>
     <!-- ///////////////////////////// -->
   </div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 ///////////////////////
-const emit = defineEmits<{ displayMode: [mood: number] }>();
+const emit = defineEmits<{ displayMode: [mood: number]; new: [] }>();
+const props = defineProps<{ loading: boolean }>();
 const state = reactive({
   displayConsole: [
     { id: 1, name: "خطی" },
@@ -12,6 +13,20 @@ const state = reactive({
 </script>
 <template>
   <div class="parent-tools">
+    <!-- /////////////////////// -->
+    <button
+      :disabled="props.loading"
+      :class="[
+        'button bg-[#75ca71] text-white',
+        { 'bg-gray-400 !cursor-not-allowed': props.loading },
+      ]"
+      @click="emit('new')"
+    >
+      <transition-fade class="flex" group>
+        <span v-if="props.loading" class="btn-loader"></span>
+        <p v-else>افزودن</p>
+      </transition-fade>
+    </button>
     <!-- /////////////////////// -->
     <div
       @click="state.displayConsoleStatus = !state.displayConsoleStatus"

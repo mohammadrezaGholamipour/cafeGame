@@ -117,7 +117,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     <tools @displayMode="state.displayMode = $event" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="pinia.state.home" class="parent-console">
+      <div v-if="HomeData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
@@ -133,32 +133,35 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
           :timer="item.timer"
           :name="item.name"
         />
-        <!-- //////////////////////////////////// -->
-        <Dialog
-          :status="state.startBill.dialogStatus"
-          @changeStatus="handleDialogStartBill"
-          :btnCancelText="'بازگشت'"
-          :btnAcceptText="'شروع'"
-          :btnAccept="true"
-          :btnCancel="true"
-          :header="false"
-          :footer="true"
-          :width="300"
-        >
-          <StartBill
-            @drop-list-status="
-              (status) => (state.startBill.dropListStatus = status)
-            "
-            @hourRate="
-              (hourRate) => (state.startBill.hourRateSelected = hourRate)
-            "
-            :start-bill="state.startBill"
-          />
-        </Dialog>
-        <!-- //////////////////////////////////// -->
       </div>
+      <img
+        src="@/assets/image/noData.svg"
+        class="w-full h-full"
+        v-else-if="HomeData"
+      />
       <loading v-else />
     </transition-fade>
+    <!-- //////////////////////////////////// -->
+    <Dialog
+      :status="state.startBill.dialogStatus"
+      @changeStatus="handleDialogStartBill"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'شروع'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
+      <StartBill
+        @drop-list-status="
+          (status) => (state.startBill.dropListStatus = status)
+        "
+        @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
+        :start-bill="state.startBill"
+      />
+    </Dialog>
+    <!-- //////////////////////////////////// -->
   </div>
 </template>
 <style scoped>

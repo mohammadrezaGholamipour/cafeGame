@@ -175,7 +175,7 @@ const handleStatusDialog = (status: boolean) => {
       :footer="true"
       :width="300"
     >
-      <p class="font-bold">
+      <p class="p-1">
         {{
           `دستگاه شماره ${state.removeConsole.consoleSelected.name} حذف شود؟`
         }}

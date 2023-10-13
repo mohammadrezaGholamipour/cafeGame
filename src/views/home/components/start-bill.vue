@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StartBillProps } from "@/types/index";
 import { usePinia } from "@/store/pinia";
+import anime from "animejs";
 /////////////////////////////////////////
 const props = defineProps<{ startBill: StartBillProps }>();
 const emit = defineEmits<{
@@ -18,6 +19,25 @@ const handleHourRateSelected = (hourRateId: number) => {
       emit("hourRate", hourRateSelected);
     }
   }
+  animateNumber();
+};
+////////////////////////
+const animateNumber = () => {
+  const moneyElement = document.getElementById("money");
+  if (moneyElement) {
+    anime({
+      innerHTML: [
+        `${String(props.startBill.hourRateSelected.name).replace(
+          "000",
+          ""
+        )}  هزار تومان`,
+      ],
+      targets: moneyElement,
+      easing: "easeInOutCirc",
+      duration: 1000,
+      round: 1,
+    });
+  }
 };
 </script>
 <template>
@@ -25,25 +45,21 @@ const handleHourRateSelected = (hourRateId: number) => {
     <div>
       <div class="flex items-center gap-x-[3px]">
         <p>قیمت واحد</p>
-        <p class="text-[12px] text-[#EF6262]">(اجباری)</p>
+        <p class="text-[12px] text-[#ffd54a]">(اجباری)</p>
       </div>
       <div
         @click="emit('dropListStatus', !props.startBill.dropListStatus)"
         class="relative cursor-pointer flex justify-center"
         id="start-bill"
       >
-        <transition-fade group>
-          <div
-            v-if="!props.startBill.hourRateSelected.id"
-            class="flex items-center gap-x-[5px]"
-          >
-            <p class="text-[12px] font-bold">انتخاب کنید</p>
-            <img src="@/assets/image/home/start-bill-money.svg" />
-          </div>
-          <p class="font-bold" v-else>
-            {{ props.startBill.hourRateSelected.name.toLocaleString() }} تومان
-          </p>
-        </transition-fade>
+        <div
+          v-if="!props.startBill.hourRateSelected.id"
+          class="flex items-center gap-x-[5px]"
+        >
+          <p class="text-[12px] font-bold">انتخاب کنید</p>
+          <img src="@/assets/image/home/start-bill-money.svg" />
+        </div>
+        <p v-show="props.startBill.hourRateSelected.id" id="money">gdsg</p>
         <DropList
           :status="props.startBill.dropListStatus"
           @close="emit('dropListStatus', false)"

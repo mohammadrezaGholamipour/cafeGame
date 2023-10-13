@@ -146,7 +146,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
       :status="state.startBill.dialogStatus"
       @changeStatus="handleDialogStartBill"
       :btnCancelText="'بازگشت'"
-      :btnAcceptText="'شروع'"
+      :btnAcceptText="'تایید'"
       :btnAccept="true"
       :btnCancel="true"
       :header="false"

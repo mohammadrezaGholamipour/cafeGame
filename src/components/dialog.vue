@@ -63,7 +63,7 @@ const handleDialogStatus = (status: boolean) => {
             {{ props.btnAcceptText }}
           </button>
           <button
-            class="button bg-[#C0C0C0] text-white"
+            class="button bg-white text-black"
             @click="handleDialogStatus(false)"
             v-if="props.btnCancel"
           >
@@ -88,7 +88,7 @@ const handleDialogStatus = (status: boolean) => {
   width: 100vw;
 }
 .dialog-card {
-  @apply flex flex-col font-[dana] bg-[#E9EFF2] rounded-md shadow-lg p-[10px] gap-y-3 min-w-[300px];
+  @apply flex flex-col font-[dana] text-white bg-[#1d5b79] rounded-md shadow-lg p-[10px] gap-y-3 min-w-[300px];
 }
 .dialog-header {
   @apply flex w-full justify-between items-center;

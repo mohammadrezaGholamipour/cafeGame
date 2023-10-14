@@ -22,7 +22,7 @@ export const usePinia = defineStore("pinia", () => {
       name: "success",
       timer: 3000,
     } as Notification,
-    appWidth: 0,
+    appWidth: 1366,
     console: false as boolean | consoleTypeApi[],
     hourRate: false as boolean | hourRate[],
     food: false as boolean | food[],

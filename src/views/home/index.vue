@@ -154,12 +154,12 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
       :width="300"
     >
       <StartBill
+        @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
         @drop-list-status="
           (status) => (state.startBill.dropListStatus = status)
         "
-        @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
         :start-bill="state.startBill"
-        v-if="state.startBill.consoleId"
+        v-if="pinia.state.hourRate"
       />
     </Dialog>
     <!-- //////////////////////////////////// -->

@@ -1,6 +1,7 @@
 import VueTransitions from "@morev/vue-transitions";
 import DropList from "@/components/drop-list.vue";
 import Dialog from "@/components/dialog.vue";
+import "@/utils/convert-persian-number";
 import "@morev/vue-transitions/styles";
 import { createPinia } from "pinia";
 import "@/assets/css/index.css";

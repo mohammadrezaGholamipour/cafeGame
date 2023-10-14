@@ -59,7 +59,7 @@ const animateNumber = () => {
           <p class="text-[12px] font-bold">انتخاب کنید</p>
           <img src="@/assets/image/home/start-bill-money.svg" />
         </div>
-        <p v-show="props.startBill.hourRateSelected.id" id="money">gdsg</p>
+        <p v-show="props.startBill.hourRateSelected.id" id="money"></p>
         <DropList
           :status="props.startBill.dropListStatus"
           @close="emit('dropListStatus', false)"

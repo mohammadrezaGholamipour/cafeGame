@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { consolePage, consoleTypeApi, bill } from "@/types/index";
+import type { consoleTypeApi, bill } from "@/types/index";
 import ConsoleLine from "./components/console-line.vue";
 import ConsoleBox from "./components/console-box.vue";
 import loading from "@/components/loading.vue";

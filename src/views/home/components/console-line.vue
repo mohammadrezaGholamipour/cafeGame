@@ -66,20 +66,19 @@ const props = defineProps<home>();
           پایان
         </button>
       </div>
-      <button v-else class="button bg-[#7CC078] text-white">
+      <button
+        @click="
+          emit(
+            'status',
+            { billId: props.billId, consoleId: props.consoleId },
+            true
+          )
+        "
+        v-else
+        class="button bg-[#7CC078] text-white"
+      >
         <div class="flex items-center gap-x-[5px]">
-          <p
-            class="text-white font-[kalameh] text-[0.75rem] mb-1"
-            @click="
-              emit(
-                'status',
-                { billId: props.billId, consoleId: props.consoleId },
-                true
-              )
-            "
-          >
-            شروع
-          </p>
+          <p class="text-white font-[kalameh] text-[0.75rem] mb-1">شروع</p>
           <img src="@/assets/image/home/start.svg" />
         </div>
       </button>

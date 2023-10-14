@@ -159,6 +159,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
         "
         @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
         :start-bill="state.startBill"
+        v-if="state.startBill.consoleId"
       />
     </Dialog>
     <!-- //////////////////////////////////// -->

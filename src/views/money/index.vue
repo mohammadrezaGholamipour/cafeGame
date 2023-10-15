@@ -30,16 +30,16 @@ const requestNewHourRate = (): void => {
   state.loading = true;
   hourRateApi
     .new({ id: 0, rate: state.dialog.newHourRate.replace(",", "") })
-    .then(
-      () => pinia.requestGetHourRate(),
-      pinia.handleNotification({
-        ...pinia.state.notification,
-        name: "success",
-        status: true,
-        textHeader: "موفق",
-        textMain: "با موفقیت افزوده شد",
-      })
-    )
+    .then(() => {
+      pinia.requestGetHourRate(),
+        pinia.handleNotification({
+          ...pinia.state.notification,
+          name: "success",
+          status: true,
+          textHeader: "موفق",
+          textMain: "با موفقیت افزوده شد",
+        });
+    })
     .catch(() => {
       pinia.handleNotification({
         ...pinia.state.notification,
@@ -58,7 +58,16 @@ const requestRemoveHourRate = (): void => {
   state.loading = true;
   hourRateApi
     .delete(state.dialog.hourRateId)
-    .then(() => pinia.requestGetHourRate())
+    .then(() => {
+      pinia.requestGetHourRate();
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "info",
+        status: true,
+        textHeader: "اعلان",
+        textMain: "قیمت مورد نظر حذف شد",
+      });
+    })
     .catch(() => {
       pinia.handleNotification({
         ...pinia.state.notification,
@@ -209,8 +218,8 @@ watch(
       <div v-if="state.dialog.name === 'new'" class="p-1 w-full">
         <input
           placeholder="قیمت مورد نظر را وارد کنید"
+          class="input min-w-full bg-white"
           v-model="state.dialog.newHourRate"
-          class="input min-w-full"
           type="text"
         />
       </div>

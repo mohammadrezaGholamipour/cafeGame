@@ -77,6 +77,13 @@ const requestRemoveConsole = () => {
     .delete(state.removeConsole.consoleSelected.id)
     .then(() => {
       pinia.requestGetConsole();
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "info",
+        status: true,
+        textHeader: "اعلان",
+        textMain: "دستگاه حذف شد",
+      });
     })
     .catch(() => {
       pinia.handleNotification({
@@ -101,6 +108,13 @@ const requestNewConsole = () => {
     })
     .then(() => {
       pinia.requestGetConsole();
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "success",
+        status: true,
+        textHeader: "موفق",
+        textMain: "دستگاه جدید اضافه شد",
+      });
     })
     .catch(() => {
       pinia.handleNotification({

@@ -20,7 +20,7 @@ export const usePinia = defineStore("pinia", () => {
       textHeader: "",
       status: false,
       name: "success",
-      timer: 3000,
+      timer: 2000,
     } as Notification,
     appWidth: 1366,
     console: false as boolean | consoleTypeApi[],
@@ -70,11 +70,12 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   ////////////////////////////////////
-  const requestGetFood = async (): Promise<void> => {
+  const requestGetFood = async (name?: string): Promise<void> => {
+    const query = { ...(name && { name }) };
     try {
-      const response: food[] = await foodApi.get();
+      const response: food[] = await foodApi.get(query);
       state.food = response;
-    } catch (error) {
+    } catch {
       handleNotification({
         ...state.notification,
         name: "error",

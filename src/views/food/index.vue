@@ -152,7 +152,11 @@ const handleRemoveFoodDialog = (status: boolean) => {
 <template>
   <div class="parent-food-page">
     <!-- //////////////////////// -->
-    <tools @new="state.newOrEdit.status = true" :loading="state.loading" />
+    <tools
+      @new="state.newOrEdit.status = true"
+      @search="pinia.requestGetFood"
+      :loading="state.loading"
+    />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
@@ -229,6 +233,7 @@ const handleRemoveFoodDialog = (status: boolean) => {
     <NewOrEdit
       @close="handleCloseNewOrEditDialog"
       @update="requestUpdateFood"
+      :loading="state.loading"
       :data="state.newOrEdit"
       @new="requestNewFood"
     />
@@ -238,6 +243,7 @@ const handleRemoveFoodDialog = (status: boolean) => {
       :status="state.removeFood.status"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
+      :loading="false"
       :btnAccept="true"
       :btnCancel="true"
       :header="false"

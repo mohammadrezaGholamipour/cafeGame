@@ -8,6 +8,7 @@ import * as yup from "yup";
 ////////////////////////////
 const props = defineProps<{
   data: { status: boolean; food: food };
+  loading: boolean;
 }>();
 const emit = defineEmits<{
   close: [];
@@ -91,6 +92,7 @@ watch(
     :status="props.data.status"
     :btnCancelText="'بازگشت'"
     :btnAcceptText="'تایید'"
+    :loading="props.loading"
     :btnAccept="true"
     :btnCancel="true"
     :header="false"

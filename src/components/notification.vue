@@ -3,6 +3,7 @@ import { ref, watch, nextTick } from "vue";
 import { usePinia } from "@/store/pinia";
 import type { Ref } from "vue";
 //////////////////////////////////////
+const notificationSound = new Audio("src/assets/sound/notification.mp3");
 const notification: Ref<HTMLDivElement | null> = ref(null);
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
@@ -12,6 +13,7 @@ watch(
   async (value) => {
     if (value) {
       await nextTick();
+      notificationSound.play();
       notification.value?.classList.remove("disable");
       notification.value?.classList.add("active");
       handleCloseTimer();

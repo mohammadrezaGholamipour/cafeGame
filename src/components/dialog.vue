@@ -56,11 +56,18 @@ const handleDialogStatus = (status: boolean) => {
         <!-- ////////////////////////// -->
         <div v-if="props.footer" class="dialog-footer">
           <button
-            class="button bg-[#7CC078] text-white"
-            @click="handleDialogStatus(true)"
+            :disabled="props.loading"
             v-if="props.btnAccept"
+            :class="[
+              'button bg-[#75ca71] text-white',
+              { 'bg-gray-400 !cursor-not-allowed': props.loading },
+            ]"
+            @click="handleDialogStatus(true)"
           >
-            {{ props.btnAcceptText }}
+            <transition-fade class="flex" group>
+              <span v-if="props.loading" class="btn-loader"></span>
+              <p v-else>{{ props.btnAcceptText }}</p>
+            </transition-fade>
           </button>
           <button
             class="button bg-white text-black"

@@ -1,5 +1,6 @@
 export interface DialogProps {
   status: boolean;
+  loading: boolean;
   header: boolean;
   width: number;
   headerText?: string;

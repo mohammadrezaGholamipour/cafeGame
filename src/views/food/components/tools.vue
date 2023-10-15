@@ -1,6 +1,20 @@
 <script setup lang="ts">
-const emit = defineEmits<{ new: [] }>();
+import { ref, watch } from "vue";
+//////////////////////////
 const props = defineProps<{ loading: boolean }>();
+let timer: ReturnType<typeof setTimeout>;
+const emit = defineEmits<{ new: []; search: [string] }>();
+const search = ref("");
+////////////////////////
+watch(
+  () => search.value,
+  (value: string) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      emit("search", value);
+    }, 1000);
+  }
+);
 </script>
 <template>
   <div class="parent-tools">
@@ -22,6 +36,7 @@ const props = defineProps<{ loading: boolean }>();
     <input
       class="input !min-w-[200px] w-[220px]"
       placeholder="دنبال چی هستی؟"
+      v-model="search"
       type="text"
     />
     <!-- /////////////////////// -->

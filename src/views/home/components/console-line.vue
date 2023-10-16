@@ -27,6 +27,14 @@ const props = defineProps<home>();
       </div>
       <transition-fade class="h-full flex items-center" group>
         <div v-if="$props.status" class="parent-money-and-timer">
+          <div class="console-timer">
+            <p>
+              {{
+                `${props.timer.hours}:${props.timer.minutes}:${props.timer.seconds}`
+              }}
+            </p>
+            <img src="@/assets/image/home/timer.svg" />
+          </div>
           <transition-fade group class="console-money">
             <p class="!text-[0.8rem]" v-if="!props.costPlayed">
               درحال محاسبه ...
@@ -36,14 +44,6 @@ const props = defineProps<home>();
               <p class="!font-[400]">تومان</p>
             </div>
           </transition-fade>
-          <div class="console-timer">
-            <p>
-              {{
-                `${props.timer.hours}:${props.timer.minutes}:${props.timer.seconds}`
-              }}
-            </p>
-            <img src="@/assets/image/home/timer.svg" />
-          </div>
         </div>
         <p v-else class="text-[#565656] font-[kalameh]">
           دستگاه خالی میباشد :(

@@ -89,10 +89,13 @@ export const usePinia = defineStore("pinia", () => {
   const requestGetBill = async (): Promise<void> => {
     try {
       const response: bill[] = await billApi.get();
-      state.bill = response.map((bill) => ({
-        ...bill,
-        foodCost: calculateFoodCost(bill),
-      }));
+      state.bill = response
+        .map((bill) => ({
+          ...bill,
+          systemName: handleGetSystmeNameById(bill.systemId),
+          foodCost: handleFoodCost(bill),
+        }))
+        .sort(sortBills);
     } catch (error) {
       handleNotification({
         ...state.notification,
@@ -165,12 +168,14 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////
-  const calculateFoodCost = (bill: bill): number => {
+  const handleFoodCost = (bill: bill): number => {
     let foodCost = 0;
     if (Array.isArray(state.food) && bill.billFoods.length) {
       for (const foodBill of bill.billFoods) {
         for (const food of state.food) {
           if (foodBill.foodId === food.id) {
+            foodBill.name = food.name;
+            foodBill.cost = food.cost;
             foodCost += foodBill.count * food.cost;
             break;
           }
@@ -179,7 +184,27 @@ export const usePinia = defineStore("pinia", () => {
     }
     return foodCost;
   };
-
+  //////////////////////////
+  const handleGetSystmeNameById = (systemId: number): string => {
+    let consoleName: string | undefined = "";
+    if (Array.isArray(state.console)) {
+      consoleName = state.console.find((item) => item.id === systemId)?.name;
+    }
+    return consoleName ? consoleName : "";
+  };
+  //////////////////////////
+  const sortBills = (a: bill, b: bill): number => {
+    if (!a.endTime && !b.endTime) {
+      return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+    }
+    if (!a.endTime) {
+      return -1;
+    }
+    if (!b.endTime) {
+      return 1;
+    }
+    return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
+  };
   //////////////////////////
   const handleConsoleTimer = (console: home): void => {
     let { hourRate, timer } = console;

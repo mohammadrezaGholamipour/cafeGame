@@ -72,15 +72,23 @@ export interface hourRate {
   name: number;
 }
 export interface bill {
-  billFoods: { id: number; count: number; foodId: number; billId: number }[];
-  endTime: string;
+  billFoods: {
+    id: number;
+    count: number;
+    foodId: number;
+    billId: number;
+    cost: number;
+    name: string;
+  }[];
+  endTime: Date;
   finalCost: number;
   hourRateId: number;
   id: number;
   paymentMethod: number;
   foodCost: number;
-  startTime: string;
+  startTime: Date;
   systemId: number;
+  systemName: string;
 }
 export interface StartBillProps {
   dropListStatus: boolean;

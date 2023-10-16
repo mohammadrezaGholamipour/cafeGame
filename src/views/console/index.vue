@@ -185,6 +185,7 @@ const handleStatusDialog = (status: boolean) => {
       :btnAcceptText="'تایید'"
       :btnAccept="true"
       :btnCancel="true"
+      :loading="false"
       :header="false"
       :footer="true"
       :width="300"

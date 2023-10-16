@@ -17,7 +17,7 @@ const props = defineProps(["header"]);
 </template>
 <style>
 .table-larg {
-  @apply w-full shadow-sm bg-white text-center rounded-[5px] overflow-hidden;
+  @apply w-full p-[10px] shadow-sm bg-white text-center rounded-[5px] overflow-hidden;
 }
 .table-larg thead tr td {
   @apply font-[dana] font-bold text-[15px];
@@ -25,6 +25,9 @@ const props = defineProps(["header"]);
 }
 .table-larg td {
   @apply p-[10px] text-[13px] font-[kalameh];
+}
+.table-larg tr {
+  @apply border-b border-dashed;
 }
 .table-larg tr:nth-child(even) {
   background: rgba(29, 91, 121, 0.1);

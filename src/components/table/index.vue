@@ -18,6 +18,6 @@ const pinia = usePinia();
 </template>
 <style scoped>
 .parent-table {
-  @apply w-full h-full flex flex-col justify-start items-center overflow-y-auto;
+  @apply w-full h-full flex flex-col justify-start items-center ;
 }
 </style>

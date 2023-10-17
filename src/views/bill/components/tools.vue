@@ -8,8 +8,8 @@ const props = defineProps<{ loading: boolean }>();
     <button
       :disabled="props.loading"
       :class="[
-        'button bg-[#3ea6da] text-white',
         { 'bg-gray-400 !cursor-not-allowed': props.loading },
+        'button bg-[#3ea6da] text-white',
       ]"
     >
       <transition-fade class="flex" group>

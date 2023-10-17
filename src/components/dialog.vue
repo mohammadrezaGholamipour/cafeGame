@@ -36,6 +36,7 @@ const handleDialogStatus = (status: boolean) => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             @click="handleDialogStatus(false)"
+            class="cursor-pointer"
             viewBox="0 0 20 20"
             height="20"
             fill="none"

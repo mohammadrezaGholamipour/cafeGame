@@ -2,13 +2,19 @@
 import Table from "@/components/table/index.vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
+import type { bill } from "@/types/index";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
+import cost from "./components/cost.vue";
 ///////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
-  loading: false,
   headerTable: ["ردیف", "شروع و پایان", "شماره دستگاه", "مبلغ کل"],
+  dialog: {
+    status: false,
+    name: "",
+    billSelected: {} as bill,
+  },
 });
 ///////////////////////////////////////
 const billData = computed(() => {
@@ -17,11 +23,21 @@ const billData = computed(() => {
   }
 });
 //////////////////////////////////////////
+const handleDialog = (bill: bill, name: string) => {
+  state.dialog.billSelected = bill;
+  state.dialog.name = name;
+  state.dialog.status = true;
+};
+//////////////////////////////////////////
+const handleDialogStatus = (status: boolean) => {
+  state.dialog.status = false;
+};
+//////////////////////////////////////////
 </script>
 <template>
   <div class="parent-bill-page">
     <!-- //////////////////////// -->
-    <tools />
+    <tools :loading="false" />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
@@ -36,9 +52,19 @@ const billData = computed(() => {
             <td>زمان</td>
             <td>{{ bill.systemName }}</td>
             <td>
-              {{
-                bill.finalCost ? bill.finalCost.toLocaleString() : "درحال اجرا"
-              }}
+              <div class="flex justify-center">
+                <button
+                  v-if="bill.finalCost && bill.billFoods.length"
+                  class="button bg-[#3ea6da] text-white"
+                  @click="handleDialog(bill, 'cost')"
+                >
+                  {{ bill.finalCost.toLocaleString() }}
+                </button>
+                <p v-if="bill.finalCost && !bill.billFoods.length">
+                  {{ bill.finalCost.toLocaleString() }}
+                </p>
+                <p v-if="!bill.finalCost">درحال اجرا</p>
+              </div>
             </td>
           </tr>
         </template>
@@ -59,11 +85,17 @@ const billData = computed(() => {
               <div>زمان</div>
               <div>{{ bill.systemId }}</div>
               <div>
-                {{
-                  bill.finalCost
-                    ? bill.finalCost.toLocaleString()
-                    : "درحال اجرا"
-                }}
+                <button
+                  v-if="bill.finalCost && bill.billFoods.length"
+                  class="button bg-[#3ea6da] text-white"
+                  @click="handleDialog(bill, 'cost')"
+                >
+                  {{ bill.finalCost.toLocaleString() }}
+                </button>
+                <p v-if="bill.finalCost && !bill.billFoods.length">
+                  {{ bill.finalCost.toLocaleString() }}
+                </p>
+                <p v-if="!bill.finalCost">درحال اجرا</p>
               </div>
             </div>
           </div>
@@ -79,6 +111,25 @@ const billData = computed(() => {
       <loading v-else />
       <!-- //////////////////////// -->
     </transition-fade>
+    <!-- /////////////////////// -->
+    <Dialog
+      @changeStatus="handleDialogStatus"
+      :status="state.dialog.status"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'"
+      :headerText="'فاکتور'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :loading="false"
+      :footer="false"
+      :header="true"
+      :width="500"
+    >
+      <cost
+        v-if="state.dialog.name === 'cost'"
+        :bill="state.dialog.billSelected"
+      />
+    </Dialog>
     <!-- /////////////////////// -->
   </div>
 </template>

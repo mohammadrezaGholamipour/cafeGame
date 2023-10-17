@@ -96,6 +96,6 @@ const handleCloseTimer = () => {
   border: 1px solid #7bcfed;
 }
 .photo {
-  @apply bg-center bg-cover min-w-[50px] min-h-[50px] h-[50px] w-[50px];
+  @apply bg-center bg-cover min-w-[25px] min-h-[25px] h-[25px] w-[25px];
 }
 </style>

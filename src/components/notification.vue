@@ -3,7 +3,7 @@ import { ref, watch, nextTick } from "vue";
 import { usePinia } from "@/store/pinia";
 import type { Ref } from "vue";
 //////////////////////////////////////
-const notificationSound = new Audio("src/assets/sound/notification.mp3");
+const notificationSound = new Audio("/assets/notification.mp3");
 const notification: Ref<HTMLDivElement | null> = ref(null);
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
@@ -49,9 +49,12 @@ const handleCloseTimer = () => {
       <p>{{ pinia.state.notification.textHeader }}</p>
       <p>{{ pinia.state.notification.textMain }}</p>
     </div>
-    <img
-      :src="`src/assets/image/notification/${pinia.state.notification.name}.svg`"
-    />
+    <div
+      :style="{
+        backgroundImage: `url(/assets/${pinia.state.notification.name}.svg)`,
+      }"
+      class="photo"
+    ></div>
   </div>
 </template>
 <style scoped>
@@ -91,5 +94,8 @@ const handleCloseTimer = () => {
 .info {
   background: linear-gradient(94deg, #2d82b2 -6.52%, #329abb 108.61%);
   border: 1px solid #7bcfed;
+}
+.photo {
+  @apply bg-center bg-cover min-w-[50px] min-h-[50px] h-[50px] w-[50px];
 }
 </style>

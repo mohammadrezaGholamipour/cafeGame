@@ -10,36 +10,36 @@ const state = reactive({
     {
       id: 1,
       name: "دستگاه ها",
-      icon: "src/assets/image/menu/console.svg",
+      icon: "/assets/console.svg",
       route: "console",
     },
     {
       id: 2,
       name: "بوفه",
-      icon: "src/assets/image/menu/food.svg",
+      icon: "/assets/food.svg",
       route: "food",
     },
     {
       id: 3,
       name: "خانه",
-      icon: "src/assets/image/menu/home.svg",
+      icon: "/assets/home.svg",
       route: "home",
     },
     {
       id: 4,
       name: "فاکتور ها",
-      icon: "src/assets/image/menu/bill.svg",
+      icon: "/assets/bill.svg",
       route: "bill",
     },
     {
       id: 5,
       name: "قیمت ها",
-      icon: "src/assets/image/menu/money.svg",
+      icon: "/assets/money.svg",
       route: "money",
     },
   ],
 });
-/////////////////////////
+/////////////////////////////////
 const handleMenuClass = computed(() => {
   if (pinia.state.appWidth > 500) {
     return "mb-2 rounded-[5px]";

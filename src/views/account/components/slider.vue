@@ -29,7 +29,7 @@ const handleTimer = () => {
 <template>
   <div
     :style="{
-      backgroundImage: `url(src/assets/image/account/${
+      backgroundImage: `url(/assets/${
         state.slilderList[state.sliderSelected].name
       }.jpg)`,
       transition: 'background-image 0.5s ease-in-out',

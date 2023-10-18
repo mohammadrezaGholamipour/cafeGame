@@ -6,6 +6,7 @@ import type { bill } from "@/types/index";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
 import cost from "./components/cost.vue";
+import Time from "./components/time.vue";
 ///////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
@@ -33,6 +34,28 @@ const handleDialogStatus = (status: boolean) => {
   state.dialog.status = false;
 };
 //////////////////////////////////////////
+const handleDate = (dateString: Date) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const timeDiff = today - date;
+  const oneDay = 24 * 60 * 60 * 1000;
+  ///////////////////////////////////
+  if (timeDiff < oneDay) {
+    return "امروز";
+  } else if (timeDiff < oneDay * 2) {
+    return "دیروز";
+  } else if (timeDiff < oneDay * 3) {
+    return "دو روز پیش";
+  } else {
+    return date.toLocaleDateString("fa-IR", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      calendar: "persian",
+    });
+  }
+};
+//////////////////////////////////////////
 </script>
 <template>
   <div class="parent-bill-page">
@@ -49,7 +72,14 @@ const handleDialogStatus = (status: boolean) => {
             :key="bill.id"
           >
             <td>{{ index + 1 }}</td>
-            <td>زمان</td>
+            <td>
+              <button
+                class="button mx-auto bg-[#3ea6da] text-white"
+                @click="handleDialog(bill, 'time')"
+              >
+                {{ bill.endTime ? handleDate(bill.endTime) : "درحال اجرا" }}
+              </button>
+            </td>
             <td>{{ bill.systemName }}</td>
             <td>
               <div class="flex justify-center">
@@ -58,7 +88,7 @@ const handleDialogStatus = (status: boolean) => {
                   class="button bg-[#3ea6da] text-white"
                   @click="handleDialog(bill, 'cost')"
                 >
-                  {{ bill.finalCost.toLocaleString() }}
+                  نمایش
                 </button>
                 <p v-if="bill.finalCost && !bill.billFoods.length">
                   {{ bill.finalCost.toLocaleString() }}
@@ -82,7 +112,14 @@ const handleDialogStatus = (status: boolean) => {
             </div>
             <div class="small-table-left">
               <div>{{ index + 1 }}</div>
-              <div>زمان</div>
+              <div>
+                <button
+                  class="button mx-auto bg-[#3ea6da] text-white"
+                  @click="handleDialog(bill, 'time')"
+                >
+                  {{ bill.endTime ? handleDate(bill.endTime) : "درحال اجرا" }}
+                </button>
+              </div>
               <div>{{ bill.systemId }}</div>
               <div>
                 <button
@@ -90,7 +127,7 @@ const handleDialogStatus = (status: boolean) => {
                   class="button bg-[#3ea6da] text-white"
                   @click="handleDialog(bill, 'cost')"
                 >
-                  {{ bill.finalCost.toLocaleString() }}
+                  نمایش
                 </button>
                 <p v-if="bill.finalCost && !bill.billFoods.length">
                   {{ bill.finalCost.toLocaleString() }}
@@ -127,6 +164,10 @@ const handleDialogStatus = (status: boolean) => {
     >
       <cost
         v-if="state.dialog.name === 'cost'"
+        :bill="state.dialog.billSelected"
+      />
+      <Time
+        v-if="state.dialog.name === 'time'"
         :bill="state.dialog.billSelected"
       />
     </Dialog>

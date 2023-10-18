@@ -43,22 +43,39 @@ const state = reactive({
       </template>
     </Table>
     <!-- ///////////////////////// -->
-    <div class="cost-totla-and-played mt-[10px]">
-      <p>هزنیه بازی شده</p>
-      <p>
-        {{ (props.bill.finalCost - props.bill.foodCost).toLocaleString() }}
-        تومان
-      </p>
+    <div
+      class="flex flex-col w-full justify-center mt-1 items-center bg-red-500 rounded-md"
+    >
+      <!-- ///////////////////////// -->
+      <div class="cost-total">
+        <p>هزینه خوراکی</p>
+        <p>
+          {{ props.bill.foodCost.toLocaleString() }}
+          تومان
+        </p>
+      </div>
+      <!-- ///////////////////////// -->
+      <div class="w-full border border-separate border-white"></div>
+      <!-- ///////////////////////// -->
+      <div class="cost-total">
+        <p>هزنیه بازی شده</p>
+        <p>
+          {{ (props.bill.finalCost - props.bill.foodCost).toLocaleString() }}
+          تومان
+        </p>
+      </div>
+      <!-- ///////////////////////// -->
+      <div class="w-full border border-separate border-white"></div>
+      <!-- ///////////////////////// -->
+      <div class="cost-total">
+        <p>هزینه کل</p>
+        <p>
+          {{ props.bill.finalCost.toLocaleString() }}
+          تومان
+        </p>
+      </div>
+      <!-- ///////////////////////// -->
     </div>
-    <!-- ///////////////////////// -->
-    <div class="cost-totla-and-played bg-red-500 rounded-md">
-      <p>هزینه کل</p>
-      <p>
-        {{ props.bill.finalCost.toLocaleString() }}
-        تومان
-      </p>
-    </div>
-    <!-- ///////////////////////// -->
   </div>
 </template>
 <style scoped>
@@ -66,7 +83,7 @@ const state = reactive({
   @apply w-full max-h-[220px] overflow-y-auto overflow-hidden flex flex-col justify-start items-center;
   background-color: rgba(29, 91, 121, 0.1);
 }
-.cost-totla-and-played {
+.cost-total {
   @apply flex w-full items-center justify-between p-[10px];
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
+import type { StartBillProps } from "@/types/index";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
@@ -11,12 +12,12 @@ import billApi from "@/api/bill.js";
 const pinia = usePinia();
 const state = reactive({
   displayMode: 2,
-  startBill: {
+  bill: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
-    dialogStatus: false,
     consoleId: 0,
-  },
+  } as StartBillProps,
+  dialogStatus: false,
 });
 ////////////////////////////////
 const HomeData = computed(() => {
@@ -25,24 +26,17 @@ const HomeData = computed(() => {
   }
 });
 /////////////////////////////////////////////////
-const handleConsoleStatus = (
-  info: { billId: number; consoleId: number },
-  status: boolean
-) => {
-  (status ? handleShowDialogStartBill : requestCloseBill)(info);
-};
-/////////////////////////////////////////////////
 const requestStartBill = (): void => {
-  handleConsoleLoading(state.startBill.consoleId, true);
+  handleConsoleLoading(state.bill.consoleId, true);
   billApi
     .start(
-      state.startBill.consoleId,
-      state.startBill.hourRateSelected.id,
+      state.bill.consoleId,
+      state.bill.hourRateSelected.id,
       new Date().toISOString()
     )
     .then(() => pinia.requestGetBill())
     .catch(() => {
-      handleConsoleLoading(state.startBill.consoleId, false);
+      handleConsoleLoading(state.bill.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -77,15 +71,19 @@ const handleShowDialogStartBill = (info: {
   billId: number;
   consoleId: number;
 }): void => {
-  state.startBill.consoleId = info.consoleId;
-  state.startBill.dialogStatus = true;
+  state.bill.consoleId = info.consoleId;
+  state.dialogStatus = true;
 };
 ///////////////////////////////////////////////
-const handleDialogStartBill = (status: boolean) => {
+const handleDialogStatus = (status: boolean) => {
   if (status) {
-    if (state.startBill.hourRateSelected.id) {
-      state.startBill.dialogStatus = false;
+    if (state.bill.hourRateSelected.id) {
       requestStartBill();
+      state.dialogStatus = false;
+      setTimeout(() => {
+        state.bill.consoleId = 0;
+        state.bill.hourRateSelected = { id: 0, name: 0 };
+      }, 500);
     } else {
       pinia.handleNotification({
         ...pinia.state.notification,
@@ -96,20 +94,28 @@ const handleDialogStartBill = (status: boolean) => {
       });
     }
   } else {
-    state.startBill.dialogStatus = false;
+    state.dialogStatus = false;
+    setTimeout(() => {
+      state.bill.consoleId = 0;
+      state.bill.hourRateSelected = { id: 0, name: 0 };
+    }, 500);
   }
-  setTimeout(() => {
-    state.startBill.consoleId = 0;
-    state.startBill.hourRateSelected = { id: 0, name: 0 };
-  }, 500);
 };
 ///////////////////////////////////////////////
+const handleConsoleStatus = (
+  info: { billId: number; consoleId: number },
+  status: boolean
+) => {
+  (status ? handleShowDialogStartBill : requestCloseBill)(info);
+};
+//////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
   if (Array.isArray(pinia.state.home)) {
     let console = pinia.state.home.find((item) => item.consoleId === consoleId);
     if (console) console.loading = status;
   }
 };
+/////////////////////////////////////////////////
 </script>
 <template>
   <div class="parent-home-page">
@@ -143,8 +149,8 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     </transition-fade>
     <!-- //////////////////////////////////// -->
     <Dialog
-      :status="state.startBill.dialogStatus"
-      @changeStatus="handleDialogStartBill"
+      @changeStatus="handleDialogStatus"
+      :status="state.dialogStatus"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
       :btnAccept="true"
@@ -155,12 +161,9 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
       :width="300"
     >
       <StartBill
-        @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
-        @drop-list-status="
-          (status) => (state.startBill.dropListStatus = status)
-        "
-        :start-bill="state.startBill"
-        v-if="pinia.state.hourRate"
+        @hourRate="(hourRate) => (state.bill.hourRateSelected = hourRate)"
+        @drop-list-status="(status) => (state.bill.dropListStatus = status)"
+        :start-bill="state.bill"
       />
     </Dialog>
     <!-- //////////////////////////////////// -->

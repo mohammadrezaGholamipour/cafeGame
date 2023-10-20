@@ -10,6 +10,17 @@ const props = defineProps<home>();
 <template>
   <div :class="['console', props.status ? 'active-color' : 'disable-color']">
     <!-- ///////////////////////// -->
+    <img
+      src="@/assets/image/home/remove-bill.svg"
+      class="icon-change-bill left-[10px]"
+      v-if="props.status"
+    />
+    <img
+      src="@/assets/image/home/food-bill.svg"
+      class="icon-change-bill right-[10px]"
+      v-if="props.status"
+    />
+    <!-- ///////////////////////// -->
     <transition-scale>
       <div
         :class="[
@@ -124,5 +135,8 @@ const props = defineProps<home>();
 }
 .console-footer {
   @apply flex gap-x-[7px] items-center;
+}
+.icon-change-bill {
+  @apply cursor-pointer hover:scale-110 transition-all absolute top-[10px];
 }
 </style>

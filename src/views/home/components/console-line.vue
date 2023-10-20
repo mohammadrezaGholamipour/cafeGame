@@ -52,19 +52,31 @@ const props = defineProps<home>();
     </div>
     <transition-slide group>
       <div v-if="props.status" class="console-left">
-        <button class="button bg-[#3ea6da] text-white">امکانات</button>
-        <button
-          class="button bg-[#EF6262] text-white"
-          @click="
-            emit(
-              'status',
-              { billId: props.billId, consoleId: props.consoleId },
-              false
-            )
-          "
-        >
-          پایان
-        </button>
+        <div>
+          <img
+            src="@/assets/image/home/remove-bill.svg"
+            class="icon-change-bill ml-[14px]"
+          />
+          <button class="button bg-[#3ea6da] text-white">امکانات</button>
+        </div>
+        <div>
+          <img
+            src="@/assets/image/home/food-bill.svg"
+            class="icon-change-bill ml-[10px]"
+          />
+          <button
+            class="button bg-[#EF6262] text-white"
+            @click="
+              emit(
+                'status',
+                { billId: props.billId, consoleId: props.consoleId },
+                false
+              )
+            "
+          >
+            پایان
+          </button>
+        </div>
       </div>
       <button
         @click="
@@ -123,5 +135,11 @@ const props = defineProps<home>();
 }
 .console-left {
   @apply flex flex-col justify-center items-center h-full gap-y-[5px];
+}
+.console-left > div {
+  @apply flex w-full justify-end items-center;
+}
+.icon-change-bill {
+  @apply cursor-pointer hover:scale-110 transition-all;
 }
 </style>

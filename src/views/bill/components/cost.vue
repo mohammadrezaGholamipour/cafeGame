@@ -44,7 +44,7 @@ const state = reactive({
     </Table>
     <!-- ///////////////////////// -->
     <div
-      class="flex flex-col w-full justify-center mt-1 items-center bg-red-500 rounded-md"
+      class="flex flex-col w-full justify-start mt-2 items-center bg-red-500 rounded-md"
     >
       <!-- ///////////////////////// -->
       <div class="cost-total">
@@ -55,7 +55,7 @@ const state = reactive({
         </p>
       </div>
       <!-- ///////////////////////// -->
-      <div class="w-full border border-separate border-white"></div>
+      <div class="w-full border border-dashed border-white"></div>
       <!-- ///////////////////////// -->
       <div class="cost-total">
         <p>هزنیه بازی شده</p>
@@ -67,7 +67,7 @@ const state = reactive({
       <!-- ///////////////////////// -->
       <div class="w-full border border-separate border-white"></div>
       <!-- ///////////////////////// -->
-      <div class="cost-total">
+      <div class="cost-total bg-white text-black font-bold rounded-b-md">
         <p>هزینه کل</p>
         <p>
           {{ props.bill.finalCost.toLocaleString() }}

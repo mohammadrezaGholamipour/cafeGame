@@ -3,6 +3,7 @@ import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
+  removeBill: [billId: number, consoleId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -11,6 +12,7 @@ const props = defineProps<home>();
   <div :class="['console', props.status ? 'active-color' : 'disable-color']">
     <!-- ///////////////////////// -->
     <img
+      @click="emit('removeBill', props.billId, props.consoleId)"
       src="@/assets/image/home/remove-bill.svg"
       class="icon-change-bill left-[10px]"
       v-if="props.status"

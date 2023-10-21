@@ -3,6 +3,7 @@ import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
+  removeBill: [billId: number, consoleId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -55,6 +56,7 @@ const props = defineProps<home>();
         <div>
           <img
             src="@/assets/image/home/remove-bill.svg"
+            @click="emit('removeBill', props.billId, props.consoleId)"
             class="icon-change-bill ml-[14px]"
           />
           <button class="button bg-[#3ea6da] text-white">امکانات</button>

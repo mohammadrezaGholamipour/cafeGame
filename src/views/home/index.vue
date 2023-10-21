@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
-import type { StartBillProps } from "@/types/index";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
@@ -12,12 +11,16 @@ import billApi from "@/api/bill.js";
 const pinia = usePinia();
 const state = reactive({
   displayMode: 2,
-  bill: {
+  consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
     consoleId: 0,
-  } as StartBillProps,
-  dialogStatus: false,
+    billId: 0,
+  },
+  dialog: {
+    status: false,
+    name: "",
+  },
 });
 ////////////////////////////////
 const HomeData = computed(() => {
@@ -27,16 +30,16 @@ const HomeData = computed(() => {
 });
 /////////////////////////////////////////////////
 const requestStartBill = (): void => {
-  handleConsoleLoading(state.bill.consoleId, true);
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
     .start(
-      state.bill.consoleId,
-      state.bill.hourRateSelected.id,
+      state.consoleSelected.consoleId,
+      state.consoleSelected.hourRateSelected.id,
       new Date().toISOString()
     )
     .then(() => pinia.requestGetBill())
     .catch(() => {
-      handleConsoleLoading(state.bill.consoleId, false);
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -66,47 +69,36 @@ const requestCloseBill = (info: {
       });
     });
 };
-///////////////////////////////////////////////
-const handleShowDialogStartBill = (info: {
-  billId: number;
-  consoleId: number;
-}): void => {
-  state.bill.consoleId = info.consoleId;
-  state.dialogStatus = true;
-};
-///////////////////////////////////////////////
-const handleDialogStatus = (status: boolean) => {
-  if (status) {
-    if (state.bill.hourRateSelected.id) {
-      requestStartBill();
-      state.dialogStatus = false;
-      setTimeout(() => {
-        state.bill.consoleId = 0;
-        state.bill.hourRateSelected = { id: 0, name: 0 };
-      }, 500);
-    } else {
+//////////////////////////////////////////
+const requestRemoveBill = () => {
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
+  billApi
+    .delete(state.consoleSelected.billId)
+    .then(() => pinia.requestGetBill())
+    .catch(() => {
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "لطفا قیمت واحد را انتخاب کنید",
+        textMain: "فاکتور مورد نظر حذف نشد",
       });
-    }
-  } else {
-    state.dialogStatus = false;
-    setTimeout(() => {
-      state.bill.consoleId = 0;
-      state.bill.hourRateSelected = { id: 0, name: 0 };
-    }, 500);
-  }
+    });
 };
-///////////////////////////////////////////////
+//////////////////////////////////////////
 const handleConsoleStatus = (
   info: { billId: number; consoleId: number },
   status: boolean
 ) => {
   (status ? handleShowDialogStartBill : requestCloseBill)(info);
+};
+//////////////////////////////////////
+const handleRemoveBill = (billId: number, consoleId: number): void => {
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "removeBill";
+  state.dialog.status = true;
 };
 //////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
@@ -115,7 +107,52 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     if (console) console.loading = status;
   }
 };
-/////////////////////////////////////////////////
+///////////////////////////////////////////////
+const handleShowDialogStartBill = (info: {
+  billId: number;
+  consoleId: number;
+}): void => {
+  state.consoleSelected.consoleId = info.consoleId;
+  state.dialog.name = "startBill";
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
+const handleDialogStatus = (status: boolean) => {
+  if (status) {
+    ////////////////////////////////////////
+    if (state.dialog.name === "startBill") {
+      if (state.consoleSelected.hourRateSelected.id) {
+        requestStartBill();
+        handleCloseDialog();
+      } else {
+        pinia.handleNotification({
+          ...pinia.state.notification,
+          name: "error",
+          status: true,
+          textHeader: "خطا",
+          textMain: "لطفا قیمت واحد را انتخاب کنید",
+        });
+      }
+    } else if (state.dialog.name === "removeBill") {
+      requestRemoveBill();
+      handleCloseDialog();
+    }
+    ////////////////////////////////////////
+  } else {
+    handleCloseDialog();
+  }
+};
+///////////////////////////////////////////////
+const handleCloseDialog = () => {
+  state.dialog.status = false;
+  setTimeout(() => {
+    state.dialog.name = "";
+    state.consoleSelected.consoleId = 0;
+    state.consoleSelected.hourRateSelected = { id: 0, name: 0 };
+    state.consoleSelected.billId = 0;
+  }, 500);
+};
+//////////////////////////////////////
 </script>
 <template>
   <div class="parent-home-page">
@@ -127,6 +164,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
+          @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
@@ -150,7 +188,7 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     <!-- //////////////////////////////////// -->
     <Dialog
       @changeStatus="handleDialogStatus"
-      :status="state.dialogStatus"
+      :status="state.dialog.status"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
       :btnAccept="true"
@@ -160,11 +198,22 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
       :footer="true"
       :width="300"
     >
+      <!-- /////////////////////////// -->
       <StartBill
-        @hourRate="(hourRate) => (state.bill.hourRateSelected = hourRate)"
-        @drop-list-status="(status) => (state.bill.dropListStatus = status)"
-        :start-bill="state.bill"
+        @hourRate="
+          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+        "
+        @drop-list-status="
+          (status) => (state.consoleSelected.dropListStatus = status)
+        "
+        :start-bill="state.consoleSelected"
+        v-if="state.dialog.name === 'startBill'"
       />
+      <!-- /////////////////////////// -->
+      <p v-if="state.dialog.name === 'removeBill'" class="p-1">
+        فاکتور مورد نظر حذف شود؟
+      </p>
+      <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->
   </div>

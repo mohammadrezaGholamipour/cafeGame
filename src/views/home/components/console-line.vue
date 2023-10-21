@@ -4,6 +4,7 @@ import type { home } from "@/types/index";
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
   removeBill: [billId: number, consoleId: number];
+  food: [billId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -64,6 +65,7 @@ const props = defineProps<home>();
         <div>
           <img
             src="@/assets/image/home/food-bill.svg"
+            @click="emit('food', props.billId)"
             class="icon-change-bill ml-[10px]"
           />
           <button

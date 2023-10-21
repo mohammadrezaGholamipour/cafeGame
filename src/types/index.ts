@@ -67,6 +67,12 @@ export interface food {
   name: string;
   cost: number;
 }
+export interface foodStore {
+  id: number;
+  name: string;
+  cost: number;
+  count: number;
+}
 export interface hourRate {
   id: number;
   name: number;

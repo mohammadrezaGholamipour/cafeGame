@@ -6,6 +6,7 @@ import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
+import Food from "./components/food.vue";
 import billApi from "@/api/bill.js";
 ///////////////////////////////
 const pinia = usePinia();
@@ -91,7 +92,13 @@ const handleConsoleStatus = (
   info: { billId: number; consoleId: number },
   status: boolean
 ) => {
-  (status ? handleShowDialogStartBill : requestCloseBill)(info);
+  (status ? handleStartBill : requestCloseBill)(info);
+};
+//////////////////////////////////////
+const handleSetFood = (billId: number) => {
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "food";
+  state.dialog.status = true;
 };
 //////////////////////////////////////
 const handleRemoveBill = (billId: number, consoleId: number): void => {
@@ -101,20 +108,17 @@ const handleRemoveBill = (billId: number, consoleId: number): void => {
   state.dialog.status = true;
 };
 //////////////////////////////////////
+const handleStartBill = (info: { billId: number; consoleId: number }): void => {
+  state.consoleSelected.consoleId = info.consoleId;
+  state.dialog.name = "startBill";
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
   if (Array.isArray(pinia.state.home)) {
     let console = pinia.state.home.find((item) => item.consoleId === consoleId);
     if (console) console.loading = status;
   }
-};
-///////////////////////////////////////////////
-const handleShowDialogStartBill = (info: {
-  billId: number;
-  consoleId: number;
-}): void => {
-  state.consoleSelected.consoleId = info.consoleId;
-  state.dialog.name = "startBill";
-  state.dialog.status = true;
 };
 ///////////////////////////////////////////////
 const handleDialogStatus = (status: boolean) => {
@@ -172,6 +176,7 @@ const handleCloseDialog = () => {
           v-for="item in HomeData"
           :loading="item.loading"
           :status="item.status"
+          @food="handleSetFood"
           :billId="item.billId"
           :key="item.consoleId"
           :timer="item.timer"
@@ -196,7 +201,7 @@ const handleCloseDialog = () => {
       :loading="false"
       :header="false"
       :footer="true"
-      :width="300"
+      :width="330"
     >
       <!-- /////////////////////////// -->
       <StartBill
@@ -214,6 +219,7 @@ const handleCloseDialog = () => {
         فاکتور مورد نظر حذف شود؟
       </p>
       <!-- /////////////////////////// -->
+      <Food v-if="state.dialog.name === 'food'" />
     </Dialog>
     <!-- //////////////////////////////////// -->
   </div>

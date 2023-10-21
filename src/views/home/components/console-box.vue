@@ -4,6 +4,7 @@ import type { home } from "@/types/index";
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
   removeBill: [billId: number, consoleId: number];
+  food: [billId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -20,6 +21,7 @@ const props = defineProps<home>();
     <img
       src="@/assets/image/home/food-bill.svg"
       class="icon-change-bill right-[10px]"
+      @click="emit('food', props.billId)"
       v-if="props.status"
     />
     <!-- ///////////////////////// -->

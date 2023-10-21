@@ -5,7 +5,7 @@
 </template>
 <style>
 .parent-small-table {
-  @apply flex flex-col justify-start items-center gap-y-[10px];
+  @apply flex w-full flex-col justify-start items-center gap-y-[10px];
 }
 .small-table {
   @apply flex shadow-sm w-[300px] border border-dashed border-white justify-between items-start gap-x-[10px] rounded-[10px] p-[15px];

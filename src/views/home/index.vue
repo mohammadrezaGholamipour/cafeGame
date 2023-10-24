@@ -3,6 +3,7 @@ import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
+import type { billFood } from "@/types/index";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
@@ -15,11 +16,14 @@ const state = reactive({
   consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
+    billFoods: [] as billFood[] | [],
+    foodSelected: [] as { foodId: number; count: number }[] | [],
     consoleId: 0,
     billId: 0,
   },
   dialog: {
     status: false,
+    loading: false,
     name: "",
   },
 });
@@ -88,6 +92,28 @@ const requestRemoveBill = () => {
     });
 };
 //////////////////////////////////////////
+const requestSetFood = () => {
+  state.dialog.loading = true;
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
+  billApi
+    .setFood(state.consoleSelected.billId, state.consoleSelected.foodSelected)
+    .then(() => {
+      pinia.requestGetBill();
+      handleCloseDialog();
+    })
+    .catch(() => {
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "خوراکی ثبت نشد",
+      });
+    })
+    .finally(() => (state.dialog.loading = false));
+};
+//////////////////////////////////////////
 const handleConsoleStatus = (
   info: { billId: number; consoleId: number },
   status: boolean
@@ -95,7 +121,17 @@ const handleConsoleStatus = (
   (status ? handleStartBill : requestCloseBill)(info);
 };
 //////////////////////////////////////
-const handleSetFood = (billId: number) => {
+const handleSetFood = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[] | []
+) => {
+  state.consoleSelected.foodSelected = billFood.map(({ foodId, count }) => ({
+    foodId,
+    count,
+  }));
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.billFoods = billFood;
   state.consoleSelected.billId = billId;
   state.dialog.name = "food";
   state.dialog.status = true;
@@ -140,6 +176,8 @@ const handleDialogStatus = (status: boolean) => {
     } else if (state.dialog.name === "removeBill") {
       requestRemoveBill();
       handleCloseDialog();
+    } else if (state.dialog.name === "food") {
+      requestSetFood();
     }
     ////////////////////////////////////////
   } else {
@@ -150,10 +188,12 @@ const handleDialogStatus = (status: boolean) => {
 const handleCloseDialog = () => {
   state.dialog.status = false;
   setTimeout(() => {
-    state.dialog.name = "";
-    state.consoleSelected.consoleId = 0;
     state.consoleSelected.hourRateSelected = { id: 0, name: 0 };
+    state.consoleSelected.foodSelected = [];
+    state.consoleSelected.billFoods = [];
+    state.consoleSelected.consoleId = 0;
     state.consoleSelected.billId = 0;
+    state.dialog.name = "";
   }, 500);
 };
 //////////////////////////////////////
@@ -173,6 +213,7 @@ const handleCloseDialog = () => {
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
           :hourRate="item.hourRate"
+          :billFood="item.billFood"
           v-for="item in HomeData"
           :loading="item.loading"
           :status="item.status"
@@ -193,12 +234,12 @@ const handleCloseDialog = () => {
     <!-- //////////////////////////////////// -->
     <Dialog
       @changeStatus="handleDialogStatus"
+      :loading="state.dialog.loading"
       :status="state.dialog.status"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
       :btnAccept="true"
       :btnCancel="true"
-      :loading="false"
       :header="false"
       :footer="true"
       :width="330"
@@ -211,15 +252,20 @@ const handleCloseDialog = () => {
         @drop-list-status="
           (status) => (state.consoleSelected.dropListStatus = status)
         "
-        :start-bill="state.consoleSelected"
         v-if="state.dialog.name === 'startBill'"
+        :start-bill="state.consoleSelected"
       />
       <!-- /////////////////////////// -->
       <p v-if="state.dialog.name === 'removeBill'" class="p-1">
         فاکتور مورد نظر حذف شود؟
       </p>
       <!-- /////////////////////////// -->
-      <Food v-if="state.dialog.name === 'food'" />
+      <Food
+        @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
+        :billFood="state.consoleSelected.billFoods"
+        v-if="state.dialog.name === 'food'"
+      />
+      <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->
   </div>

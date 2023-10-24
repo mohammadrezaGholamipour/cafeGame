@@ -1,24 +1,36 @@
 <script setup lang="ts">
+import type { billFood, foodStore } from "@/types/index";
 import Table from "@/components/table/index.vue";
 import { onMounted, reactive, watch } from "vue";
-import type { foodStore } from "@/types/index";
 import { usePinia } from "@/store/pinia";
 ////////////////////////////
+const props = defineProps<{ billFood: billFood[] | [] }>();
+const emit = defineEmits<{
+  foodSelected: [food: { foodId: number; count: number }[]];
+}>();
+///////////////////////////
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
 const state = reactive({
   headerTable: ["ردیف", "نام محصول", "تعداد"],
-  food: [] as foodStore[],
+  foodList: [] as foodStore[],
+  foodSelected: [] as { foodId: number; count: number }[],
   search: "",
 });
 //////////////////
 onMounted(() => {
   handleSetFoodData();
+  props.billFood.forEach(({ foodId, count }) => {
+    const food = state.foodList.find((food) => food.id === foodId);
+    if (food) {
+      food.count = count;
+    }
+  });
 });
 ////////////////
 const handleSetFoodData = () => {
   if (Array.isArray(pinia.state.food)) {
-    state.food = pinia.state.food.map((food) => ({ ...food, count: 0 }));
+    state.foodList = pinia.state.food.map((food) => ({ ...food, count: 0 }));
   }
 };
 ////////////////
@@ -38,10 +50,17 @@ watch(
 );
 ///////////////////////
 const handleAddAndSubtract = (status: string, food: foodStore) => {
+  /////////////////////////////////
   if (status === "add") food.count++;
   else if (food.count) food.count--;
+  /////////////////////////////
+  const foodItem = state.foodSelected.find((item) => item.foodId === food.id);
+  if (foodItem) foodItem.count = food.count;
+  else state.foodSelected.push({ foodId: food.id, count: food.count });
+  state.foodSelected = state.foodSelected.filter((item) => item.count);
+  /////////////////////////////
+  emit("foodSelected", state.foodSelected);
 };
-///////////////////////
 </script>
 <template>
   <div class="parent-food">
@@ -56,9 +75,9 @@ const handleAddAndSubtract = (status: string, food: foodStore) => {
       group
     >
       <!-- //////////////////////// -->
-      <Table v-if="state.food.length" :header="state.headerTable">
+      <Table v-if="state.foodList.length" :header="state.headerTable">
         <template v-slot:Larg>
-          <tr v-for="(food, index) in state.food" :key="food.id">
+          <tr v-for="(food, index) in state.foodList" :key="food.id">
             <td>{{ index + 1 }}</td>
             <td>{{ food.name }}</td>
             <td>
@@ -80,7 +99,7 @@ const handleAddAndSubtract = (status: string, food: foodStore) => {
         </template>
         <template v-slot:small>
           <div
-            v-for="(food, index) in state.food"
+            v-for="(food, index) in state.foodList"
             class="small-table"
             :key="food.id"
           >

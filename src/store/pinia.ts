@@ -121,6 +121,7 @@ export const usePinia = defineStore("pinia", () => {
         costPlayed: 0,
         status: false,
         loading: false,
+        billFood: [],
         billId: 0,
         consoleId,
         name,
@@ -134,7 +135,13 @@ export const usePinia = defineStore("pinia", () => {
           uniqueSystemIds.add(item.systemId)
       );
       ////////////////////////////////////////////////////////////////
-      for (let { hourRateId, startTime, systemId, id } of unclosedBills) {
+      for (let {
+        hourRateId,
+        startTime,
+        systemId,
+        id,
+        billFoods,
+      } of unclosedBills) {
         for (let console of state.home) {
           if (systemId === console.consoleId && !console.interval) {
             const hourRateSelected = state.hourRate.find(
@@ -159,6 +166,7 @@ export const usePinia = defineStore("pinia", () => {
             console.timer.seconds = seconds;
             console.timer.minutes = minutes;
             console.timer.hours = hours;
+            console.billFood = billFoods;
             console.billId = id;
             console.status = true;
             /////////////////////////////////

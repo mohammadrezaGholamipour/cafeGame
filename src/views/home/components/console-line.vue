@@ -4,7 +4,18 @@ import type { home } from "@/types/index";
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
   removeBill: [billId: number, consoleId: number];
-  food: [billId: number];
+  food: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -56,16 +67,16 @@ const props = defineProps<home>();
       <div v-if="props.status" class="console-left">
         <div>
           <img
-            src="@/assets/image/home/remove-bill.svg"
             @click="emit('removeBill', props.billId, props.consoleId)"
+            src="@/assets/image/home/remove-bill.svg"
             class="icon-change-bill ml-[14px]"
           />
           <button class="button bg-[#3ea6da] text-white">امکانات</button>
         </div>
         <div>
           <img
+            @click="emit('food', props.billId, props.consoleId, props.billFood)"
             src="@/assets/image/home/food-bill.svg"
-            @click="emit('food', props.billId)"
             class="icon-change-bill ml-[10px]"
           />
           <button

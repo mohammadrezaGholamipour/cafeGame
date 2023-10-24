@@ -49,6 +49,7 @@ export interface home {
   interval?: number;
   costPlayed: number;
   loading: boolean;
+  billFood: billFood[];
   timer: { hours: number; minutes: number; seconds: number };
 }
 export interface consoleTypeApi {
@@ -77,15 +78,16 @@ export interface hourRate {
   id: number;
   name: number;
 }
+export interface billFood {
+  id: number;
+  count: number;
+  foodId: number;
+  billId: number;
+  cost: number;
+  name: string;
+}
 export interface bill {
-  billFoods: {
-    id: number;
-    count: number;
-    foodId: number;
-    billId: number;
-    cost: number;
-    name: string;
-  }[];
+  billFoods: billFood[];
   endTime: Date;
   finalCost: number;
   hourRateId: number;

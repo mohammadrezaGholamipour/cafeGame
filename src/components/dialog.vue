@@ -121,7 +121,6 @@ const handleDialogStatus = (status: boolean) => {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   transition: opacity 0.5s, transform 0.5s;
-  transform: scale(0.8);
   opacity: 0;
 }
 </style>

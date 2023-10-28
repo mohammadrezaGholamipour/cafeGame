@@ -135,6 +135,23 @@ const props = defineProps<home>();
       </div>
     </transition-fade>
     <!-- //////////////////////// -->
+    <div class="parent-console-option">
+      <div>
+        <div class="option-box">
+          <img src="@/assets/image/home/money-option.svg" />
+          <p>قیمت واحد</p>
+        </div>
+        <div class="option-box">
+          <img src="@/assets/image/home/bill-time-option.svg" />
+          <p>زمان شروع</p>
+        </div>
+        <div class="option-box">
+          <img src="@/assets/image/home/alarm-option.svg" />
+          <p>یادآور</p>
+        </div>
+      </div>
+    </div>
+    <!-- //////////////////////// -->
   </div>
 </template>
 <style scoped>
@@ -168,5 +185,26 @@ const props = defineProps<home>();
 }
 .icon-change-bill {
   @apply cursor-pointer hover:scale-110 transition-all absolute top-[10px];
+}
+.parent-console-option {
+  @apply absolute top-0 flex flex-col justify-center items-center gap-y-[10px] rounded-[10px] w-full h-full backdrop-blur-xl;
+}
+.parent-console-option > div {
+  @apply flex items-center gap-x-[10px];
+}
+.option-box {
+  @apply w-[70px] h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
+}
+.option-box p {
+  @apply text-[#1C274C] font-bold font-[kalameh] text-[13px];
+}
+.option-box:nth-child(1) {
+  background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
+}
+.option-box:nth-child(2) {
+  background: linear-gradient(94deg, #2d82b2 -6.52%, #329abb 108.61%);
+}
+.option-box:nth-child(3) {
+  background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
 </style>

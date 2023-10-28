@@ -217,10 +217,12 @@ const handleCloseDialog = () => {
 };
 //////////////////////////////////////
 const getTimeStartOrEndBill = () => {
-  let currentDateTime = new Date();
-  let tehranOffset = 3.5 * 60 * 60 * 1000;
-  let tehranTime = new Date(currentDateTime.getTime() + tehranOffset);
-  return tehranTime.toISOString();
+  const currentDateTime = new Date();
+  const tehranOffset = 3.5 * 60 * 60 * 1000;
+  const tehranTime = new Date(
+    currentDateTime.getTime() + tehranOffset
+  ).toISOString();
+  return tehranTime;
 };
 </script>
 <template>

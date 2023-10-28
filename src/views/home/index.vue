@@ -4,6 +4,7 @@ import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
 import type { billFood } from "@/types/index";
+import Factor from "./components/Factor.vue";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
@@ -24,7 +25,10 @@ const state = reactive({
   dialog: {
     status: false,
     loading: false,
+    header: false,
+    footer: true,
     name: "",
+    width: 330,
   },
 });
 ////////////////////////////////
@@ -126,10 +130,6 @@ const handleSetFood = (
   consoleId: number,
   billFood: billFood[] | []
 ) => {
-  state.consoleSelected.foodSelected = billFood.map(({ foodId, count }) => ({
-    foodId,
-    count,
-  }));
   state.consoleSelected.consoleId = consoleId;
   state.consoleSelected.billFoods = billFood;
   state.consoleSelected.billId = billId;
@@ -147,6 +147,21 @@ const handleRemoveBill = (billId: number, consoleId: number): void => {
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
   state.consoleSelected.consoleId = info.consoleId;
   state.dialog.name = "startBill";
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
+const handleFactor = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[]
+) => {
+  state.consoleSelected.billId = billId;
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.billFoods = billFood;
+  state.dialog.name = "factor";
+  state.dialog.footer = false;
+  state.dialog.header = true;
+  state.dialog.width = 500;
   state.dialog.status = true;
 };
 ///////////////////////////////////////////////
@@ -186,6 +201,7 @@ const handleDialogStatus = (status: boolean) => {
 };
 ///////////////////////////////////////////////
 const handleCloseDialog = () => {
+  if (state.dialog.name === "food") pinia.requestGetFood();
   state.dialog.status = false;
   setTimeout(() => {
     state.consoleSelected.hourRateSelected = { id: 0, name: 0 };
@@ -193,6 +209,9 @@ const handleCloseDialog = () => {
     state.consoleSelected.billFoods = [];
     state.consoleSelected.consoleId = 0;
     state.consoleSelected.billId = 0;
+    state.dialog.header = false;
+    state.dialog.footer = true;
+    state.dialog.width = 330;
     state.dialog.name = "";
   }, 500);
 };
@@ -216,6 +235,7 @@ const handleCloseDialog = () => {
           :billFood="item.billFood"
           v-for="item in HomeData"
           :loading="item.loading"
+          @factor="handleFactor"
           :status="item.status"
           @food="handleSetFood"
           :billId="item.billId"
@@ -235,14 +255,15 @@ const handleCloseDialog = () => {
     <Dialog
       @changeStatus="handleDialogStatus"
       :loading="state.dialog.loading"
+      :header="state.dialog.header"
       :status="state.dialog.status"
+      :footer="state.dialog.footer"
+      :width="state.dialog.width"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
+      :headerText="'فاکتور'"
       :btnAccept="true"
       :btnCancel="true"
-      :header="false"
-      :footer="true"
-      :width="330"
     >
       <!-- /////////////////////////// -->
       <StartBill
@@ -264,6 +285,12 @@ const handleCloseDialog = () => {
         @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
         :billFood="state.consoleSelected.billFoods"
         v-if="state.dialog.name === 'food'"
+      />
+      <Factor
+        :consoleId="state.consoleSelected.consoleId"
+        :billFoods="state.consoleSelected.billFoods"
+        :bill-id="state.consoleSelected.billId"
+        v-if="state.dialog.name === 'factor'"
       />
       <!-- /////////////////////////// -->
     </Dialog>

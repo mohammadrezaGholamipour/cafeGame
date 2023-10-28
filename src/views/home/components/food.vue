@@ -26,6 +26,7 @@ onMounted(() => {
       food.count = count;
     }
   });
+  handleFoodSelected();
 });
 ////////////////
 const handleSetFoodData = () => {
@@ -54,10 +55,13 @@ const handleAddAndSubtract = (status: string, food: foodStore) => {
   if (status === "add") food.count++;
   else if (food.count) food.count--;
   /////////////////////////////
-  const foodItem = state.foodSelected.find((item) => item.foodId === food.id);
-  if (foodItem) foodItem.count = food.count;
-  else state.foodSelected.push({ foodId: food.id, count: food.count });
-  state.foodSelected = state.foodSelected.filter((item) => item.count);
+  handleFoodSelected();
+};
+////////////////////////////
+const handleFoodSelected = () => {
+  state.foodSelected = state.foodList
+    .filter((food) => food.count)
+    .map(({ id, count }) => ({ foodId: id, count }));
   /////////////////////////////
   emit("foodSelected", state.foodSelected);
 };
@@ -78,10 +82,10 @@ const handleAddAndSubtract = (status: string, food: foodStore) => {
       <Table v-if="state.foodList.length" :header="state.headerTable">
         <template v-slot:Larg>
           <tr v-for="(food, index) in state.foodList" :key="food.id">
-            <td>{{ index + 1 }}</td>
+            <td class="w-[55px]">{{ index + 1 }}</td>
             <td>{{ food.name }}</td>
             <td>
-              <div class="flex justify-between items-center">
+              <div class="flex justify-between items-center gap-x-[10px]">
                 <img
                   @click="handleAddAndSubtract('add', food)"
                   src="@/assets/image/home/add.svg"

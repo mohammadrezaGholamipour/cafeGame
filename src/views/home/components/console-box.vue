@@ -3,6 +3,18 @@ import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
+  factor: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
   removeBill: [billId: number, consoleId: number];
   food: [
     billId: number,
@@ -67,7 +79,10 @@ const props = defineProps<home>();
             درحال محاسبه ...
           </p>
           <div
-            class="w-full flex items-center justify-center gap-x-[3px]"
+            class="w-full flex cursor-pointer items-center justify-center gap-x-[3px]"
+            @click="
+              emit('factor', props.billId, props.consoleId, props.billFood)
+            "
             v-else
           >
             <p>

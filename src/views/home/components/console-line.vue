@@ -4,6 +4,18 @@ import type { home } from "@/types/index";
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
   removeBill: [billId: number, consoleId: number];
+  factor: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
   food: [
     billId: number,
     consoleId: number,
@@ -52,7 +64,13 @@ const props = defineProps<home>();
             <p class="!text-[0.8rem]" v-if="!props.costPlayed">
               درحال محاسبه ...
             </p>
-            <div v-else class="flex items-center gap-x-[5px]">
+            <div
+              @click="
+                emit('factor', props.billId, props.consoleId, props.billFood)
+              "
+              class="flex items-center cursor-pointer gap-x-[5px]"
+              v-else
+            >
               <p>{{ props.costPlayed.toLocaleString() }}</p>
               <p class="!font-[400]">تومان</p>
             </div>

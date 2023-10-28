@@ -20,21 +20,31 @@ const state = reactive({
 //////////////////
 onMounted(() => {
   handleSetFoodData();
-  props.billFood.forEach(({ foodId, count }) => {
-    const food = state.foodList.find((food) => food.id === foodId);
-    if (food) {
-      food.count = count;
-    }
-  });
   handleFoodSelected();
 });
 ////////////////
 const handleSetFoodData = () => {
   if (Array.isArray(pinia.state.food)) {
+    //////////////////////////////
     state.foodList = pinia.state.food.map((food) => ({ ...food, count: 0 }));
+    //////////////////////////////
+    props.billFood.forEach(({ foodId, count }) => {
+      const food = state.foodList.find((food) => food.id === foodId);
+      if (food) {
+        food.count = count;
+      }
+    });
+    //////////////////////////////
+    state.foodSelected.forEach(({ foodId, count }) => {
+      const food = state.foodList.find((food) => food.id === foodId);
+      if (food) {
+        food.count = count;
+      }
+    });
+    //////////////////////////////
   }
 };
-////////////////
+/////////////////////////
 watch(
   () => state.search,
   (value: string) => {
@@ -57,7 +67,7 @@ const handleAddAndSubtract = (status: string, food: foodStore) => {
   /////////////////////////////
   handleFoodSelected();
 };
-////////////////////////////
+/////////////////////////////////
 const handleFoodSelected = () => {
   state.foodSelected = state.foodList
     .filter((food) => food.count)

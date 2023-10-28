@@ -44,7 +44,7 @@ const requestStartBill = (): void => {
     .start(
       state.consoleSelected.consoleId,
       state.consoleSelected.hourRateSelected.id,
-      new Date().toISOString()
+      getTimeStartOrEndBill()
     )
     .then(() => pinia.requestGetBill())
     .catch(() => {
@@ -65,7 +65,7 @@ const requestCloseBill = (info: {
 }): void => {
   handleConsoleLoading(info.consoleId, true);
   billApi
-    .close(info.billId, new Date().toISOString())
+    .close(info.billId, getTimeStartOrEndBill())
     .then(() => pinia.requestGetBill())
     .catch(() => {
       handleConsoleLoading(info.consoleId, false);
@@ -216,6 +216,12 @@ const handleCloseDialog = () => {
   }, 500);
 };
 //////////////////////////////////////
+const getTimeStartOrEndBill = () => {
+  let currentDateTime = new Date();
+  let tehranOffset = 3.5 * 60 * 60 * 1000;
+  let tehranTime = new Date(currentDateTime.getTime() + tehranOffset);
+  return tehranTime.toISOString();
+};
 </script>
 <template>
   <div class="parent-home-page">

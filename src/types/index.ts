@@ -48,8 +48,10 @@ export interface home {
   hourRate: number;
   interval?: number;
   costPlayed: number;
+  costFood: number;
   loading: boolean;
   billFood: billFood[];
+  optionStatus: boolean;
   timer: { hours: number; minutes: number; seconds: number };
 }
 export interface consoleTypeApi {

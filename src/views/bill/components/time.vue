@@ -37,14 +37,14 @@ const handleTime = (dateString: Date) => {
 </script>
 <template>
   <div class="parent-bill-time">
-    <div class="bg-[#7cc078] rounded-md">
+    <div>
       <p>اطلاعات شروع :</p>
       {{
         ` ${handleDate(props.bill.startTime)} --
         ${handleTime(props.bill.startTime)} `
       }}
     </div>
-    <div class="bg-[#ef6262] rounded-md">
+    <div>
       <p>اطلاعات پایان :</p>
       {{
         props.bill.endTime
@@ -61,6 +61,12 @@ const handleTime = (dateString: Date) => {
   background-color: rgba(29, 91, 121, 0.1);
 }
 .parent-bill-time > div {
-  @apply w-full flex justify-between items-center p-3;
+  @apply w-full flex justify-between items-center p-3 rounded-md;
+}
+.parent-bill-time div:nth-child(1) {
+  background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
+}
+.parent-bill-time div:nth-child(2) {
+  background: linear-gradient(95deg, #f6743e -6.96%, #d42525 108.25%);
 }
 </style>

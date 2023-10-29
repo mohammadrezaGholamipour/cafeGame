@@ -32,7 +32,7 @@ const state = reactive({
   },
 });
 ////////////////////////////////
-const HomeData = computed(() => {
+const homeData = computed(() => {
   if (Array.isArray(pinia.state.home)) {
     return pinia.state.home;
   }
@@ -137,11 +137,25 @@ const handleSetFood = (
   state.dialog.status = true;
 };
 //////////////////////////////////////
-const handleRemoveBill = (billId: number, consoleId: number): void => {
-  state.consoleSelected.consoleId = consoleId;
-  state.consoleSelected.billId = billId;
-  state.dialog.name = "removeBill";
-  state.dialog.status = true;
+const handleRemoveBill = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[]
+): void => {
+  if (billFood.length) {
+    pinia.handleNotification({
+      ...pinia.state.notification,
+      name: "error",
+      status: true,
+      textHeader: "خطا",
+      textMain: "ابتدا خوراکی ها را حذف کنید",
+    });
+  } else {
+    state.consoleSelected.consoleId = consoleId;
+    state.consoleSelected.billId = billId;
+    state.dialog.name = "removeBill";
+    state.dialog.status = true;
+  }
 };
 //////////////////////////////////////
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
@@ -155,20 +169,28 @@ const handleFactor = (
   consoleId: number,
   billFood: billFood[]
 ) => {
-  state.consoleSelected.billId = billId;
-  state.consoleSelected.consoleId = consoleId;
-  state.consoleSelected.billFoods = billFood;
-  state.dialog.name = "factor";
-  state.dialog.footer = false;
-  state.dialog.header = true;
-  state.dialog.width = 500;
-  state.dialog.status = true;
+  if (billFood.length) {
+    state.consoleSelected.billId = billId;
+    state.consoleSelected.consoleId = consoleId;
+    state.consoleSelected.billFoods = billFood;
+    state.dialog.name = "factor";
+    state.dialog.footer = false;
+    state.dialog.header = true;
+    state.dialog.width = 500;
+    state.dialog.status = true;
+  }
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
-  if (Array.isArray(pinia.state.home)) {
-    let console = pinia.state.home.find((item) => item.consoleId === consoleId);
-    if (console) console.loading = status;
+  let console = homeData.value?.find((item) => item.consoleId === consoleId);
+  if (console) console.loading = status;
+};
+///////////////////////////////////////////////
+const handleOptionStatus = (status: boolean, consoleId: number) => {
+  let console = homeData.value?.find((item) => item.consoleId === consoleId);
+  if (console) {
+    if (status) console.optionStatus = true;
+    else console.optionStatus = false;
   }
 };
 ///////////////////////////////////////////////
@@ -231,17 +253,20 @@ const getTimeStartOrEndBill = () => {
     <tools @displayMode="state.displayMode = $event" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="HomeData?.length" class="parent-console">
+      <div v-if="homeData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
+          @optionStatus="handleOptionStatus"
+          :optionStatus="item.optionStatus"
           @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
           :hourRate="item.hourRate"
           :billFood="item.billFood"
-          v-for="item in HomeData"
+          :costFood="item.costFood"
+          v-for="item in homeData"
           :loading="item.loading"
           @factor="handleFactor"
           :status="item.status"
@@ -255,7 +280,7 @@ const getTimeStartOrEndBill = () => {
       <img
         src="@/assets/image/noData.svg"
         class="w-full h-full"
-        v-else-if="HomeData"
+        v-else-if="homeData"
       />
       <loading v-else />
     </transition-fade>

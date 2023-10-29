@@ -36,7 +36,7 @@ const consoleSelected = computed(() => {
 <template>
   <div class="parent-bill-cost">
     <!-- ///////////////////////// -->
-    <Table v-if="billSelected?.foodCost" :header="state.headerTable">
+    <Table :header="state.headerTable">
       <template v-slot:Larg>
         <tr v-for="(food, index) in props.billFoods" :key="food.id">
           <td>{{ index + 1 }}</td>
@@ -68,11 +68,9 @@ const consoleSelected = computed(() => {
       </template>
     </Table>
     <!-- ///////////////////////// -->
-    <div
-      class="flex flex-col w-full justify-start items-center bg-red-500 rounded-md"
-    >
+    <div class="flex flex-col w-full justify-start items-center rounded-md">
       <!-- ///////////////////////// -->
-      <div v-if="billSelected?.foodCost" class="cost-total">
+      <div class="cost-total rounded-t-md">
         <p>هزینه خوراکی</p>
         <p>
           {{ billSelected?.foodCost.toLocaleString() }}
@@ -80,10 +78,7 @@ const consoleSelected = computed(() => {
         </p>
       </div>
       <!-- ///////////////////////// -->
-      <div
-        class="w-full border border-dashed border-white"
-        v-if="billSelected?.foodCost"
-      ></div>
+      <div class="w-full border border-solid border-slate-500"></div>
       <!-- ///////////////////////// -->
       <div class="cost-total">
         <p>هزنیه بازی شده</p>
@@ -93,20 +88,12 @@ const consoleSelected = computed(() => {
         </p>
       </div>
       <!-- ///////////////////////// -->
-      <div
-        class="w-full border border-separate border-white"
-        v-if="billSelected?.foodCost"
-      ></div>
-      <!-- ///////////////////////// -->
-      <div
-        class="cost-total bg-white text-black font-bold rounded-b-md"
-        v-if="billSelected?.foodCost"
-      >
+      <div class="cost-total">
         <p>جمع کل</p>
         <p>
           {{
             (
-              billSelected?.foodCost + (consoleSelected?.costPlayed || 0)
+              (billSelected?.foodCost || 0) + (consoleSelected?.costPlayed || 0)
             ).toLocaleString()
           }}
           تومان
@@ -123,5 +110,11 @@ const consoleSelected = computed(() => {
 }
 .cost-total {
   @apply flex w-full items-center justify-between p-[10px];
+  background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
+}
+
+.cost-total:nth-child(4) {
+  @apply font-bold rounded-b-md text-white;
+  background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
 }
 </style>

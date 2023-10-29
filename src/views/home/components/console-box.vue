@@ -15,7 +15,18 @@ const emit = defineEmits<{
       name: string;
     }[]
   ];
-  removeBill: [billId: number, consoleId: number];
+  removeBill: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
   food: [
     billId: number,
     consoleId: number,
@@ -28,6 +39,7 @@ const emit = defineEmits<{
       name: string;
     }[]
   ];
+  optionStatus: [status: boolean, consoleId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -36,7 +48,7 @@ const props = defineProps<home>();
   <div :class="['console', props.status ? 'active-color' : 'disable-color']">
     <!-- ///////////////////////// -->
     <img
-      @click="emit('removeBill', props.billId, props.consoleId)"
+      @click="emit('removeBill', props.billId, props.consoleId, props.billFood)"
       src="@/assets/image/home/remove-bill.svg"
       class="icon-change-bill left-[10px]"
       v-if="props.status"
@@ -79,14 +91,17 @@ const props = defineProps<home>();
             درحال محاسبه ...
           </p>
           <div
-            class="w-full flex cursor-pointer items-center justify-center gap-x-[3px]"
+            :class="
+              props.billFood.length ? 'cursor-pointer' : 'cursor-not-allowed'
+            "
+            class="flex items-center justify-center gap-x-[3px]"
             @click="
               emit('factor', props.billId, props.consoleId, props.billFood)
             "
             v-else
           >
             <p>
-              {{ props.costPlayed.toLocaleString() }}
+              {{ (props.costPlayed + props.costFood).toLocaleString() }}
             </p>
             <p class="!font-[400]">تومان</p>
           </div>
@@ -109,7 +124,12 @@ const props = defineProps<home>();
         >
           پایان
         </button>
-        <button class="button bg-[#3ea6da] text-white">امکانات</button>
+        <button
+          @click="emit('optionStatus', true, props.consoleId)"
+          class="button bg-[#3ea6da] text-white"
+        >
+          امکانات
+        </button>
       </div>
       <button
         class="button bg-[#7CC078] text-white"
@@ -135,22 +155,31 @@ const props = defineProps<home>();
       </div>
     </transition-fade>
     <!-- //////////////////////// -->
-    <div class="parent-console-option">
-      <div>
-        <div class="option-box">
-          <img src="@/assets/image/home/money-option.svg" />
-          <p>قیمت واحد</p>
+    <transition-slide>
+      <div
+        @click="emit('optionStatus', false, props.consoleId)"
+        class="parent-console-option"
+        v-if="props.optionStatus"
+      >
+        <div class="close-option">
+          <img src="@/assets/image/close.svg" />
         </div>
-        <div class="option-box">
-          <img src="@/assets/image/home/bill-time-option.svg" />
-          <p>زمان شروع</p>
-        </div>
-        <div class="option-box">
-          <img src="@/assets/image/home/alarm-option.svg" />
-          <p>یادآور</p>
+        <div>
+          <div class="option-box">
+            <img src="@/assets/image/home/money-option.svg" />
+            <p>قیمت واحد</p>
+          </div>
+          <div class="option-box">
+            <img src="@/assets/image/home/bill-time-option.svg" />
+            <p>زمان شروع</p>
+          </div>
+          <div class="option-box">
+            <img src="@/assets/image/home/alarm-option.svg" />
+            <p>یادآور</p>
+          </div>
         </div>
       </div>
-    </div>
+    </transition-slide>
     <!-- //////////////////////// -->
   </div>
 </template>
@@ -187,24 +216,30 @@ const props = defineProps<home>();
   @apply cursor-pointer hover:scale-110 transition-all absolute top-[10px];
 }
 .parent-console-option {
-  @apply absolute top-0 flex flex-col justify-center items-center gap-y-[10px] rounded-[10px] w-full h-full backdrop-blur-xl;
+  @apply absolute top-0 flex flex-col justify-center items-center gap-y-[10px] rounded-[10px] w-full h-full backdrop-blur-md;
 }
 .parent-console-option > div {
   @apply flex items-center gap-x-[10px];
 }
 .option-box {
-  @apply w-[70px] h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
+  @apply w-[70px] hover:opacity-80 transition-all h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
 }
 .option-box p {
   @apply text-[#1C274C] font-bold font-[kalameh] text-[13px];
 }
 .option-box:nth-child(1) {
+  @apply border-2 border-[#32bb71];
   background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
 }
 .option-box:nth-child(2) {
+  @apply border-2 border-[#2d82b2];
   background: linear-gradient(94deg, #2d82b2 -6.52%, #329abb 108.61%);
 }
 .option-box:nth-child(3) {
+  @apply border-2 border-[#f8b806];
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
+}
+.close-option {
+  @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 top-[-22px] shadow-md absolute flex justify-center items-center;
 }
 </style>

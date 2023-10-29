@@ -5,6 +5,7 @@ import type {
   bill,
   food,
   hourRate,
+  billFood,
 } from "@/types/index";
 import hourRateApi from "@/api/hourRate.js";
 import consoleApi from "@/api/console.js";
@@ -93,7 +94,7 @@ export const usePinia = defineStore("pinia", () => {
         .map((bill) => ({
           ...bill,
           systemName: handleGetSystmeNameById(bill.systemId),
-          foodCost: handleFoodCost(bill),
+          foodCost: handleFoodCost(bill.billFoods),
         }))
         .sort(sortBills);
     } catch (error) {
@@ -119,9 +120,11 @@ export const usePinia = defineStore("pinia", () => {
         hourRate: 0,
         interval: 0,
         costPlayed: 0,
+        costFood: 0,
         status: false,
         loading: false,
         billFood: [],
+        optionStatus: false,
         billId: 0,
         consoleId,
         name,
@@ -163,6 +166,7 @@ export const usePinia = defineStore("pinia", () => {
             delta -= minutes * 60;
             let seconds = Math.floor(delta % 60);
             ////////////////////////
+            console.costFood = handleFoodCost(billFoods);
             console.timer.seconds = seconds;
             console.timer.minutes = minutes;
             console.timer.hours = hours;
@@ -176,10 +180,10 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////
-  const handleFoodCost = (bill: bill): number => {
+  const handleFoodCost = (billFoods: billFood[]): number => {
     let foodCost = 0;
-    if (Array.isArray(state.food) && bill.billFoods.length) {
-      for (const foodBill of bill.billFoods) {
+    if (Array.isArray(state.food) && billFoods.length) {
+      for (const foodBill of billFoods) {
         for (const food of state.food) {
           if (foodBill.foodId === food.id) {
             foodBill.name = food.name;

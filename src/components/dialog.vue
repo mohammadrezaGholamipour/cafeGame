@@ -36,6 +36,7 @@ const handleDialogStatus = (status: boolean) => {
           <img
             @click="handleDialogStatus(false)"
             src="@/assets/image/close.svg"
+            class="cursor-pointer"
           />
         </div>
         <!-- ////////////////////////// -->

@@ -4,7 +4,7 @@ import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
 import type { billFood } from "@/types/index";
-import Factor from "./components/Factor.vue";
+import Factor from "./components/factor.vue";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";

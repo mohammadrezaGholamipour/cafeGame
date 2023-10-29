@@ -48,7 +48,10 @@ export interface home {
   hourRate: number;
   interval?: number;
   costPlayed: number;
+  costFood: number;
   loading: boolean;
+  billFood: billFood[];
+  optionStatus: boolean;
   timer: { hours: number; minutes: number; seconds: number };
 }
 export interface consoleTypeApi {
@@ -67,19 +70,26 @@ export interface food {
   name: string;
   cost: number;
 }
+export interface foodStore {
+  id: number;
+  name: string;
+  cost: number;
+  count: number;
+}
 export interface hourRate {
   id: number;
   name: number;
 }
+export interface billFood {
+  id: number;
+  count: number;
+  foodId: number;
+  billId: number;
+  cost: number;
+  name: string;
+}
 export interface bill {
-  billFoods: {
-    id: number;
-    count: number;
-    foodId: number;
-    billId: number;
-    cost: number;
-    name: string;
-  }[];
+  billFoods: billFood[];
   endTime: Date;
   finalCost: number;
   hourRateId: number;
@@ -93,6 +103,5 @@ export interface bill {
 export interface StartBillProps {
   dropListStatus: boolean;
   hourRateSelected: { id: number; name: number };
-  dialogStatus: boolean;
   consoleId: number;
 }

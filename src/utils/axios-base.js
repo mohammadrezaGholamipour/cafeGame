@@ -2,7 +2,7 @@
 import axios from 'axios';
 ////////////////////////////////
 const HttpClient = axios.create({
-  baseURL: 'https://cafegameapi.iran.liara.run/api/',
+  baseURL: 'https://cafegamev.iran.liara.run/api/',
   timeout: 0,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',

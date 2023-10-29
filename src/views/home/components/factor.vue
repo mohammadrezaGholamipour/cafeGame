@@ -1,19 +1,44 @@
 <script setup lang="ts">
+import type { bill, billFood, home } from "@/types/index";
 import Table from "@/components/table/index.vue";
-import type { bill } from "@/types/index";
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
+import { usePinia } from "@/store/pinia";
 ////////////////////////////////////
-const props = defineProps<{ bill: bill }>();
+const props = defineProps<{
+  billId: number;
+  billFoods: billFood[];
+  consoleId: number;
+}>();
+const pinia = usePinia();
 const state = reactive({
   headerTable: ["ردیف", "نام محصول", "قیمت واحد", "تعداد", "مبلغ کل"],
 });
+////////////////////////////////////
+const billSelected = computed(() => {
+  if (Array.isArray(pinia.state.bill)) {
+    const billSelected: bill | undefined = pinia.state.bill.find(
+      (item: bill) => item.id === props.billId
+    );
+    if (billSelected) return billSelected;
+  }
+});
+////////////////////////////////////
+const consoleSelected = computed(() => {
+  if (Array.isArray(pinia.state.home)) {
+    const consoleSelected: home | undefined = pinia.state.home.find(
+      (item: home) => item.consoleId === props.consoleId
+    );
+    if (consoleSelected) return consoleSelected;
+  }
+});
+////////////////////////////////////
 </script>
 <template>
   <div class="parent-bill-cost">
     <!-- ///////////////////////// -->
     <Table :header="state.headerTable">
       <template v-slot:Larg>
-        <tr v-for="(food, index) in props.bill.billFoods" :key="food.id">
+        <tr v-for="(food, index) in props.billFoods" :key="food.id">
           <td>{{ index + 1 }}</td>
           <td>{{ food.name }}</td>
           <td>{{ food.cost.toLocaleString() }} تومان</td>
@@ -23,7 +48,7 @@ const state = reactive({
       </template>
       <template v-slot:small>
         <div
-          v-for="(food, index) in props.bill.billFoods"
+          v-for="(food, index) in props.billFoods"
           class="small-table"
           :key="food.id"
         >
@@ -43,14 +68,12 @@ const state = reactive({
       </template>
     </Table>
     <!-- ///////////////////////// -->
-    <div
-      class="flex flex-col w-full justify-start mt-2 items-center rounded-md"
-    >
+    <div class="flex flex-col w-full justify-start items-center rounded-md">
       <!-- ///////////////////////// -->
       <div class="cost-total rounded-t-md">
         <p>هزینه خوراکی</p>
         <p>
-          {{ props.bill.foodCost.toLocaleString() }}
+          {{ billSelected?.foodCost.toLocaleString() }}
           تومان
         </p>
       </div>
@@ -60,15 +83,19 @@ const state = reactive({
       <div class="cost-total">
         <p>هزنیه بازی شده</p>
         <p>
-          {{ (props.bill.finalCost - props.bill.foodCost).toLocaleString() }}
+          {{ consoleSelected?.costPlayed.toLocaleString() }}
           تومان
         </p>
       </div>
       <!-- ///////////////////////// -->
-      <div class="cost-total bg-white text-black font-bold rounded-b-md">
-        <p>هزینه کل</p>
+      <div class="cost-total">
+        <p>جمع کل</p>
         <p>
-          {{ props.bill.finalCost.toLocaleString() }}
+          {{
+            (
+              (billSelected?.foodCost || 0) + (consoleSelected?.costPlayed || 0)
+            ).toLocaleString()
+          }}
           تومان
         </p>
       </div>
@@ -78,13 +105,14 @@ const state = reactive({
 </template>
 <style scoped>
 .parent-bill-cost {
-  @apply w-full max-h-[220px] overflow-y-auto overflow-hidden flex flex-col justify-start items-center;
+  @apply w-full max-h-[220px] overflow-y-auto overflow-hidden flex gap-y-[10px] flex-col justify-start items-center;
   background-color: rgba(29, 91, 121, 0.1);
 }
 .cost-total {
   @apply flex w-full items-center justify-between p-[10px];
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
+
 .cost-total:nth-child(4) {
   @apply font-bold rounded-b-md text-white;
   background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);

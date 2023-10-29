@@ -33,20 +33,11 @@ const handleDialogStatus = (status: boolean) => {
         <!-- ///////////////////////// -->
         <div v-if="props.header" class="dialog-header">
           <p class="font-bold">{{ headerText }}</p>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
+          <img
             @click="handleDialogStatus(false)"
+            src="@/assets/image/close.svg"
             class="cursor-pointer"
-            viewBox="0 0 20 20"
-            height="20"
-            fill="none"
-            width="20"
-          >
-            <path
-              d="M10 0C4.4898 0 0 4.4898 0 10C0 15.5102 4.4898 20 10 20C15.5102 20 20 15.5102 20 10C20 4.4898 15.5102 0 10 0ZM12.551 11.5306C12.8571 11.8367 12.8571 12.3469 12.551 12.6531C12.3469 12.7551 12.2449 12.8571 12.0408 12.8571C11.8367 12.8571 11.6327 12.7551 11.5306 12.6531L10 11.1225L8.46939 12.6531C8.16327 12.9592 7.65306 12.9592 7.34694 12.6531C7.04082 12.3469 7.04082 11.8367 7.34694 11.5306L8.87755 10L7.34694 8.46939C7.04082 8.16327 7.04082 7.65306 7.34694 7.34694C7.65306 7.04082 8.16327 7.04082 8.46939 7.34694L10 8.87755L11.5306 7.34694C11.8367 7.04082 12.3469 7.04082 12.6531 7.34694C12.9592 7.65306 12.9592 8.16327 12.6531 8.46939L11.1225 10L12.551 11.5306Z"
-              fill="#EF6262"
-            />
-          </svg>
+          />
         </div>
         <!-- ////////////////////////// -->
         <div v-if="props.header" class="line"></div>
@@ -121,7 +112,6 @@ const handleDialogStatus = (status: boolean) => {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   transition: opacity 0.5s, transform 0.5s;
-  transform: scale(0.8);
   opacity: 0;
 }
 </style>

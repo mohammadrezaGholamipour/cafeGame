@@ -3,46 +3,52 @@ import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
 import loading from "@/components/loading.vue";
+import type { billFood } from "@/types/index";
+import Factor from "./components/Factor.vue";
 import tools from "./components/tools.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
+import Food from "./components/food.vue";
 import billApi from "@/api/bill.js";
 ///////////////////////////////
 const pinia = usePinia();
 const state = reactive({
   displayMode: 2,
-  startBill: {
+  consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
-    dialogStatus: false,
+    billFoods: [] as billFood[] | [],
+    foodSelected: [] as { foodId: number; count: number }[] | [],
     consoleId: 0,
+    billId: 0,
+  },
+  dialog: {
+    status: false,
+    loading: false,
+    header: false,
+    footer: true,
+    name: "",
+    width: 330,
   },
 });
 ////////////////////////////////
-const HomeData = computed(() => {
+const homeData = computed(() => {
   if (Array.isArray(pinia.state.home)) {
     return pinia.state.home;
   }
 });
 /////////////////////////////////////////////////
-const handleConsoleStatus = (
-  info: { billId: number; consoleId: number },
-  status: boolean
-) => {
-  (status ? handleShowDialogStartBill : requestCloseBill)(info);
-};
-/////////////////////////////////////////////////
 const requestStartBill = (): void => {
-  handleConsoleLoading(state.startBill.consoleId, true);
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
     .start(
-      state.startBill.consoleId,
-      state.startBill.hourRateSelected.id,
-      new Date().toISOString()
+      state.consoleSelected.consoleId,
+      state.consoleSelected.hourRateSelected.id,
+      getTimeStartOrEndBill()
     )
     .then(() => pinia.requestGetBill())
     .catch(() => {
-      handleConsoleLoading(state.startBill.consoleId, false);
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -59,7 +65,7 @@ const requestCloseBill = (info: {
 }): void => {
   handleConsoleLoading(info.consoleId, true);
   billApi
-    .close(info.billId, new Date().toISOString())
+    .close(info.billId, getTimeStartOrEndBill())
     .then(() => pinia.requestGetBill())
     .catch(() => {
       handleConsoleLoading(info.consoleId, false);
@@ -72,43 +78,173 @@ const requestCloseBill = (info: {
       });
     });
 };
-///////////////////////////////////////////////
-const handleShowDialogStartBill = (info: {
-  billId: number;
-  consoleId: number;
-}): void => {
-  state.startBill.consoleId = info.consoleId;
-  state.startBill.dialogStatus = true;
-};
-///////////////////////////////////////////////
-const handleDialogStartBill = (status: boolean) => {
-  if (status) {
-    if (state.startBill.hourRateSelected.id) {
-      state.startBill.dialogStatus = false;
-      requestStartBill();
-    } else {
+//////////////////////////////////////////
+const requestRemoveBill = () => {
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
+  billApi
+    .delete(state.consoleSelected.billId)
+    .then(() => pinia.requestGetBill())
+    .catch(() => {
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "لطفا قیمت واحد را انتخاب کنید",
+        textMain: "فاکتور مورد نظر حذف نشد",
       });
-    }
+    });
+};
+//////////////////////////////////////////
+const requestSetFood = () => {
+  state.dialog.loading = true;
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
+  billApi
+    .setFood(state.consoleSelected.billId, state.consoleSelected.foodSelected)
+    .then(() => {
+      pinia.requestGetBill();
+      handleCloseDialog();
+    })
+    .catch(() => {
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "خوراکی ثبت نشد",
+      });
+    })
+    .finally(() => (state.dialog.loading = false));
+};
+//////////////////////////////////////////
+const handleConsoleStatus = (
+  info: { billId: number; consoleId: number },
+  status: boolean
+) => {
+  (status ? handleStartBill : requestCloseBill)(info);
+};
+//////////////////////////////////////
+const handleSetFood = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[] | []
+) => {
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.billFoods = billFood;
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "food";
+  state.dialog.status = true;
+};
+//////////////////////////////////////
+const handleRemoveBill = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[]
+): void => {
+  if (billFood.length) {
+    pinia.handleNotification({
+      ...pinia.state.notification,
+      name: "error",
+      status: true,
+      textHeader: "خطا",
+      textMain: "ابتدا خوراکی ها را حذف کنید",
+    });
   } else {
-    state.startBill.dialogStatus = false;
+    state.consoleSelected.consoleId = consoleId;
+    state.consoleSelected.billId = billId;
+    state.dialog.name = "removeBill";
+    state.dialog.status = true;
   }
-  setTimeout(() => {
-    state.startBill.consoleId = 0;
-    state.startBill.hourRateSelected = { id: 0, name: 0 };
-  }, 500);
+};
+//////////////////////////////////////
+const handleStartBill = (info: { billId: number; consoleId: number }): void => {
+  state.consoleSelected.consoleId = info.consoleId;
+  state.dialog.name = "startBill";
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
+const handleFactor = (
+  billId: number,
+  consoleId: number,
+  billFood: billFood[]
+) => {
+  if (billFood.length) {
+    state.consoleSelected.billId = billId;
+    state.consoleSelected.consoleId = consoleId;
+    state.consoleSelected.billFoods = billFood;
+    state.dialog.name = "factor";
+    state.dialog.footer = false;
+    state.dialog.header = true;
+    state.dialog.width = 500;
+    state.dialog.status = true;
+  }
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
-  if (Array.isArray(pinia.state.home)) {
-    let console = pinia.state.home.find((item) => item.consoleId === consoleId);
-    if (console) console.loading = status;
+  let console = homeData.value?.find((item) => item.consoleId === consoleId);
+  if (console) console.loading = status;
+};
+///////////////////////////////////////////////
+const handleOptionStatus = (status: boolean, consoleId: number) => {
+  let console = homeData.value?.find((item) => item.consoleId === consoleId);
+  if (console) {
+    if (status) console.optionStatus = true;
+    else console.optionStatus = false;
   }
+};
+///////////////////////////////////////////////
+const handleDialogStatus = (status: boolean) => {
+  if (status) {
+    ////////////////////////////////////////
+    if (state.dialog.name === "startBill") {
+      if (state.consoleSelected.hourRateSelected.id) {
+        requestStartBill();
+        handleCloseDialog();
+      } else {
+        pinia.handleNotification({
+          ...pinia.state.notification,
+          name: "error",
+          status: true,
+          textHeader: "خطا",
+          textMain: "لطفا قیمت واحد را انتخاب کنید",
+        });
+      }
+    } else if (state.dialog.name === "removeBill") {
+      requestRemoveBill();
+      handleCloseDialog();
+    } else if (state.dialog.name === "food") {
+      requestSetFood();
+    }
+    ////////////////////////////////////////
+  } else {
+    handleCloseDialog();
+  }
+};
+///////////////////////////////////////////////
+const handleCloseDialog = () => {
+  if (state.dialog.name === "food") pinia.requestGetFood();
+  state.dialog.status = false;
+  setTimeout(() => {
+    state.consoleSelected.hourRateSelected = { id: 0, name: 0 };
+    state.consoleSelected.foodSelected = [];
+    state.consoleSelected.billFoods = [];
+    state.consoleSelected.consoleId = 0;
+    state.consoleSelected.billId = 0;
+    state.dialog.header = false;
+    state.dialog.footer = true;
+    state.dialog.width = 330;
+    state.dialog.name = "";
+  }, 500);
+};
+//////////////////////////////////////
+const getTimeStartOrEndBill = () => {
+  const currentDateTime = new Date();
+  const tehranOffset = 3.5 * 60 * 60 * 1000;
+  const tehranTime = new Date(
+    currentDateTime.getTime() + tehranOffset
+  ).toISOString();
+  return tehranTime;
 };
 </script>
 <template>
@@ -117,17 +253,24 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
     <tools @displayMode="state.displayMode = $event" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="HomeData?.length" class="parent-console">
+      <div v-if="homeData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
+          @optionStatus="handleOptionStatus"
+          :optionStatus="item.optionStatus"
+          @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
           :hourRate="item.hourRate"
-          v-for="item in HomeData"
+          :billFood="item.billFood"
+          :costFood="item.costFood"
+          v-for="item in homeData"
           :loading="item.loading"
+          @factor="handleFactor"
           :status="item.status"
+          @food="handleSetFood"
           :billId="item.billId"
           :key="item.consoleId"
           :timer="item.timer"
@@ -137,31 +280,52 @@ const handleConsoleLoading = (consoleId: number, status: boolean) => {
       <img
         src="@/assets/image/noData.svg"
         class="w-full h-full"
-        v-else-if="HomeData"
+        v-else-if="homeData"
       />
       <loading v-else />
     </transition-fade>
     <!-- //////////////////////////////////// -->
     <Dialog
-      :status="state.startBill.dialogStatus"
-      @changeStatus="handleDialogStartBill"
+      @changeStatus="handleDialogStatus"
+      :loading="state.dialog.loading"
+      :header="state.dialog.header"
+      :status="state.dialog.status"
+      :footer="state.dialog.footer"
+      :width="state.dialog.width"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
+      :headerText="'فاکتور'"
       :btnAccept="true"
       :btnCancel="true"
-      :loading="false"
-      :header="false"
-      :footer="true"
-      :width="300"
     >
+      <!-- /////////////////////////// -->
       <StartBill
-        @hourRate="(hourRate) => (state.startBill.hourRateSelected = hourRate)"
-        @drop-list-status="
-          (status) => (state.startBill.dropListStatus = status)
+        @hourRate="
+          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
         "
-        :start-bill="state.startBill"
-        v-if="pinia.state.hourRate"
+        @drop-list-status="
+          (status) => (state.consoleSelected.dropListStatus = status)
+        "
+        v-if="state.dialog.name === 'startBill'"
+        :start-bill="state.consoleSelected"
       />
+      <!-- /////////////////////////// -->
+      <p v-if="state.dialog.name === 'removeBill'" class="p-1">
+        فاکتور مورد نظر حذف شود؟
+      </p>
+      <!-- /////////////////////////// -->
+      <Food
+        @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
+        :billFood="state.consoleSelected.billFoods"
+        v-if="state.dialog.name === 'food'"
+      />
+      <Factor
+        :consoleId="state.consoleSelected.consoleId"
+        :billFoods="state.consoleSelected.billFoods"
+        :bill-id="state.consoleSelected.billId"
+        v-if="state.dialog.name === 'factor'"
+      />
+      <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->
   </div>

@@ -3,6 +3,43 @@ import type { home } from "@/types/index";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
+  removeBill: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
+  factor: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
+  food: [
+    billId: number,
+    consoleId: number,
+    billFood: {
+      id: number;
+      count: number;
+      foodId: number;
+      billId: number;
+      cost: number;
+      name: string;
+    }[]
+  ];
+  optionStatus: [status: boolean, consoleId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -39,8 +76,17 @@ const props = defineProps<home>();
             <p class="!text-[0.8rem]" v-if="!props.costPlayed">
               درحال محاسبه ...
             </p>
-            <div v-else class="flex items-center gap-x-[5px]">
-              <p>{{ props.costPlayed.toLocaleString() }}</p>
+            <div
+              @click="
+                emit('factor', props.billId, props.consoleId, props.billFood)
+              "
+              :class="
+                props.billFood.length ? 'cursor-pointer' : 'cursor-not-allowed'
+              "
+              class="flex items-center gap-x-[5px]"
+              v-else
+            >
+              <p>{{ (props.costPlayed + props.costFood).toLocaleString() }}</p>
               <p class="!font-[400]">تومان</p>
             </div>
           </transition-fade>
@@ -52,19 +98,40 @@ const props = defineProps<home>();
     </div>
     <transition-slide group>
       <div v-if="props.status" class="console-left">
-        <button class="button bg-[#3ea6da] text-white">امکانات</button>
-        <button
-          class="button bg-[#EF6262] text-white"
-          @click="
-            emit(
-              'status',
-              { billId: props.billId, consoleId: props.consoleId },
-              false
-            )
-          "
-        >
-          پایان
-        </button>
+        <div>
+          <img
+            @click="
+              emit('removeBill', props.billId, props.consoleId, props.billFood)
+            "
+            src="@/assets/image/home/remove-bill.svg"
+            class="icon-change-bill ml-[14px]"
+          />
+          <button
+            @click="emit('optionStatus', true, props.consoleId)"
+            class="button bg-[#3ea6da] text-white"
+          >
+            امکانات
+          </button>
+        </div>
+        <div>
+          <img
+            @click="emit('food', props.billId, props.consoleId, props.billFood)"
+            src="@/assets/image/home/food-bill.svg"
+            class="icon-change-bill ml-[10px]"
+          />
+          <button
+            class="button bg-[#EF6262] text-white"
+            @click="
+              emit(
+                'status',
+                { billId: props.billId, consoleId: props.consoleId },
+                false
+              )
+            "
+          >
+            پایان
+          </button>
+        </div>
       </div>
       <button
         @click="
@@ -90,6 +157,32 @@ const props = defineProps<home>();
       </div>
     </transition-fade>
     <!-- ///////////////////////////// -->
+    <transition-slide>
+      <div
+        @click="emit('optionStatus', false, props.consoleId)"
+        class="parent-console-option"
+        v-if="props.optionStatus"
+      >
+        <div class="close-option">
+          <img src="@/assets/image/close.svg" />
+        </div>
+        <div>
+          <div class="option-box">
+            <img src="@/assets/image/home/money-option.svg" />
+            <p>قیمت واحد</p>
+          </div>
+          <div class="option-box">
+            <img src="@/assets/image/home/bill-time-option.svg" />
+            <p>زمان شروع</p>
+          </div>
+          <div class="option-box">
+            <img src="@/assets/image/home/alarm-option.svg" />
+            <p>یادآور</p>
+          </div>
+        </div>
+      </div>
+    </transition-slide>
+    <!-- //////////////////////// -->
   </div>
 </template>
 <style scoped>
@@ -123,5 +216,38 @@ const props = defineProps<home>();
 }
 .console-left {
   @apply flex flex-col justify-center items-center h-full gap-y-[5px];
+}
+.console-left > div {
+  @apply flex w-full justify-end items-center;
+}
+.icon-change-bill {
+  @apply cursor-pointer hover:scale-110 transition-all;
+}
+.parent-console-option {
+  @apply absolute flex justify-between items-center px-[10px] rounded-[5px] w-full h-full backdrop-blur-md;
+}
+.parent-console-option > div {
+  @apply flex items-center gap-x-[10px];
+}
+.option-box {
+  @apply w-[70px] hover:opacity-80 transition-all h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
+}
+.option-box p {
+  @apply text-[#1C274C] font-bold font-[kalameh] text-[13px];
+}
+.option-box:nth-child(1) {
+  @apply border-2 border-[#32bb71];
+  background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
+}
+.option-box:nth-child(2) {
+  @apply border-2 border-[#2d82b2];
+  background: linear-gradient(94deg, #2d82b2 -6.52%, #329abb 108.61%);
+}
+.option-box:nth-child(3) {
+  @apply border-2 border-[#f8b806];
+  background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
+}
+.close-option {
+  @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 shadow-md flex justify-center items-center;
 }
 </style>

@@ -40,6 +40,8 @@ const emit = defineEmits<{
     }[]
   ];
   optionStatus: [status: boolean, consoleId: number];
+  hourRate: [billId: number];
+  changeStartTime: [billId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -167,11 +169,14 @@ const props = defineProps<home>();
           <img src="@/assets/image/close.svg" />
         </div>
         <div>
-          <div class="option-box">
+          <div @click="emit('hourRate', props.billId)" class="option-box">
             <img src="@/assets/image/home/money-option.svg" />
             <p>قیمت واحد</p>
           </div>
-          <div class="option-box">
+          <div
+            @click="emit('changeStartTime', props.billId)"
+            class="option-box"
+          >
             <img src="@/assets/image/home/bill-time-option.svg" />
             <p>زمان شروع</p>
           </div>

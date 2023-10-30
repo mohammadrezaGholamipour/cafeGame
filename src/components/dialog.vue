@@ -51,7 +51,7 @@ const handleDialogStatus = (status: boolean) => {
             :disabled="props.loading"
             v-if="props.btnAccept"
             :class="[
-              'button bg-[#75ca71] text-white',
+              'button bg-[#7CC078] text-white',
               { 'bg-gray-400 !cursor-not-allowed': props.loading },
             ]"
             @click="handleDialogStatus(true)"
@@ -93,7 +93,7 @@ const handleDialogStatus = (status: boolean) => {
   @apply flex w-full justify-between items-center;
 }
 .dialog-footer {
-  @apply flex justify-end gap-x-[10px] items-center;
+  @apply flex justify-center gap-x-[10px] items-center;
 }
 .line {
   width: 100%;

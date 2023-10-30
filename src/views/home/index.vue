@@ -2,6 +2,8 @@
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
 import StartBill from "./components/start-bill.vue";
+import StartTime from "./components/start-time.vue";
+import HourRate from "./components/hour-rate.vue";
 import loading from "@/components/loading.vue";
 import type { billFood } from "@/types/index";
 import Factor from "./components/factor.vue";
@@ -96,6 +98,51 @@ const requestRemoveBill = () => {
     });
 };
 //////////////////////////////////////////
+const requestChangeHourRate = () => {
+  state.dialog.loading = true;
+  billApi
+    .changeMoney(
+      state.consoleSelected.billId,
+      state.consoleSelected.hourRateSelected.id
+    )
+    .then(() => {
+      pinia.requestGetBill();
+      state.dialog.loading = false;
+      handleCloseDialog();
+    })
+    .catch(() => {
+      state.dialog.loading = false;
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "قیمت واحد عوض نشد",
+      });
+    });
+};
+//////////////////////////////////////////
+const requestChangeStartTime = (time: number) => {
+  state.dialog.loading = true;
+  billApi
+    .changeStartTime(state.consoleSelected.billId, time)
+    .then(() => {
+      pinia.requestGetBill();
+      state.dialog.loading = false;
+      handleCloseDialog();
+    })
+    .catch(() => {
+      state.dialog.loading = false;
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "زمان تغییر نکرد",
+      });
+    });
+};
+//////////////////////////////////////////
 const requestSetFood = () => {
   state.dialog.loading = true;
   handleConsoleLoading(state.consoleSelected.consoleId, true);
@@ -181,6 +228,20 @@ const handleFactor = (
   }
 };
 ///////////////////////////////////////////////
+const handleHourRate = (billId: number) => {
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "hourRate";
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
+const handleStartTime = (billId: number) => {
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "startTime";
+  state.dialog.footer = false;
+  state.dialog.header = true;
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
   let console = homeData.value?.find((item) => item.consoleId === consoleId);
   if (console) console.loading = status;
@@ -215,6 +276,8 @@ const handleDialogStatus = (status: boolean) => {
       handleCloseDialog();
     } else if (state.dialog.name === "food") {
       requestSetFood();
+    } else if (state.dialog.name === "hourRate") {
+      requestChangeHourRate();
     }
     ////////////////////////////////////////
   } else {
@@ -258,11 +321,13 @@ const getTimeStartOrEndBill = () => {
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
           :dropListStatus="item.dropListStatus"
           @optionStatus="handleOptionStatus"
+          @changeStartTime="handleStartTime"
           :optionStatus="item.optionStatus"
           @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
+          @hourRate="handleHourRate"
           :hourRate="item.hourRate"
           :billFood="item.billFood"
           :costFood="item.costFood"
@@ -286,6 +351,7 @@ const getTimeStartOrEndBill = () => {
     </transition-fade>
     <!-- //////////////////////////////////// -->
     <Dialog
+      :headerText="state.dialog.name === 'فاکتور' ? 'فاکتور' : 'زمان شروع'"
       @changeStatus="handleDialogStatus"
       :loading="state.dialog.loading"
       :header="state.dialog.header"
@@ -294,7 +360,6 @@ const getTimeStartOrEndBill = () => {
       :width="state.dialog.width"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
-      :headerText="'فاکتور'"
       :btnAccept="true"
       :btnCancel="true"
     >
@@ -319,11 +384,26 @@ const getTimeStartOrEndBill = () => {
         :billFood="state.consoleSelected.billFoods"
         v-if="state.dialog.name === 'food'"
       />
+      <!-- /////////////////////////// -->
       <Factor
         :consoleId="state.consoleSelected.consoleId"
         :billFoods="state.consoleSelected.billFoods"
         :bill-id="state.consoleSelected.billId"
         v-if="state.dialog.name === 'factor'"
+      />
+      <!-- /////////////////////////// -->
+      <HourRate
+        @hourRate="
+          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+        "
+        v-if="state.dialog.name === 'hourRate'"
+      />
+      <!-- /////////////////////////// -->
+      <StartTime
+        v-if="state.dialog.name === 'startTime'"
+        :billId="state.consoleSelected.billId"
+        :loading="state.dialog.loading"
+        @time="requestChangeStartTime"
       />
       <!-- /////////////////////////// -->
     </Dialog>

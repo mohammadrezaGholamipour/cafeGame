@@ -5,6 +5,6 @@ export default {
   setFood: (billId, food) => HttpClient.put(`bill/${billId}/set-foods`, food),
   close: (billId, endTime) => HttpClient.put(`bill/${billId}/close`, endTime),
   delete: (consoleId) => HttpClient.delete(`bill/${consoleId}`),
-  changeMoney: (consoleId, moneyId) => HttpClient.put(`bill/${consoleId}/change-rate`, moneyId),
-  changeStartTime: (consoleId, startTime) => HttpClient.put(`bill/${consoleId}/adjust-start-time`, startTime),
+  changeMoney: (billId, moneyId) => HttpClient.put(`bill/${billId}/change-rate`, moneyId),
+  changeStartTime: (billId, startTime) => HttpClient.put(`bill/${billId}/adjust-start-time`, startTime),
 };

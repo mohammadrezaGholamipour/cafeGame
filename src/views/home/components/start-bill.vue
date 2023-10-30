@@ -57,7 +57,10 @@ const animateNumber = () => {
           class="flex items-center gap-x-[5px]"
         >
           <p class="text-[12px] font-bold">انتخاب کنید</p>
-          <img src="@/assets/image/home/start-bill-money.svg" />
+          <img
+            src="@/assets/image/home/start-bill-money.svg"
+            class="animate-pulse"
+          />
         </div>
         <p v-show="props.startBill.hourRateSelected.id" id="money"></p>
         <DropList

@@ -17,7 +17,7 @@ import billApi from "@/api/bill.js";
 import { defineStore } from "pinia";
 ////////////////////////////////
 export const usePinia = defineStore("pinia", () => {
-  let sound = new Audio("/assets/alarm.mp3");
+  let sound = new Audio("/assets/alarm.wav");
   const state = reactive({
     notification: {
       textMain: "",

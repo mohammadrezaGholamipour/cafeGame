@@ -1,3 +1,4 @@
+import localStorageService from "@/utils/local-storage-service";
 import type {
   Notification,
   home,
@@ -6,6 +7,7 @@ import type {
   food,
   hourRate,
   billFood,
+  alarmInLocalStorage,
 } from "@/types/index";
 import hourRateApi from "@/api/hourRate.js";
 import consoleApi from "@/api/console.js";
@@ -15,6 +17,7 @@ import billApi from "@/api/bill.js";
 import { defineStore } from "pinia";
 ////////////////////////////////
 export const usePinia = defineStore("pinia", () => {
+  let sound = new Audio("/assets/alarm.mp3");
   const state = reactive({
     notification: {
       textMain: "",
@@ -125,6 +128,7 @@ export const usePinia = defineStore("pinia", () => {
         loading: false,
         billFood: [],
         optionStatus: false,
+        alarmStatus: false,
         billId: 0,
         consoleId,
         name,
@@ -219,9 +223,21 @@ export const usePinia = defineStore("pinia", () => {
   };
   //////////////////////////
   const handleConsoleTimer = (console: home): void => {
-    let { hourRate, timer } = console;
-    console.interval = setInterval(() => {
-      const minutesMoney = (hourRate / 60) * timer.minutes;
+    let { hourRate, timer, consoleId, interval } = console;
+    //////////////////////////////////
+    interval = setInterval(() => {
+      const alarm: alarmInLocalStorage[] = localStorageService.getAlarm();
+      const alarmSelected = alarm.find((item) => item.consoleId === consoleId);
+      if (alarmSelected) {
+        const { hour, minute } = alarmSelected;
+        const alarmMinute = Number(hour) * 60 + Number(minute);
+        const timerMinute = Number(timer.hours) * 60 + Number(timer.minutes);
+        if (timerMinute >= alarmMinute && !console.alarmStatus) {
+          console.alarmStatus = true;
+          handleAlarmSound();
+        }
+      }
+      //////////////////////////////
       timer.seconds++;
       if (timer.seconds == 60) {
         timer.seconds = 0;
@@ -232,17 +248,32 @@ export const usePinia = defineStore("pinia", () => {
         timer.hours++;
       }
       if (timer.hours > 0) {
+        const minutesMoney = (hourRate / 60) * timer.minutes;
         console.costPlayed = Math.round(timer.hours * hourRate + minutesMoney);
       } else {
         console.costPlayed = Math.round(hourRate);
       }
+      /////////////////////////////////
     }, 1000);
+  };
+  //////////////////////////
+  const handleAlarmSound = () => {
+    if (Array.isArray(state.home)) {
+      const status = state.home.some((item) => item.alarmStatus);
+      if (status) {
+        if (sound.paused) sound.play();
+      } else {
+        console.log("stop");
+        sound.pause();
+      }
+    }
   };
   //////////////////////////
   return {
     handleNotification,
     requestGetHourRate,
     requestGetConsole,
+    handleAlarmSound,
     requestGetFood,
     requestGetBill,
     handleHomeData,

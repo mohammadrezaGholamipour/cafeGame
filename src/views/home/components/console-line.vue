@@ -43,6 +43,7 @@ const emit = defineEmits<{
   hourRate: [billId: number];
   changeStartTime: [billId: number];
   alarm: [consoleId: number];
+  removeAlarm: [consoleId: number];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -189,6 +190,17 @@ const props = defineProps<home>();
       </div>
     </transition-slide>
     <!-- //////////////////////// -->
+    <transition-fade>
+      <div v-if="props.alarmStatus" class="parent-show-alarm">
+        <button
+          class="button p-2 bg-[#EF6262] text-white"
+          @click="emit('removeAlarm', props.consoleId)"
+        >
+          متوجه شدم
+        </button>
+      </div>
+    </transition-fade>
+    <!-- //////////////////////// -->
   </div>
 </template>
 <style scoped>
@@ -255,5 +267,9 @@ const props = defineProps<home>();
 }
 .close-option {
   @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 shadow-md flex justify-center items-center;
+}
+.parent-show-alarm {
+  @apply w-full h-full absolute flex left-0 justify-center top-0 backdrop-blur-lg items-center rounded-[5px];
+  background: linear-gradient(92deg, #f8b8069a -30.82%, #ff8e04ab 126.36%);
 }
 </style>

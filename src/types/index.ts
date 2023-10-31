@@ -52,6 +52,7 @@ export interface home {
   loading: boolean;
   billFood: billFood[];
   optionStatus: boolean;
+  alarmStatus: boolean;
   timer: { hours: number; minutes: number; seconds: number };
 }
 export interface consoleTypeApi {

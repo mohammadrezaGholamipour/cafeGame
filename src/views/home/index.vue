@@ -274,6 +274,13 @@ const handleRemoveAlarm = (consoleId: number) => {
   const alarm = alarmList.filter((item) => item.consoleId !== consoleId);
   localStorageService.setAlarm(alarm);
   state.consoleSelected.alarm = {};
+  const consoleSelected = homeData.value?.find(
+    (item) => item.consoleId === consoleId
+  );
+  if (consoleSelected) {
+    consoleSelected.alarmStatus = false;
+    pinia.handleAlarmSound();
+  }
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
@@ -344,6 +351,7 @@ const getTimeStartOrEndBill = () => {
   ).toISOString();
   return tehranTime;
 };
+////////////////////////////////
 </script>
 <template>
   <div class="parent-home-page">
@@ -358,6 +366,8 @@ const getTimeStartOrEndBill = () => {
           @optionStatus="handleOptionStatus"
           @changeStartTime="handleStartTime"
           :optionStatus="item.optionStatus"
+          @removeAlarm="handleRemoveAlarm"
+          :alarmStatus="item.alarmStatus"
           @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"

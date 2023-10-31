@@ -150,6 +150,6 @@ const handleGetConsoleTimer = () => {
   @apply text-center bg-white min-w-[50px] w-[75px];
 }
 .parent-alarm-list {
-  @apply flex w-full text-slate-700 font-[kalameh] text-lg bg-white justify-between items-center p-2 rounded-md;
+  @apply flex w-full text-slate-700 font-[kalameh] bg-white justify-between items-center p-2 rounded-md;
 }
 </style>

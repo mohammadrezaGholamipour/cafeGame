@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import localStorageService from "@/utils/local-storage-service";
 import type { AccountResponse, register } from "@/types/index";
 import AccountTab from "./components/account-tab.vue";
-import tokenService from "@/utils/token-service";
 import Slider from "./components/slider.vue";
 import Title from "./components/title.vue";
 import AccountApi from "@/api/account.js";
@@ -22,7 +22,7 @@ const requestLogin = (data: object): void => {
   state.requestLoading = true;
   AccountApi.login(data)
     .then((response: AccountResponse) => {
-      tokenService.setToken(response.token);
+      localStorageService.setToken(response.token);
       router.push("/");
     })
     .catch(() => {
@@ -43,7 +43,7 @@ const requestRegister = (data: register): void => {
   state.requestLoading = true;
   AccountApi.register(data)
     .then((response: AccountResponse) => {
-      tokenService.setToken(response.token);
+      localStorageService.setToken(response.token);
       router.push("/");
     })
     .catch(() => {

@@ -58,6 +58,12 @@ export interface consoleTypeApi {
   id: number;
   name: string;
 }
+export interface alarmInLocalStorage {
+  hour: number;
+  consoleId: number;
+  minute: number;
+}
+
 export interface consolePage {
   id: number;
   name: string;

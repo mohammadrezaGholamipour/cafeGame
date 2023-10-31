@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import tokenService from "@/utils/token-service";
+import localStorageService from "@/utils/local-storage-service";
 import account from "@/views/account/index.vue";
 import console from "@/views/console/index.vue";
 import notFound from "@/views/not-found.vue";
@@ -58,7 +58,7 @@ const router = createRouter({
 });
 /////////////////////
 router.beforeEach((to, from, next) => {
-  const token = tokenService.getToken();
+  const token = localStorageService.getToken();
   if (to.name === "account" && token) {
     next({ path: "/" });
   } else if (to.name !== "account" && !token) {

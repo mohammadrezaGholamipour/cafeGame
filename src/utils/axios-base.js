@@ -1,4 +1,4 @@
-﻿import tokenService from "./token-service";
+﻿import localStorageService from "./local-storage-service";
 import axios from 'axios';
 ////////////////////////////////
 const HttpClient = axios.create({
@@ -13,7 +13,7 @@ const HttpClient = axios.create({
 ///////////////////////////////////
 HttpClient.interceptors.request.use(
   (config) => {
-    config.headers['authorization'] = `Bearer ${tokenService.getToken()}`;
+    config.headers['authorization'] = `Bearer ${localStorageService.getToken()}`;
     return config;
   },
   (error) => {
@@ -33,7 +33,7 @@ HttpClient.interceptors.response.use(
         case 400:
           break;
         case 401:
-          tokenService.removeToken()
+          localStorageService.removeToken()
           window.location.href = "/account"
           break;
         case 403:

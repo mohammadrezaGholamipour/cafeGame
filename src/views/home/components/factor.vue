@@ -41,7 +41,7 @@ const consoleSelected = computed(() => {
         <tr v-for="(food, index) in props.billFoods" :key="food.id">
           <td>{{ index + 1 }}</td>
           <td>{{ food.name }}</td>
-          <td>{{ food.cost.toLocaleString() }} تومان</td>
+          <td>{{ food.cost?.toLocaleString() }} تومان</td>
           <td>{{ food.count }}</td>
           <td>{{ (food.cost * food.count).toLocaleString() }} تومان</td>
         </tr>

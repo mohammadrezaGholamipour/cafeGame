@@ -3,12 +3,12 @@ import type { billFood, foodStore } from "@/types/index";
 import Table from "@/components/table/index.vue";
 import { onMounted, reactive, watch } from "vue";
 import { usePinia } from "@/store/pinia";
-////////////////////////////
+////////////////////////////////////////
 const props = defineProps<{ billFood: billFood[] | [] }>();
 const emit = defineEmits<{
   foodSelected: [food: { foodId: number; count: number }[]];
 }>();
-///////////////////////////
+////////////////////////////////////////
 let timer: ReturnType<typeof setTimeout>;
 const pinia = usePinia();
 const state = reactive({
@@ -20,28 +20,27 @@ const state = reactive({
 //////////////////
 onMounted(() => {
   handleSetFoodData();
-  handleFoodSelected();
 });
-////////////////
+////////////////////////////////
 const handleSetFoodData = () => {
   if (Array.isArray(pinia.state.food)) {
-    //////////////////////////////
+    ///////////////////////////////
     state.foodList = pinia.state.food.map((food) => ({ ...food, count: 0 }));
-    //////////////////////////////
     props.billFood.forEach(({ foodId, count }) => {
-      const food = state.foodList.find((food) => food.id === foodId);
-      if (food) {
-        food.count = count;
-      }
+      const foodList = state.foodList.find((food) => food.id === foodId);
+      if (foodList) foodList.count = count;
+      const foodSelected = state.foodSelected.find(
+        (food) => food.foodId === foodId
+      );
+      if (foodSelected) foodSelected.count = count;
+      else state.foodSelected.push({ foodId, count });
     });
-    //////////////////////////////
+    ///////////////////////////////
     state.foodSelected.forEach(({ foodId, count }) => {
-      const food = state.foodList.find((food) => food.id === foodId);
-      if (food) {
-        food.count = count;
-      }
+      const foodList = state.foodList.find((food) => food.id === foodId);
+      if (foodList) foodList.count = count;
     });
-    //////////////////////////////
+    ///////////////////////////////
   }
 };
 /////////////////////////
@@ -59,31 +58,44 @@ watch(
   () => pinia.state.food,
   () => handleSetFoodData()
 );
-///////////////////////
-const handleAddAndSubtract = (status: string, food: foodStore) => {
+////////////////////////////////////
+watch(
+  () => state.foodSelected,
+  () => {
+    const food = state.foodSelected.filter((item) => item.count);
+    emit("foodSelected", food);
+  },
+  { deep: true }
+);
+////////////////////////////////////
+const handleAddOrSubtract = (status: string, food: foodStore) => {
   /////////////////////////////////
   if (status === "add") food.count++;
   else if (food.count) food.count--;
   /////////////////////////////
-  handleFoodSelected();
+  const foodSelected = state.foodSelected.find(
+    (item) => item.foodId === food.id
+  );
+  if (foodSelected) foodSelected.count = food.count;
+  else state.foodSelected.push({ foodId: food.id, count: food.count });
 };
-/////////////////////////////////
-const handleFoodSelected = () => {
-  state.foodSelected = state.foodList
-    .filter((food) => food.count)
-    .map(({ id, count }) => ({ foodId: id, count }));
-  /////////////////////////////
-  emit("foodSelected", state.foodSelected);
-};
+//////////////////////////////////////////
 </script>
 <template>
   <div class="parent-food">
-    <input
-      class="input !min-w-[200px] w-full bg-white"
-      placeholder="دنبال چی هستی؟"
-      v-model="state.search"
-      type="text"
-    />
+    <div class="parent-search-food">
+      <input
+        class="input !min-w-[200px] w-full bg-white"
+        placeholder="دنبال چی هستی؟"
+        v-model="state.search"
+        type="text"
+      />
+      <img
+        @click="pinia.requestGetFood(), (state.search = '')"
+        src="@/assets/image/close.svg"
+        class="cursor-pointer"
+      />
+    </div>
     <transition-fade
       class="w-full overflow-hidden overflow-y-auto h-full"
       group
@@ -97,13 +109,13 @@ const handleFoodSelected = () => {
             <td>
               <div class="flex justify-between items-center gap-x-[10px]">
                 <img
-                  @click="handleAddAndSubtract('add', food)"
+                  @click="handleAddOrSubtract('add', food)"
                   src="@/assets/image/home/add.svg"
                   class="cursor-pointer"
                 />
                 <p>{{ food.count }}</p>
                 <img
-                  @click="handleAddAndSubtract('subtract', food)"
+                  @click="handleAddOrSubtract('subtract', food)"
                   src="@/assets/image/home/Low-off.svg"
                   class="cursor-pointer"
                 />
@@ -127,13 +139,13 @@ const handleFoodSelected = () => {
               <div>{{ food.name }}</div>
               <div class="flex items-center gap-x-[10px]">
                 <img
-                  @click="handleAddAndSubtract('add', food)"
+                  @click="handleAddOrSubtract('add', food)"
                   src="@/assets/image/home/add.svg"
                   class="cursor-pointer"
                 />
                 <p>{{ food.count }}</p>
                 <img
-                  @click="handleAddAndSubtract('subtract', food)"
+                  @click="handleAddOrSubtract('subtract', food)"
                   src="@/assets/image/home/Low-off.svg"
                   class="cursor-pointer"
                 />
@@ -151,5 +163,8 @@ const handleFoodSelected = () => {
 <style scoped>
 .parent-food {
   @apply w-full transition-all h-[220px] overflow-hidden flex flex-col items-center justify-start gap-y-[10px];
+}
+.parent-search-food {
+  @apply w-full bg-white pl-2 rounded-md flex items-center justify-between gap-x-[10px];
 }
 </style>

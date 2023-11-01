@@ -223,27 +223,31 @@ export const usePinia = defineStore("pinia", () => {
   };
   //////////////////////////
   const handleConsoleTimer = (console: home): void => {
-    let { hourRate, timer, consoleId, interval } = console;
+    let { hourRate, timer, consoleId } = console;
     //////////////////////////////////
-    interval = setInterval(() => {
-      const alarm: alarmInLocalStorage[] = localStorageService.getAlarm();
-      const alarmSelected = alarm.find((item) => item.consoleId === consoleId);
-      if (alarmSelected) {
-        const { hour, minute } = alarmSelected;
-        const alarmMinute = Number(hour) * 60 + Number(minute);
-        const timerMinute = Number(timer.hours) * 60 + Number(timer.minutes);
-        if (timerMinute >= alarmMinute && !console.alarmStatus) {
-          console.alarmStatus = true;
-          handleAlarmSound();
-        }
-      }
-      //////////////////////////////
+    console.interval = setInterval(() => {
       timer.seconds++;
-      if (timer.seconds == 60) {
+      if (timer.seconds === 60) {
+        // ///////////////////
         timer.seconds = 0;
         timer.minutes++;
+        /////////////////////
+        const alarm: alarmInLocalStorage[] = localStorageService.getAlarm();
+        const alarmSelected = alarm.find(
+          (item) => item.consoleId === consoleId
+        );
+        if (alarmSelected) {
+          const { hour, minute } = alarmSelected;
+          const alarmMinute = Number(hour) * 60 + Number(minute);
+          const timerMinute = Number(timer.hours) * 60 + Number(timer.minutes);
+          if (timerMinute >= alarmMinute && !console.alarmStatus) {
+            console.alarmStatus = true;
+            handleAlarmSound();
+          }
+        }
+        ///////////////////
       }
-      if (timer.minutes == 60) {
+      if (timer.minutes === 60) {
         timer.minutes = 0;
         timer.hours++;
       }
@@ -263,7 +267,6 @@ export const usePinia = defineStore("pinia", () => {
       if (status) {
         if (sound.paused) sound.play();
       } else {
-        console.log("stop");
         sound.pause();
       }
     }

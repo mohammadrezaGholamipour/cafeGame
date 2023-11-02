@@ -3,6 +3,7 @@ import { usePinia } from "@/store/pinia";
 import { reactive } from "vue";
 import anime from "animejs";
 /////////////////////////
+const props = defineProps<{ hourRate: number }>();
 const emit = defineEmits<{
   hourRate: [hourRate: { id: number; name: number }];
 }>();
@@ -40,10 +41,11 @@ const animateNumber = () => {
     });
   }
 };
+/////////////////////////
 </script>
 <template>
   <div class="parent-hour-rate">
-    <p>قیمت واحد</p>
+    <p>عوض کردن قیمت واحد</p>
     <div
       @click="state.dropListStatus = !state.dropListStatus"
       class="flex items-center justify-center relative"
@@ -53,13 +55,13 @@ const animateNumber = () => {
         class="flex cursor-pointer items-center gap-x-[5px]"
         v-if="!state.hourRate.id"
       >
-        <p>انتخاب کنید</p>
+        <p>{{ props.hourRate.toLocaleString() }}</p>
         <img
           src="@/assets/image/home/start-bill-money.svg"
           class="animate-pulse"
         />
       </div>
-      <p v-show="state.hourRate.id" id="money"></p>
+      <p v-show="state.hourRate.id" class="cursor-pointer" id="money"></p>
       <DropList
         @close="state.dropListStatus = false"
         @selected="handleHourRateSelected"

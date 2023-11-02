@@ -24,6 +24,7 @@ const state = reactive({
     billFoods: [] as billFood[] | [],
     foodSelected: [] as { foodId: number; count: number }[] | [],
     consoleId: 0,
+    hourRate: 0,
     alarm: {} as alarmInLocalStorage | {},
     billId: 0,
   },
@@ -233,7 +234,8 @@ const handleFactor = (
   }
 };
 ///////////////////////////////////////////////
-const handleHourRate = (billId: number) => {
+const handleChangeHourRate = (billId: number, hourRate: number) => {
+  state.consoleSelected.hourRate = hourRate;
   state.consoleSelected.billId = billId;
   state.dialog.name = "hourRate";
   state.dialog.status = true;
@@ -362,6 +364,7 @@ const getTimeStartOrEndBill = () => {
       <div v-if="homeData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? consoleLine : consoleBox"
+          @changeHourRate="handleChangeHourRate"
           :dropListStatus="item.dropListStatus"
           @optionStatus="handleOptionStatus"
           @changeStartTime="handleStartTime"
@@ -372,7 +375,6 @@ const getTimeStartOrEndBill = () => {
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
           :consoleId="item.consoleId"
-          @hourRate="handleHourRate"
           :hourRate="item.hourRate"
           :billFood="item.billFood"
           :costFood="item.costFood"
@@ -443,6 +445,7 @@ const getTimeStartOrEndBill = () => {
           (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
         "
         v-if="state.dialog.name === 'hourRate'"
+        :hourRate="state.consoleSelected.hourRate"
       />
       <!-- /////////////////////////// -->
       <StartTime

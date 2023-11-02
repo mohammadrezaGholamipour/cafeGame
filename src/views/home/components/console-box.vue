@@ -40,7 +40,7 @@ const emit = defineEmits<{
     }[]
   ];
   optionStatus: [status: boolean, consoleId: number];
-  hourRate: [billId: number];
+  changeHourRate: [billId: number, hourRate: number];
   changeStartTime: [billId: number];
   alarm: [consoleId: number];
   removeAlarm: [consoleId: number];
@@ -169,7 +169,10 @@ const props = defineProps<home>();
           <img src="@/assets/image/close.svg" />
         </div>
         <div>
-          <div @click="emit('hourRate', props.billId)" class="option-box">
+          <div
+            @click="emit('changeHourRate', props.billId, props.hourRate)"
+            class="option-box"
+          >
             <img src="@/assets/image/home/money-option.svg" />
             <p>قیمت واحد</p>
           </div>

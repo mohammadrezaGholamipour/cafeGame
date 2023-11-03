@@ -98,6 +98,7 @@ export const usePinia = defineStore("pinia", () => {
           ...bill,
           systemName: handleGetSystmeNameById(bill.systemId),
           foodCost: handleFoodCost(bill.billFoods),
+          billFoods: handleBillFoods(bill.billFoods),
         }))
         .sort(sortBills);
     } catch (error) {
@@ -190,8 +191,6 @@ export const usePinia = defineStore("pinia", () => {
       for (const foodBill of billFoods) {
         for (const food of state.food) {
           if (foodBill.foodId === food.id) {
-            foodBill.name = food.name;
-            foodBill.cost = food.cost;
             foodCost += foodBill.count * food.cost;
             break;
           }
@@ -199,6 +198,28 @@ export const usePinia = defineStore("pinia", () => {
       }
     }
     return foodCost;
+  };
+  //////////////////////////
+  const handleBillFoods = (billFoods: billFood[]) => {
+    let setFood = [] as billFood[];
+    if (Array.isArray(state.food) && billFoods.length) {
+      for (const foodBill of billFoods) {
+        for (const food of state.food) {
+          if (foodBill.foodId === food.id) {
+            setFood.push({
+              id: food.id,
+              count: foodBill.count,
+              foodId: foodBill.foodId,
+              billId: foodBill.billId,
+              cost: food.cost,
+              name: food.name,
+            });
+            break;
+          }
+        }
+      }
+    }
+    return setFood;
   };
   //////////////////////////
   const handleGetSystmeNameById = (systemId: number): string => {

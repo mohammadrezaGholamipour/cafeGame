@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { billFood, foodStore } from "@/types/index";
+import type { billFood, foodStore, food } from "@/types/index";
 import Table from "@/components/table/index.vue";
 import { onMounted, reactive, watch } from "vue";
 import { usePinia } from "@/store/pinia";
@@ -19,28 +19,30 @@ const state = reactive({
 });
 //////////////////
 onMounted(() => {
-  handleSetFoodData();
+  if (Array.isArray(pinia.state.food)) {
+    ///////////////////////////////
+    state.foodList = pinia.state.food.map((food: food) => ({
+      ...food,
+      count: 0,
+    }));
+    props.billFood.forEach(({ foodId, count }) => {
+      const foodList = state.foodList.find((food) => food.id === foodId);
+      if (foodList) foodList.count = count;
+      state.foodSelected.push({ foodId, count });
+    });
+  }
 });
 ////////////////////////////////
 const handleSetFoodData = () => {
   if (Array.isArray(pinia.state.food)) {
-    ///////////////////////////////
-    state.foodList = pinia.state.food.map((food) => ({ ...food, count: 0 }));
-    props.billFood.forEach(({ foodId, count }) => {
-      const foodList = state.foodList.find((food) => food.id === foodId);
-      if (foodList) foodList.count = count;
-      const foodSelected = state.foodSelected.find(
-        (food) => food.foodId === foodId
-      );
-      if (foodSelected) foodSelected.count = count;
-      else state.foodSelected.push({ foodId, count });
-    });
-    ///////////////////////////////
+    state.foodList = pinia.state.food.map((food: food) => ({
+      ...food,
+      count: 0,
+    }));
     state.foodSelected.forEach(({ foodId, count }) => {
       const foodList = state.foodList.find((food) => food.id === foodId);
       if (foodList) foodList.count = count;
     });
-    ///////////////////////////////
   }
 };
 /////////////////////////
@@ -62,7 +64,7 @@ watch(
 watch(
   () => state.foodSelected,
   () => {
-    const food = state.foodSelected.filter((item) => item.count);
+    const food = state.foodSelected.filter(({ count }) => count);
     emit("foodSelected", food);
   },
   { deep: true }

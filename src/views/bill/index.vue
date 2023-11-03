@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Table from "@/components/table/index.vue";
 import loading from "@/components/loading.vue";
+import Report from "./components/report.vue";
 import tools from "./components/tools.vue";
 import type { bill } from "@/types/index";
 import { usePinia } from "@/store/pinia";
@@ -17,21 +18,32 @@ const state = reactive({
     billSelected: {} as bill,
   },
 });
-///////////////////////////////////////
+/////////////////////////////////////
 const billData = computed(() => {
   if (Array.isArray(pinia.state.bill)) {
     return pinia.state.bill;
   }
 });
 //////////////////////////////////////////
-const handleDialog = (bill: bill, name: string) => {
+const handleDialogCostAndTimer = (bill: bill, name: string) => {
   state.dialog.billSelected = bill;
   state.dialog.name = name;
   state.dialog.status = true;
 };
 //////////////////////////////////////////
+const handleShowReport = () => {
+  state.dialog.name = "report";
+  state.dialog.status = true;
+};
+//////////////////////////////////////////
 const handleDialogStatus = (status: boolean) => {
-  state.dialog.status = false;
+  if (status) {
+  } else {
+    setTimeout(() => {
+      state.dialog.name = "";
+    }, 500);
+  }
+  state.dialog.status = status;
 };
 //////////////////////////////////////////
 const handleDate = (dateString: Date) => {
@@ -60,7 +72,7 @@ const handleDate = (dateString: Date) => {
 <template>
   <div class="parent-bill-page">
     <!-- //////////////////////// -->
-    <tools :loading="false" />
+    <tools @report="handleShowReport" :loading="false" />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
@@ -75,7 +87,7 @@ const handleDate = (dateString: Date) => {
             <td>
               <button
                 class="button mx-auto bg-[#3ea6da] text-white"
-                @click="handleDialog(bill, 'time')"
+                @click="handleDialogCostAndTimer(bill, 'time')"
               >
                 {{ bill.endTime ? handleDate(bill.endTime) : "درحال اجرا" }}
               </button>
@@ -86,7 +98,7 @@ const handleDate = (dateString: Date) => {
                 <button
                   v-if="bill.finalCost && bill.billFoods.length"
                   class="button bg-[#3ea6da] text-white"
-                  @click="handleDialog(bill, 'cost')"
+                  @click="handleDialogCostAndTimer(bill, 'cost')"
                 >
                   نمایش
                 </button>
@@ -115,7 +127,7 @@ const handleDate = (dateString: Date) => {
               <div>
                 <button
                   class="button mx-auto bg-[#3ea6da] text-white"
-                  @click="handleDialog(bill, 'time')"
+                  @click="handleDialogCostAndTimer(bill, 'time')"
                 >
                   {{ bill.endTime ? handleDate(bill.endTime) : "درحال اجرا" }}
                 </button>
@@ -123,9 +135,9 @@ const handleDate = (dateString: Date) => {
               <div>{{ bill.systemId }}</div>
               <div>
                 <button
+                  @click="handleDialogCostAndTimer(bill, 'cost')"
                   v-if="bill.finalCost && bill.billFoods.length"
                   class="button bg-[#3ea6da] text-white"
-                  @click="handleDialog(bill, 'cost')"
                 >
                   نمایش
                 </button>
@@ -170,6 +182,7 @@ const handleDate = (dateString: Date) => {
         v-if="state.dialog.name === 'time'"
         :bill="state.dialog.billSelected"
       />
+      <Report v-if="state.dialog.name === 'report'" />
     </Dialog>
     <!-- /////////////////////// -->
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const emit = defineEmits<{ new: [] }>();
+const emit = defineEmits<{ new: []; report: [] }>();
 const props = defineProps<{ loading: boolean }>();
 </script>
 <template>
@@ -7,6 +7,7 @@ const props = defineProps<{ loading: boolean }>();
     <!-- /////////////////////// -->
     <button
       :disabled="props.loading"
+      @click="emit('report')"
       :class="[
         { 'bg-gray-400 !cursor-not-allowed': props.loading },
         'button bg-[#3ea6da] text-white',

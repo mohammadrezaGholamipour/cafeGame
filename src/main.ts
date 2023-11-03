@@ -1,3 +1,4 @@
+import Vue3PersianDatetimePicker from "vue3-persian-datetime-picker";
 import VueTransitions from "@morev/vue-transitions";
 import DropList from "@/components/drop-list.vue";
 import Dialog from "@/components/dialog.vue";
@@ -10,6 +11,7 @@ import router from "./router";
 import App from "./App.vue";
 ///////////////////////////
 const app = createApp(App);
+app.component("DatePicker", Vue3PersianDatetimePicker);
 app.component("DropList", DropList);
 app.component("Dialog", Dialog);
 app.use(VueTransitions);

@@ -11,5 +11,6 @@ observer.observe(document.getElementById("app") as HTMLDivElement);
 </script>
 <template>
   <Notification />
+  <!-- <date-picker auto-submit inline  range simple /> -->
   <RouterView />
 </template>

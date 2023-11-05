@@ -22,7 +22,10 @@ const state = reactive({
 });
 ///////////////////////////
 const consoleData = computed(() => {
-  if (Array.isArray(pinia.state.console) && Array.isArray(pinia.state.bill)) {
+  if (
+    Array.isArray(pinia.state.console) &&
+    Array.isArray(pinia.state.allBill)
+  ) {
     return pinia.state.console.map(({ id, name }: consoleTypeApi) => {
       /////////////////////////////
       const item = {
@@ -32,7 +35,7 @@ const consoleData = computed(() => {
         playedTime: { hours: 0, minutes: 0, seconds: 0 },
       };
       ////////////////////////////
-      const billData = pinia.state.bill as bill[];
+      const billData = pinia.state.allBill as bill[];
       const closedBills = billData.filter((bill: bill) => bill.endTime);
       /////////////////////////
       for (const bill of closedBills) {
@@ -190,7 +193,7 @@ const handleStatusDialog = (status: boolean) => {
       :footer="true"
       :width="300"
     >
-      <p class="p-1">
+      <p class="p-1 text-center">
         {{
           `دستگاه شماره ${state.removeConsole.consoleSelected.name} حذف شود؟`
         }}

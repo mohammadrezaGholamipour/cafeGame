@@ -1,68 +1,131 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import type { bill } from "@/types/index";
 import JalaliDate from "jalali-date";
 ////////////////////////
-const dateStatus = ref<boolean>(false);
-const inputDate = ref<string>();
-const jalaliDate = ref<string>();
-////////////////////////
-onMounted(() => {
-  jalaliDate.value = new JalaliDate(new Date()).format("dddd DD MMMM YYYY");
+const emit = defineEmits<{ report: [startDate: string, endDate: string] }>();
+const props = defineProps<{ bills: bill[] }>();
+const startDateStatus = ref<boolean>(false);
+const endDateDateStatus = ref<boolean>(false);
+const inputDate = ref<{ startDate: string; endDate: string }>({
+  startDate: "",
+  endDate: "",
 });
 ////////////////////////
 watch(
   () => inputDate.value,
   (value) => {
-    console.log(new Date(value ? value : "").toISOString());
-    jalaliDate.value = new JalaliDate(new Date(value ? value : "")).format(
-      "dddd DD MMMM YYYY"
-    );
+    if (value.startDate && value.endDate) {
+      emit(
+        "report",
+        `${value.startDate}T00:00:00.000Z`,
+        `${value.endDate}T23:59:59.999Z`
+      );
+    }
   },
   { deep: true }
 );
+////////////////////////
+const handleShowDate = computed(() => {
+  const date = { startDate: "انتخاب کنید", endDate: "انتخاب کنید" };
+  if (inputDate.value.startDate) {
+    date.startDate = new JalaliDate(new Date(inputDate.value.startDate)).format(
+      "dddd DD MMMM YYYY"
+    );
+  }
+  if (inputDate.value.endDate) {
+    date.endDate = new JalaliDate(new Date(inputDate.value.endDate)).format(
+      "dddd DD MMMM YYYY"
+    );
+  }
+  return date;
+});
+////////////////////////
+const handleTotallCost = computed(() => {
+  const foodCost = props.bills.reduce(
+    (total, item) => total + (item.foodCost || 0),
+    0
+  );
+  const playCost = props.bills.reduce(
+    (total, item) => total + (item.finalCost - item.foodCost || 0),
+    0
+  );
+  const finalCost = props.bills.reduce(
+    (total, item) => total + (item.finalCost || 0),
+    0
+  );
+  return { foodCost, playCost, finalCost, factorLength: props.bills.length };
+});
+////////////////////////
 </script>
 <template>
   <div class="parent-report">
     <!-- ////////////////////////////// -->
     <div class="!p-0">
-      <p>تاریخ :</p>
-      <date-picker
-        @close="dateStatus = false"
-        format="YYYY-MM-DD"
-        v-model="inputDate"
-        :show="dateStatus"
-        simple
-      />
-      <button
-        :disabled="false"
-        :class="[
-          'button bg-[#3ea6da] p-2 text-white',
-          { 'bg-gray-400 !cursor-not-allowed': false },
-        ]"
-        @click="dateStatus = !dateStatus"
-      >
-        <transition-fade class="flex" group>
-          <span v-if="!jalaliDate" class="btn-loader"></span>
-          <p v-else>{{ jalaliDate }}</p>
-        </transition-fade>
-      </button>
+      <div class="flex items-center gap-x-[10px]">
+        <p>تاریخ شروع :</p>
+        <date-picker
+          @close="startDateStatus = false"
+          v-model="inputDate.startDate"
+          :show="startDateStatus"
+          format="YYYY-MM-DD"
+          simple
+        />
+        <button
+          :disabled="false"
+          :class="[
+            'button bg-[#7CC078] p-2 text-white',
+            { 'bg-gray-400 !cursor-not-allowed': false },
+          ]"
+          @click="startDateStatus = !startDateStatus"
+        >
+          <p>{{ handleShowDate.startDate }}</p>
+        </button>
+      </div>
+      <div class="flex items-center gap-x-[10px]">
+        <p>تاریخ پایان :</p>
+        <date-picker
+          @close="endDateDateStatus = false"
+          v-model="inputDate.endDate"
+          :show="endDateDateStatus"
+          format="YYYY-MM-DD"
+          simple
+        />
+        <button
+          :disabled="false"
+          :class="[
+            'button bg-[#EF6262] p-2 text-white',
+            { 'bg-gray-400 !cursor-not-allowed': false },
+          ]"
+          @click="endDateDateStatus = !endDateDateStatus"
+        >
+          <p>{{ handleShowDate.endDate }}</p>
+        </button>
+      </div>
     </div>
     <!-- ////////////////////////////// -->
     <div>
+      <p>تعداد فاکتور :</p>
+      <p>{{ handleTotallCost.factorLength }} عدد</p>
+    </div>
+    <!-- ////////////////////////////// -->
+    <div class="w-full border !p-0 border-solid border-slate-500"></div>
+    <!-- ////////////////////////////// -->
+    <div>
       <p>هزینه بازی شده :</p>
-      <p>تومان</p>
+      <p>{{ handleTotallCost.playCost.toLocaleString() }} تومان</p>
     </div>
     <!-- ////////////////////////////// -->
     <div class="w-full border !p-0 border-solid border-slate-500"></div>
     <!-- ////////////////////////////// -->
     <div>
       <p>خوراکی های فروخته شده :</p>
-      <p>تومان</p>
+      <p>{{ handleTotallCost.foodCost.toLocaleString() }} تومان</p>
     </div>
     <!-- ////////////////////////////// -->
     <div>
       <p>جمع کل :</p>
-      <p>تومان</p>
+      <p>{{ handleTotallCost.finalCost.toLocaleString() }} تومان</p>
     </div>
     <!-- ////////////////////////////// -->
   </div>
@@ -100,7 +163,10 @@ watch(
 .parent-report > div:nth-child(4) {
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
-.parent-report > div:nth-child(5) {
+.parent-report > div:nth-child(6) {
+  background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
+}
+.parent-report > div:nth-child(7) {
   @apply rounded-b-md;
   background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
 }

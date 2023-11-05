@@ -212,7 +212,7 @@ watch(
       :width="300"
     >
       <!-- ////////////////////////// -->
-      <div v-if="state.dialog.name === 'remove'" class="p-1">
+      <div v-if="state.dialog.name === 'remove'" class="p-1 text-center">
         قیمت مورد نظر حذف شود؟
       </div>
       <!-- ////////////////////////// -->

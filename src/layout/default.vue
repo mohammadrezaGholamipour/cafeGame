@@ -9,12 +9,13 @@ onMounted(async () => {
   await pinia.requestGetConsole(),
     await pinia.requestGetHourRate(),
     await pinia.requestGetFood(),
-    await pinia.requestGetBill();
+    await pinia.requestGetOpenBill();
+  await pinia.requestGetAllBill();
 });
 ///////////////////////////////
 window.onfocus = () => {
   pinia.state.home = false;
-  pinia.requestGetBill();
+  pinia.requestGetOpenBill();
 };
 </script>
 <template>

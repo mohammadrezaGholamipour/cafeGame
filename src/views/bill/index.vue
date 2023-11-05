@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { handleDate } from "@/utils/handleDateAndTime";
 import Table from "@/components/table/index.vue";
 import loading from "@/components/loading.vue";
 import Report from "./components/report.vue";
@@ -20,9 +21,9 @@ const state = reactive({
 });
 /////////////////////////////////////
 const billData = computed(() => {
-  if (Array.isArray(pinia.state.bill)) {
-    return pinia.state.bill;
-  }
+  if (Array.isArray(pinia.state.allBill)) {
+    return pinia.state.allBill;
+  } else [];
 });
 //////////////////////////////////////////
 const handleDialogCostAndTimer = (bill: bill, name: string) => {
@@ -39,33 +40,12 @@ const handleShowReport = () => {
 const handleDialogStatus = (status: boolean) => {
   if (status) {
   } else {
+    if (state.dialog.name === "report") pinia.requestGetAllBill();
     setTimeout(() => {
       state.dialog.name = "";
     }, 500);
   }
   state.dialog.status = status;
-};
-//////////////////////////////////////////
-const handleDate = (dateString: Date) => {
-  const date = new Date(dateString);
-  const today = new Date();
-  const timeDiff = today - date;
-  const oneDay = 24 * 60 * 60 * 1000;
-  ///////////////////////////////////
-  if (timeDiff < oneDay) {
-    return "امروز";
-  } else if (timeDiff < oneDay * 2) {
-    return "دیروز";
-  } else if (timeDiff < oneDay * 3) {
-    return "دو روز پیش";
-  } else {
-    return date.toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      calendar: "persian",
-    });
-  }
 };
 //////////////////////////////////////////
 </script>
@@ -182,7 +162,13 @@ const handleDate = (dateString: Date) => {
         v-if="state.dialog.name === 'time'"
         :bill="state.dialog.billSelected"
       />
-      <Report v-if="state.dialog.name === 'report'" />
+      <Report
+        @report="
+          (startDate, endDate) => pinia.requestGetAllBill(startDate, endDate)
+        "
+        v-if="state.dialog.name === 'report' && billData"
+        :bills="billData"
+      />
     </Dialog>
     <!-- /////////////////////// -->
   </div>

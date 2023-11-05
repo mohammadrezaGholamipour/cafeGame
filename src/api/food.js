@@ -1,7 +1,7 @@
 import HttpClient from '@/utils/axios-base'
 export default {
-  get: (query) => HttpClient.get('food', { params: query }),
-  new: (food) => HttpClient.post('food', food),
-  update: (foodId, food) => HttpClient.put(`food/${foodId}`, food),
-  delete: (foodId) => HttpClient.delete(`food/${foodId}`),
+  get: (query) => HttpClient.get('api/food', { params: query }),
+  new: (food) => HttpClient.post('api/food', food),
+  update: (foodId, food) => HttpClient.put(`api/food/${foodId}`, food),
+  delete: (foodId) => HttpClient.delete(`api/food/${foodId}`),
 };

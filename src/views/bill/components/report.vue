@@ -138,23 +138,23 @@ const handleTotallCost = computed(() => {
   @apply w-full flex justify-between items-center p-2.5;
 }
 .vpd-input-group {
-  display: none;
+  display: none !important;
 }
 .vpd-body {
-  @apply p-2.5;
+  @apply p-2.5 !important;
 }
 .vpd-container {
-  @apply rounded-md overflow-hidden;
+  @apply rounded-md overflow-hidden !important;
 }
 .vpd-actions {
-  @apply text-center mt-2;
+  @apply text-center mt-2 !important;
 }
 .vpd-simple-content .vpd-column {
-  @apply gap-y-[10px];
+  @apply gap-y-[10px] !important;
 }
 .vpd-simple-content .vpd-column .vpd-column-content:after,
 .vpd-simple-content .vpd-column .vpd-column-content:before {
-  @apply !hidden;
+  @apply !hidden !important;
 }
 .parent-report > div:nth-child(2) {
   @apply mt-3  rounded-t-md;

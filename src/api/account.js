@@ -1,5 +1,5 @@
 import HttpClient from '@/utils/axios-base'
 export default {
-  login: (data) => HttpClient.post('auth/login', data),
-  register: (data) => HttpClient.post('auth/register', data),
+  login: (data) => HttpClient.post('api/auth/login', data),
+  register: (data) => HttpClient.post('api/auth/register', data),
 };

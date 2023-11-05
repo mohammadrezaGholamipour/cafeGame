@@ -19,7 +19,7 @@ const state = reactive({
 <template>
   <div class="parent-tools">
     <!-- /////////////////////// -->
-    <div
+    <!-- <div
       @click="state.sortConsoleStatus = !state.sortConsoleStatus"
       class="tools-item"
       id="sort-console"
@@ -33,7 +33,7 @@ const state = reactive({
         element="sort-console"
         :space="'32px'"
       />
-    </div>
+    </div> -->
     <!-- /////////////////////// -->
     <div
       @click="state.displayConsoleStatus = !state.displayConsoleStatus"

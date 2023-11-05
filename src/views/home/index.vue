@@ -13,8 +13,10 @@ import Alarm from "./components/alarm.vue";
 import { usePinia } from "@/store/pinia";
 import { computed, reactive } from "vue";
 import Food from "./components/food.vue";
+import { useRouter } from "vue-router";
 import billApi from "@/api/bill.js";
 ///////////////////////////////
+const router = useRouter();
 const pinia = usePinia();
 const state = reactive({
   displayMode: 2,
@@ -53,7 +55,7 @@ const requestStartBill = (): void => {
       state.consoleSelected.hourRateSelected.id,
       getTimeStartOrEndBill()
     )
-    .then(() => pinia.requestGetBill())
+    .then(() => pinia.requestGetOpenBill(), pinia.requestGetAllBill())
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
@@ -73,7 +75,11 @@ const requestCloseBill = (info: {
   handleConsoleLoading(info.consoleId, true);
   billApi
     .close(info.billId, getTimeStartOrEndBill())
-    .then(() => pinia.requestGetBill())
+    .then(() => {
+      pinia.requestGetOpenBill(),
+        pinia.requestGetAllBill(),
+        handleRemoveAlarm(info.consoleId);
+    })
     .catch(() => {
       handleConsoleLoading(info.consoleId, false);
       pinia.handleNotification({
@@ -90,7 +96,11 @@ const requestRemoveBill = () => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
     .delete(state.consoleSelected.billId)
-    .then(() => pinia.requestGetBill())
+    .then(() => {
+      pinia.requestGetOpenBill();
+      pinia.requestGetAllBill();
+      handleRemoveAlarm(state.consoleSelected.consoleId);
+    })
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
@@ -111,7 +121,7 @@ const requestChangeHourRate = () => {
       state.consoleSelected.hourRateSelected.id
     )
     .then(() => {
-      pinia.requestGetBill();
+      pinia.requestGetOpenBill();
       state.dialog.loading = false;
       handleCloseDialog();
     })
@@ -132,7 +142,8 @@ const requestChangeStartTime = (time: number) => {
   billApi
     .changeStartTime(state.consoleSelected.billId, time)
     .then(() => {
-      pinia.requestGetBill();
+      pinia.requestGetOpenBill();
+      pinia.requestGetAllBill();
       state.dialog.loading = false;
       handleCloseDialog();
     })
@@ -154,7 +165,7 @@ const requestSetFood = () => {
   billApi
     .setFood(state.consoleSelected.billId, state.consoleSelected.foodSelected)
     .then(() => {
-      pinia.requestGetBill();
+      pinia.requestGetOpenBill();
       handleCloseDialog();
     })
     .catch(() => {
@@ -211,9 +222,20 @@ const handleRemoveBill = (
 };
 //////////////////////////////////////
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
-  state.consoleSelected.consoleId = info.consoleId;
-  state.dialog.name = "startBill";
-  state.dialog.status = true;
+  if (Array.isArray(pinia.state.hourRate) && pinia.state.hourRate.length) {
+    state.consoleSelected.consoleId = info.consoleId;
+    state.dialog.name = "startBill";
+    state.dialog.status = true;
+  } else {
+    router.push("/money");
+    pinia.handleNotification({
+      ...pinia.state.notification,
+      name: "info",
+      status: true,
+      textHeader: "توجه",
+      textMain: "حداقل یک قیمت واحد ایجاد کنید",
+    });
+  }
 };
 ///////////////////////////////////////////////
 const handleFactor = (
@@ -423,7 +445,7 @@ const getTimeStartOrEndBill = () => {
         :start-bill="state.consoleSelected"
       />
       <!-- /////////////////////////// -->
-      <p v-if="state.dialog.name === 'removeBill'" class="p-1">
+      <p v-if="state.dialog.name === 'removeBill'" class="p-1 text-center">
         فاکتور مورد نظر حذف شود؟
       </p>
       <!-- /////////////////////////// -->

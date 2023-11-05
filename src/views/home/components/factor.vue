@@ -15,8 +15,8 @@ const state = reactive({
 });
 ////////////////////////////////////
 const billSelected = computed(() => {
-  if (Array.isArray(pinia.state.bill)) {
-    const billSelected: bill | undefined = pinia.state.bill.find(
+  if (Array.isArray(pinia.state.allBill)) {
+    const billSelected: bill | undefined = pinia.state.allBill.find(
       (item: bill) => item.id === props.billId
     );
     if (billSelected) return billSelected;

@@ -30,12 +30,13 @@ export const usePinia = defineStore("pinia", () => {
     console: false as boolean | consoleTypeApi[],
     hourRate: false as boolean | hourRate[],
     food: false as boolean | food[],
-    bill: false as boolean | bill[],
+    allBill: false as boolean | bill[],
+    openBill: false as boolean | bill[],
     home: false as boolean | home[],
   });
   ////////////////////////////
   watch(
-    () => state.bill,
+    () => state.openBill,
     () => handleHomeData()
   );
   ////////////////////////////
@@ -90,10 +91,17 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////////////////////
-  const requestGetBill = async (): Promise<void> => {
+  const requestGetAllBill = async (
+    startDate?: string,
+    endDate?: string
+  ): Promise<void> => {
+    const query = {
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
+    };
     try {
-      const response: bill[] = await billApi.get();
-      state.bill = response
+      const response: bill[] = await billApi.get(query);
+      state.allBill = response
         .map((bill) => ({
           ...bill,
           systemName: handleGetSystmeNameById(bill.systemId),
@@ -111,10 +119,29 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////
+  const requestGetOpenBill = async (): Promise<void> => {
+    try {
+      const response: bill[] = await billApi.open();
+      state.openBill = response.map((bill) => ({
+        ...bill,
+        systemName: handleGetSystmeNameById(bill.systemId),
+        foodCost: handleFoodCost(bill.billFoods),
+      }));
+    } catch (error) {
+      handleNotification({
+        ...state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "لیست فاکتور های باز دریافت نشد",
+      });
+    }
+  };
+  //////////////////////////////////
   const handleHomeData = async () => {
     if (
       Array.isArray(state.console) &&
-      Array.isArray(state.bill) &&
+      Array.isArray(state.openBill) &&
       Array.isArray(state.hourRate)
     ) {
       state.home = state.console.map(({ id: consoleId, name }) => ({
@@ -134,14 +161,6 @@ export const usePinia = defineStore("pinia", () => {
         name,
       }));
       ////////////////////////////////////////////////////////////////
-      const uniqueSystemIds = new Set();
-      const unclosedBills = state.bill.filter(
-        (item) =>
-          !item.endTime &&
-          !uniqueSystemIds.has(item.systemId) &&
-          uniqueSystemIds.add(item.systemId)
-      );
-      ////////////////////////////////////////////////////////////////
       for (let {
         hourRateId,
         startTime,
@@ -149,7 +168,7 @@ export const usePinia = defineStore("pinia", () => {
         id,
         billFoods,
         foodCost,
-      } of unclosedBills) {
+      } of state.openBill) {
         for (let console of state.home) {
           if (systemId === console.consoleId && !console.interval) {
             const hourRateSelected = state.hourRate.find(
@@ -275,11 +294,12 @@ export const usePinia = defineStore("pinia", () => {
   //////////////////////////
   return {
     handleNotification,
+    requestGetOpenBill,
     requestGetHourRate,
     requestGetConsole,
+    requestGetAllBill,
     handleAlarmSound,
     requestGetFood,
-    requestGetBill,
     handleHomeData,
     state,
   };

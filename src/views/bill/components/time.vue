@@ -1,39 +1,9 @@
 <script setup lang="ts">
+import { handleDate, handleTime } from "@/utils/handleDateAndTime";
 import type { bill } from "@/types/index";
 ////////////////////////////////////
 const props = defineProps<{ bill: bill }>();
 ///////////////////////////////////////////
-const handleDate = (dateString: Date) => {
-  const date = new Date(dateString);
-  const today = new Date();
-  const timeDiff = today - date;
-  const oneDay = 24 * 60 * 60 * 1000;
-  ///////////////////////////////////
-  if (timeDiff < oneDay) {
-    return "امروز";
-  } else if (timeDiff < oneDay * 2) {
-    return "دیروز";
-  } else if (timeDiff < oneDay * 3) {
-    return "دو روز پیش";
-  } else {
-    return date.toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      calendar: "persian",
-    });
-  }
-};
-/////////////////////////////////////
-const handleTime = (dateString: Date) => {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString("fa-IR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    calendar: "persian",
-  });
-};
 </script>
 <template>
   <div class="parent-bill-time">

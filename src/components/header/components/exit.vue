@@ -1,6 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const emit = defineEmits<{ exit: [] }>();
+</script>
 <template>
-  <div class="parent-exit">
+  <div @click="emit('exit')" class="parent-exit">
     <p>خارج شدن</p>
     <img src="@/assets/image/header/exit.svg" />
   </div>

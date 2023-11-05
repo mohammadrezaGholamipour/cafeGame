@@ -19,19 +19,6 @@ const props = defineProps<{ loading: boolean }>();
       </transition-fade>
     </button>
     <!-- /////////////////////// -->
-    <button
-      :disabled="props.loading"
-      :class="[
-        'button bg-[#c0c0c0] text-white',
-        { 'bg-gray-400 !cursor-not-allowed': props.loading },
-      ]"
-    >
-      <transition-fade class="flex" group>
-        <span v-if="props.loading" class="btn-loader"></span>
-        <p v-else>فیلتر</p>
-      </transition-fade>
-    </button>
-    <!-- /////////////////////// -->
   </div>
 </template>
 <style scoped>

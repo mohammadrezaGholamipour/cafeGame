@@ -56,8 +56,10 @@ const handleLogin = () => {
         <p>ایمیل:</p>
         <input
           placeholder="ایمیل خود را وارد کنید"
+          inputmode="email"
           v-model="email"
           class="input"
+          type="email"
         />
       </div>
       <div class="input-and-title">

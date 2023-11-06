@@ -107,6 +107,7 @@ const handleGetConsoleTimer = () => {
       <div class="parent-input">
         <input
           v-model="state.minute"
+          inputmode="numeric"
           placeholder="دقیقه"
           class="input"
           type="text"
@@ -114,6 +115,7 @@ const handleGetConsoleTimer = () => {
         :
         <input
           v-model="state.hour"
+          inputmode="numeric"
           placeholder="ساعت"
           class="input"
           type="text"

@@ -19,8 +19,10 @@ const state = reactive({
       .string()
       .min(4, "حداقل چهار کاراکتر باید باشد")
       .required("نام و نام خانوادگی را وارد کنید")
-      .test("is-english", "لطفا نام کاربری را به لاتین وارد کنید", (value) =>
-        /^[a-zA-Z\s]+$/.test(value)
+      .test(
+        "is-english",
+        "لطفا نام و نام خانوادگی را به لاتین وارد کنید",
+        (value) => /^[a-zA-Z\s]+$/.test(value)
       ),
     email: yup
       .string()
@@ -82,6 +84,7 @@ const handleRegister = () => {
         <input
           placeholder="نام و نام خانوادگی خود را وارد کنید"
           v-model="userName"
+          inputmode="text"
           class="input"
         />
       </div>
@@ -89,8 +92,10 @@ const handleRegister = () => {
         <p>ایمیل:</p>
         <input
           placeholder="ایمیل خود را وارد کنید"
+          inputmode="email"
           v-model="email"
           class="input"
+          type="email"
         />
       </div>
       <div class="input-and-title">
@@ -116,7 +121,9 @@ const handleRegister = () => {
         <input
           placeholder="تلفن همراه خود را وارد کنید"
           v-model="mobile"
+          inputmode="tel"
           class="input"
+          type="tel"
         />
       </div>
     </div>

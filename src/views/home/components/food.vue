@@ -90,7 +90,9 @@ const handleAddOrSubtract = (status: string, food: foodStore) => {
         class="input !min-w-[200px] w-full bg-white"
         placeholder="دنبال چی هستی؟"
         v-model="state.search"
+        inputmode="search"
         type="text"
+        autofocus
       />
       <img
         @click="pinia.requestGetFood(), (state.search = '')"

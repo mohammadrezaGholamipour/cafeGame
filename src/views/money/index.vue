@@ -29,7 +29,10 @@ const hourRateData = computed(() => {
 const requestNewHourRate = (): void => {
   state.loading = true;
   hourRateApi
-    .new({ id: 0, rate: state.dialog.newHourRate.replace(",", "") })
+    .new({
+      id: 0,
+      rate: state.dialog.newHourRate.replace(/,/g, ""),
+    })
     .then(() => {
       pinia.requestGetHourRate(),
         pinia.handleNotification({
@@ -218,10 +221,12 @@ watch(
       <!-- ////////////////////////// -->
       <div v-if="state.dialog.name === 'new'" class="p-1 w-full">
         <input
-          placeholder="قیمت مورد نظر را وارد کنید"
+          placeholder="قیمت را به تومان وارد کنید"
           class="input min-w-full bg-white"
           v-model="state.dialog.newHourRate"
+          inputmode="numeric"
           type="text"
+          autofocus
         />
       </div>
       <!-- ////////////////////////// -->

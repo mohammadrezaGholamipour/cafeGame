@@ -17,6 +17,7 @@ window.onfocus = () => {
   pinia.state.home = false;
   pinia.requestGetOpenBill();
 };
+///////////////////////////////
 </script>
 <template>
   <div class="parent-layout">

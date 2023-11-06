@@ -62,7 +62,7 @@ const handleTotallCost = computed(() => {
   <div class="parent-report">
     <!-- ////////////////////////////// -->
     <div class="!p-0">
-      <div class="flex items-center gap-x-[10px]">
+      <div class="flex items-center gap-x-[5px]">
         <p>تاریخ شروع :</p>
         <date-picker
           @close="startDateStatus = false"
@@ -82,7 +82,7 @@ const handleTotallCost = computed(() => {
           <p>{{ handleShowDate.startDate }}</p>
         </button>
       </div>
-      <div class="flex items-center gap-x-[10px]">
+      <div class="flex items-center gap-x-[5px]">
         <p>تاریخ پایان :</p>
         <date-picker
           @close="endDateDateStatus = false"
@@ -135,7 +135,7 @@ const handleTotallCost = computed(() => {
   @apply w-full p-2 flex flex-col justify-center items-center;
 }
 .parent-report > div {
-  @apply w-full flex justify-between items-center p-2.5;
+  @apply w-full flex justify-between items-center p-2.5 flex-wrap whitespace-nowrap gap-[10px];
 }
 .vpd-input-group {
   display: none !important;

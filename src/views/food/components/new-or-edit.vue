@@ -104,12 +104,15 @@ watch(
       <input
         class="input min-w-[200px] bg-white"
         placeholder="نام محصول"
+        inputmode="text"
         v-model="name"
         type="text"
+        autofocus
       />
       <input
         class="input min-w-[200px] bg-white"
         placeholder="قیمت محصول"
+        inputmode="numeric"
         v-model="cost"
         type="text"
       />

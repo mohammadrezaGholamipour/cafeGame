@@ -112,3 +112,15 @@ export interface StartBillProps {
   hourRateSelected: { id: number; name: number };
   consoleId: number;
 }
+export interface highlight {
+  title: string;
+  description: string;
+}
+export interface highlightStep {
+  element: string;
+  popover: {
+    title: string;
+    description: string;
+    showButtons?: ("open" | "close" | "next")[];
+  };
+}

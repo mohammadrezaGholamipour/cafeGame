@@ -33,6 +33,7 @@ const state = reactive({
       @click="state.displayConsoleStatus = !state.displayConsoleStatus"
       id="display-console"
       class="tools-item"
+      
     >
       <p>مدل نمایش دستگاه</p>
       <img src="@/assets/image/home/display.svg" />

@@ -14,7 +14,7 @@ const props = defineProps<consolePage>();
         <p>{{ props.name }}</p>
       </div>
       <div class="parent-money-and-timer">
-        <div class="flex items-center gap-x-[5px]">
+        <div class="console-money">
           <p class="font-[dana] font-[700]">
             {{ props.playedCost.toLocaleString() }}
           </p>
@@ -32,6 +32,7 @@ const props = defineProps<consolePage>();
     </div>
     <div class="console-left">
       <button
+        id="remove-console"
         :disabled="props.loading"
         :class="[
           'button bg-[#EF6262] text-white',
@@ -63,11 +64,9 @@ const props = defineProps<consolePage>();
   @apply text-white font-[kalameh];
 }
 .console-money {
-  @apply flex items-center gap-x-[3px];
+  @apply flex items-center gap-x-[5px];
 }
-.console-money p {
-  @apply font-[dana] font-bold text-[15px];
-}
+
 .console-timer {
   @apply flex items-center gap-x-[5px];
 }

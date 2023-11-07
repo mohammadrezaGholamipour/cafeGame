@@ -26,7 +26,7 @@ const props = defineProps<consolePage>();
         <img src="@/assets/image/home/timer.svg" />
       </div>
       <!-- //////////////////////// -->
-      <div group class="console-money">
+      <div class="console-money">
         <div class="w-full flex items-center justify-center gap-x-[3px]">
           <p>
             {{ props.playedCost.toLocaleString() }}
@@ -38,6 +38,7 @@ const props = defineProps<consolePage>();
     <!-- //////////////////////// -->
     <div class="console-footer">
       <button
+        id="remove-console"
         :disabled="props.loading"
         :class="[
           'button bg-[#EF6262] text-white',

@@ -22,9 +22,9 @@ window.onfocus = () => {
 <template>
   <div class="parent-layout">
     <!-- ///////////////// -->
-    <Header />
+    <Header></Header>
     <!-- ///////////////// -->
-    <main>
+    <main id="main">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -32,7 +32,7 @@ window.onfocus = () => {
       </router-view>
     </main>
     <!-- ///////////////// -->
-    <Menu />
+    <Menu id="menu" />
     <!-- ///////////////// -->
   </div>
 </template>

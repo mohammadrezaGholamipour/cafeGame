@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { handleConsolePageStep, consolePage } from "@/utils/highlight.js";
 import type { consoleTypeApi, bill } from "@/types/index";
 import ConsoleLine from "./components/console-line.vue";
 import ConsoleBox from "./components/console-box.vue";
@@ -6,7 +7,7 @@ import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import consoleApi from "@/api/console.js";
 import { usePinia } from "@/store/pinia";
-import { computed, reactive } from "vue";
+import { computed, onMounted, reactive } from "vue";
 /////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
@@ -19,6 +20,12 @@ const state = reactive({
     },
     dialogStatus: false,
   },
+});
+///////////////////////////
+onMounted(() => {
+  setTimeout(() => {
+    consolePage.setSteps(handleConsolePageStep())
+  }, 5000);
 });
 ///////////////////////////
 const consoleData = computed(() => {

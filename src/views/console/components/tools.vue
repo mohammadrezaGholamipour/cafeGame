@@ -15,6 +15,7 @@ const state = reactive({
   <div class="parent-tools">
     <!-- /////////////////////// -->
     <button
+     id="tools"
       :disabled="props.loading"
       :class="[
         'button bg-[#75ca71] text-white',
@@ -32,6 +33,7 @@ const state = reactive({
       @click="state.displayConsoleStatus = !state.displayConsoleStatus"
       id="display-console"
       class="tools-item"
+      
     >
       <p>مدل نمایش دستگاه</p>
       <img src="@/assets/image/home/display.svg" />

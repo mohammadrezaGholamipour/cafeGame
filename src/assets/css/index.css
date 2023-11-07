@@ -1,3 +1,4 @@
+@import "driver.js/dist/driver.css";
 @import "./font.css";
 /* ////////////// */
 @tailwind components;
@@ -38,7 +39,7 @@
   .input {
     @apply min-w-[300px] w-full flex justify-center items-center text-[#656565] rounded-[5px] caret-blue-600 h-[40px] min-h-[40px] px-[18px] bg-[#DEDEDE] font-[kalameh] outline-none;
   }
-  
+
   .btn-loader {
     width: 30px;
     height: 30px;

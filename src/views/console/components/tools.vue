@@ -15,6 +15,7 @@ const state = reactive({
   <div class="parent-tools">
     <!-- /////////////////////// -->
     <button
+     id="tools"
       :disabled="props.loading"
       :class="[
         'button bg-[#75ca71] text-white',

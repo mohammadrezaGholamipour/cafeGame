@@ -14,3 +14,12 @@ observer.observe(document.getElementById("app") as HTMLDivElement);
   <!-- <date-picker auto-submit inline  range simple /> -->
   <RouterView />
 </template>
+<style>
+.driver-popover {
+  background-color: #1d5b79;
+  color: white;
+}
+.driver-popover-description {
+  @apply !font-[dana];
+}
+</style>

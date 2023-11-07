@@ -2,11 +2,12 @@
 import type { consoleTypeApi, bill } from "@/types/index";
 import ConsoleLine from "./components/console-line.vue";
 import ConsoleBox from "./components/console-box.vue";
+import { highlight } from "@/utils/highlight.js";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import consoleApi from "@/api/console.js";
 import { usePinia } from "@/store/pinia";
-import { computed, reactive } from "vue";
+import { computed, onMounted, reactive } from "vue";
 /////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
@@ -19,6 +20,10 @@ const state = reactive({
     },
     dialogStatus: false,
   },
+});
+///////////////////////////
+onMounted(() => {
+  highlight.consolePage();
 });
 ///////////////////////////
 const consoleData = computed(() => {

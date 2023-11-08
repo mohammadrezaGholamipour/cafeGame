@@ -1,7 +1,8 @@
-import type { highlight, highlightStep } from "@/types/index";
-import { driver } from "driver.js";
+import localStorageService from "@/utils/local-storage-service";
+import { driver, type DriveStep } from "driver.js";
+import type { highlight } from "@/types/index";
 /////////////////////////////
-export const consolePage = driver({
+export const run = driver({
   showProgress: false,
   allowClose: false,
   nextBtnText: "بعدی",
@@ -10,21 +11,35 @@ export const consolePage = driver({
   stagePadding: 3,
 });
 /////////////////////////////////
-export const handleConsolePageStep = () => {
-  const consolePageStap: highlightStep[] = [];
+export const consolePageStep = (step?: number) => {
+  const elementList = new Set();
+  const consolePageStep: DriveStep[] = [];
   const addStepIfElementExists = (element: string, popover: highlight) => {
-    if (document.querySelector(element) !== null) {
-      consolePageStap.push({ element, popover });
+    if (document.querySelector(element) !== null && !elementList.has(element)) {
+      elementList.add(element);
+      consolePageStep.push({
+        element,
+        popover,
+        onDeselected: () => {
+          if (run.isLastStep()) {
+            const highlight: string[] = localStorageService.getHighlight();
+            highlight.push("console");
+            localStorageService.setHighlight(highlight);
+          }
+        },
+      });
     }
   };
-  addStepIfElementExists("#tools", {
+  addStepIfElementExists("#new", {
     title: "انتخاب کنید",
     description: "اولین دستگاه خود را ایجاد کنید",
+    showButtons: [],
   });
 
   addStepIfElementExists("#display-console", {
     title: "تغییر مدل نمایش",
     description: "ظاهر دلخواد خود را انتخاب کنید",
+    showButtons: ["next"],
   });
 
   addStepIfElementExists(".console-timer", {
@@ -43,5 +58,8 @@ export const handleConsolePageStep = () => {
     description:
       "لطفا توجه داشته باشید تنها در صورتی امکان حذف دستگاه وجود دارد که هیچ فاکتوری با ان ثبت نشده باشد به عبارتی ساده تر در صفحه اصلی از این دستگاه استفاده نشده باشد",
   });
-  return consolePageStap;
+  run.destroy();
+  run.setSteps(consolePageStep);
+  run.drive(step);
 };
+

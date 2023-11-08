@@ -23,4 +23,16 @@ export default {
     window.localStorage.setItem("alarm", JSON.stringify(alarm));
   },
   ///////////////////////////
+  getHighlight: () => {
+    const highlight = window.localStorage.getItem("highlight");
+    if (highlight) {
+      return JSON.parse(highlight);
+    } else {
+      return [];
+    }
+  },
+  setHighlight: (highlight: string[]): void => {
+    window.localStorage.setItem("highlight", JSON.stringify(highlight));
+  },
+  ///////////////////////////
 };

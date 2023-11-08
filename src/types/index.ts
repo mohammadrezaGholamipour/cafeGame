@@ -115,6 +115,7 @@ export interface StartBillProps {
 export interface highlight {
   title: string;
   description: string;
+  showButtons?: ("open" | "close" | "next")[];
 }
 export interface highlightStep {
   element: string;

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { handleConsolePageStep, consolePage } from "@/utils/highlight.js";
+import localStorageService from "@/utils/local-storage-service";
 import type { consoleTypeApi, bill } from "@/types/index";
 import ConsoleLine from "./components/console-line.vue";
+import { consolePageStep } from "@/utils/highlight.js";
 import ConsoleBox from "./components/console-box.vue";
+import { computed, reactive, onMounted } from "vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import consoleApi from "@/api/console.js";
 import { usePinia } from "@/store/pinia";
-import { computed, onMounted, reactive } from "vue";
+
 /////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
@@ -23,9 +25,8 @@ const state = reactive({
 });
 ///////////////////////////
 onMounted(() => {
-  setTimeout(() => {
-    consolePage.setSteps(handleConsolePageStep())
-  }, 5000);
+  const highlight = localStorageService.getHighlight();
+  if (!highlight.includes("console")) consolePageStep();
 });
 ///////////////////////////
 const consoleData = computed(() => {
@@ -109,7 +110,7 @@ const requestRemoveConsole = () => {
     });
 };
 ///////////////////////////
-const requestNewConsole = () => {
+const requestNewConsole = async () => {
   state.requestLoading = true;
   consoleApi
     .new({
@@ -125,6 +126,9 @@ const requestNewConsole = () => {
         textHeader: "موفق",
         textMain: "دستگاه جدید اضافه شد",
       });
+      setTimeout(() => {
+        consolePageStep(1);
+      }, 500);
     })
     .catch(() => {
       pinia.handleNotification({

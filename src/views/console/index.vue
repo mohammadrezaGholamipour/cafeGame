@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import localStorageService from "@/utils/local-storage-service";
+import { consolePageStep, highlighter } from "@/utils/highlight.js";
 import type { consoleTypeApi, bill } from "@/types/index";
 import ConsoleLine from "./components/console-line.vue";
-import { consolePageStep } from "@/utils/highlight.js";
 import ConsoleBox from "./components/console-box.vue";
 import { computed, reactive, onMounted } from "vue";
 import loading from "@/components/loading.vue";
@@ -24,10 +23,7 @@ const state = reactive({
   },
 });
 ///////////////////////////
-onMounted(() => {
-  const highlight = localStorageService.getHighlight();
-  if (!highlight.includes("console")) consolePageStep();
-});
+onMounted(() => consolePageStep());
 ///////////////////////////
 const consoleData = computed(() => {
   if (
@@ -157,6 +153,13 @@ const handleStatusDialog = (status: boolean) => {
   }, 500);
 };
 ///////////////////////////
+const handleRemoveConsole = (console: consoleTypeApi) => {
+  if (!highlighter.isActive()) {
+    state.removeConsole.consoleSelected = console;
+    state.removeConsole.dialogStatus = true;
+  }
+};
+///////////////////////////
 </script>
 <template>
   <div class="parent-console-page">
@@ -171,10 +174,7 @@ const handleStatusDialog = (status: boolean) => {
       <div v-if="consoleData?.length" class="parent-console">
         <component
           :is="state.displayMode === 1 ? ConsoleLine : ConsoleBox"
-          @remove="
-            (state.removeConsole.consoleSelected = console),
-              (state.removeConsole.dialogStatus = true)
-          "
+          @remove="handleRemoveConsole(console)"
           :playedCost="console.playedCost"
           :playedTime="console.playedTime"
           :loading="state.requestLoading"

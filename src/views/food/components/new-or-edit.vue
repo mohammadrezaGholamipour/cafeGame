@@ -46,7 +46,7 @@ const handleFood = () => {
   clearTimeout(timer);
   timer = setTimeout(
     handleSubmit((values: food) => {
-      values.cost = values.cost.replace(",", "");
+      values.cost = values.cost.replace(/,/g, "");
       if (props.data.food.id) {
         values.id = props.data.food.id;
         emit("update", values);
@@ -87,37 +87,38 @@ watch(
 /////////////////////////////
 </script>
 <template>
-  <Dialog
-    @changeStatus="handleDialogStatus"
-    :status="props.data.status"
-    :btnCancelText="'بازگشت'"
-    :btnAcceptText="'تایید'"
-    :loading="props.loading"
-    :btnAccept="true"
-    :btnCancel="true"
-    :header="false"
-    :footer="true"
-    :width="300"
-  >
-    <!-- ///////////////////// -->
-    <div class="w-full flex flex-col gap-y-[10px] items-center justify-center">
-      <input
-        class="input min-w-[200px] bg-white"
-        placeholder="نام محصول"
-        inputmode="text"
-        v-model="name"
-        type="text"
-        autofocus
-      />
-      <input
-        class="input min-w-[200px] bg-white"
-        placeholder="قیمت محصول"
-        inputmode="numeric"
-        v-model="cost"
-        type="text"
-      />
-    </div>
-    <!-- ///////////////////// -->
-  </Dialog>
+    <Dialog
+      @changeStatus="handleDialogStatus"
+      :status="props.data.status"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'"
+      :loading="props.loading"
+      :btnAccept="true"
+      :btnCancel="true"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
+      <!-- ///////////////////// -->
+      <div
+        class="w-full flex flex-col gap-y-[10px] items-center justify-center"
+      >
+        <input
+          class="input min-w-[200px] bg-white"
+          placeholder="نام محصول"
+          inputmode="text"
+          v-model="name"
+          type="text"
+          autofocus
+        />
+        <input
+          class="input min-w-[200px] bg-white"
+          placeholder="قیمت محصول"
+          inputmode="numeric"
+          v-model="cost"
+          type="text"
+        />
+      </div>
+      <!-- ///////////////////// -->
+    </Dialog>
 </template>
-<style scoped></style>

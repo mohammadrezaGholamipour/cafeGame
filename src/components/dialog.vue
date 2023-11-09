@@ -29,7 +29,11 @@ const handleDialogStatus = (status: boolean) => {
 <template>
   <transition name="fade-scale">
     <div class="dialog-back-ground" v-show="props.status" ref="dialog">
-      <div :style="{ width: `${props.width}px` }" class="dialog-card">
+      <div
+        :style="{ width: `${props.width}px` }"
+        class="dialog-card"
+        id="dialog"
+      >
         <!-- ///////////////////////// -->
         <div v-if="props.header" class="dialog-header">
           <p class="font-bold">{{ headerText }}</p>

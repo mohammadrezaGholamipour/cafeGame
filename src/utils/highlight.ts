@@ -16,14 +16,14 @@ export const consolePageStep = (step?: number) => {
   const highlight = localStorageService.getHighlight();
   if (!highlight.includes("console")) {
     const elementList = new Set();
-    const consolePageStep: DriveStep[] = [];
+    const pageStep: DriveStep[] = [];
     const addStep = (element: string, popover: highlight) => {
       if (
         document.querySelector(element) !== null &&
         !elementList.has(element)
       ) {
         elementList.add(element);
-        consolePageStep.push({
+        pageStep.push({
           element,
           popover,
           onDeselected: () => {
@@ -67,7 +67,7 @@ export const consolePageStep = (step?: number) => {
         "لطفا توجه داشته باشید تنها در صورتی امکان حذف دستگاه وجود دارد که هیچ فاکتوری با ان ثبت نشده باشد به عبارتی ساده تر در صفحه اصلی از این دستگاه استفاده نشده باشد",
     });
     highlighter.destroy();
-    highlighter.setSteps(consolePageStep);
+    highlighter.setSteps(pageStep);
     highlighter.drive(step);
   }
 };
@@ -76,14 +76,14 @@ export const foodPageStep = (step?: number) => {
   const highlight = localStorageService.getHighlight();
   if (!highlight.includes("food")) {
     const elementList = new Set();
-    const consolePageStep: DriveStep[] = [];
+    const pageStep: DriveStep[] = [];
     const addStep = (element: string, popover: highlight) => {
       if (
         document.querySelector(element) !== null &&
         !elementList.has(element)
       ) {
         elementList.add(element);
-        consolePageStep.push({
+        pageStep.push({
           element,
           popover,
           onDeselected: () => {
@@ -115,7 +115,51 @@ export const foodPageStep = (step?: number) => {
         "شما میتوانید خوراکی مورد نظر خود را حذف کنید البته تنها در صورتی توانایی حذف ان را دارید که که در فاکتوری از ان استفاده نکرده باشید ",
     });
     highlighter.destroy();
-    highlighter.setSteps(consolePageStep);
+    highlighter.setSteps(pageStep);
+    highlighter.drive(step);
+  }
+};
+///////////////////////////////
+export const moneyPageStep = (step?: number) => {
+  const highlight = localStorageService.getHighlight();
+  if (!highlight.includes("money")) {
+    const elementList = new Set();
+    const pageStep: DriveStep[] = [];
+    const addStep = (element: string, popover: highlight) => {
+      if (
+        document.querySelector(element) !== null &&
+        !elementList.has(element)
+      ) {
+        elementList.add(element);
+        pageStep.push({
+          element,
+          popover,
+          onHighlighted: () => {
+            if (highlighter.getActiveStep()?.element === "#remove") {
+              const highlight: string[] = localStorageService.getHighlight();
+              if (!highlight.includes("money")) {
+                highlight.push("money");
+                localStorageService.setHighlight(highlight);
+              }
+            }
+          },
+        });
+      }
+    };
+    addStep("#new", {
+      title: "انتخاب کنید",
+      description: "اولین قیمت واحد خود را ثبت کنید",
+      showButtons: [],
+    });
+    addStep("#remove", {
+      title: "حذف قیمت واحد",
+      description:
+        "میتواند قیمت ثبت شده را حذف کنید اما درصورتی امکان حذف وجود دارد که شما از این قیمت واحد در فاکتوری استفاده نکرده باشید",
+      showButtons: ["next"],
+    });
+    highlighter.destroy();
+    highlighter.setSteps(pageStep);
+    console.log(pageStep);
     highlighter.drive(step);
   }
 };

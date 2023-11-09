@@ -6,6 +6,7 @@ const props = defineProps<{ loading: boolean }>();
   <div class="parent-tools">
     <!-- /////////////////////// -->
     <button
+      id="new"
       :disabled="props.loading"
       :class="[
         'button bg-[#75ca71] text-white',

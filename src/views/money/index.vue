@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { moneyPageStep, highlighter } from "@/utils/highlight.js";
 import { filterNumbersWithSep } from "@/utils/convert-number";
 import PersianNumberToString from "persian-number-tostring";
+import { computed, reactive, watch, onMounted } from "vue";
 import Table from "@/components/table/index.vue";
-import { computed, reactive, watch } from "vue";
 import loading from "@/components/loading.vue";
 import hourRateApi from "@/api/hourRate.js";
 import tools from "./components/tools.vue";
@@ -19,6 +20,8 @@ const state = reactive({
     status: false,
   },
 });
+///////////////////////////////////////
+onMounted(() => moneyPageStep());
 ///////////////////////////////////////
 const hourRateData = computed(() => {
   if (Array.isArray(pinia.state.hourRate)) {
@@ -42,6 +45,9 @@ const requestNewHourRate = (): void => {
           textHeader: "موفق",
           textMain: "با موفقیت افزوده شد",
         });
+      setTimeout(() => {
+        moneyPageStep(1);
+      }, 1000);
     })
     .catch(() => {
       pinia.handleNotification({
@@ -131,12 +137,24 @@ watch(
   }
 );
 ////////////////////////////
+const handleRemoveMoney = (hourRateId: number) => {
+  if (!highlighter.isActive()) {
+    state.dialog.hourRateId = hourRateId;
+    state.dialog.name = "remove";
+    state.dialog.status = true;
+  }
+};
+////////////////////////////
 </script>
 <template>
   <div class="parent-money-page">
     <!-- //////////////////////// -->
     <tools
-      @new="(state.dialog.name = 'new'), (state.dialog.status = true)"
+      @new="
+        (state.dialog.name = 'new'),
+          (state.dialog.status = true),
+          moneyPageStep(999)
+      "
       :loading="state.loading"
     />
     <!-- //////////////////////// -->
@@ -150,13 +168,10 @@ watch(
             <td>{{ PersianNumberToString(hourRate.name) }} تومان</td>
             <td class="flex justify-center">
               <img
+                @click="handleRemoveMoney(hourRate.id)"
                 src="@/assets/image/table/remove.svg"
-                @click="
-                  (state.dialog.hourRateId = hourRate.id),
-                    (state.dialog.name = 'remove'),
-                    (state.dialog.status = true)
-                "
                 class="cursor-pointer"
+                id="remove"
               />
             </td>
           </tr>
@@ -178,13 +193,10 @@ watch(
               <div>{{ PersianNumberToString(hourRate.name) }} تومان</div>
               <div class="flex justify-center">
                 <img
+                  @click="handleRemoveMoney(hourRate.id)"
                   src="@/assets/image/table/remove.svg"
-                  @click="
-                    (state.dialog.hourRateId = hourRate.id),
-                      (state.dialog.name = 'remove'),
-                      (state.dialog.status = true)
-                  "
                   class="cursor-pointer"
+                  id="remove"
                 />
               </div>
             </div>

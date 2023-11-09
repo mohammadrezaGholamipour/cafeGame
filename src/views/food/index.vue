@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { foodPageStep, highlighter } from "@/utils/highlight.js";
 import NewOrEdit from "./components/new-or-edit.vue";
+import { computed, onMounted, reactive } from "vue";
 import Table from "@/components/table/index.vue";
 import loading from "@/components/loading.vue";
 import tools from "./components/tools.vue";
 import type { food } from "@/types/index";
-import { computed, reactive } from "vue";
 import { usePinia } from "@/store/pinia";
 import foodApi from "@/api/food";
 /////////////////////////////////////////
@@ -29,6 +30,8 @@ const state = reactive({
     },
   },
 });
+///////////////////////////////////////
+onMounted(() => foodPageStep());
 ///////////////////////////////////////
 const foodData = computed(() => {
   if (Array.isArray(pinia.state.food)) {
@@ -77,6 +80,9 @@ const requestNewFood = (food: food) => {
           textHeader: "موفق",
           textMain: "با موفقیت افزوده شد",
         });
+      setTimeout(() => {
+        foodPageStep(1);
+      }, 500);
     })
     .catch(() => {
       pinia.handleNotification({
@@ -121,10 +127,12 @@ const requestRemoveFood = () => {
 };
 ////////////////////////////////////
 const handleSetFoodSelected = ({ id, cost, name }: food) => {
-  state.newOrEdit.food.name = name;
-  state.newOrEdit.food.cost = cost;
-  state.newOrEdit.food.id = id;
-  state.newOrEdit.status = true;
+  if (!highlighter.isActive()) {
+    state.newOrEdit.food.name = name;
+    state.newOrEdit.food.cost = cost;
+    state.newOrEdit.food.id = id;
+    state.newOrEdit.status = true;
+  }
 };
 /////////////////////////////////////////
 const handleCloseNewOrEditDialog = () => {
@@ -136,10 +144,15 @@ const handleCloseNewOrEditDialog = () => {
   }, 500);
 };
 /////////////////////////////////////////
-const handleRemoveFoodDialog = (status: boolean) => {
-  if (status) {
-    requestRemoveFood();
+const handleRemoveFood = (food: food) => {
+  if (!highlighter.isActive()) {
+    state.removeFood.food = { ...food };
+    state.removeFood.status = true;
   }
+};
+/////////////////////////////////////////
+const handleRemoveFoodDialog = (status: boolean) => {
+  if (status) requestRemoveFood();
   state.removeFood.status = false;
   setTimeout(() => {
     state.removeFood.food.name = "";
@@ -153,7 +166,7 @@ const handleRemoveFoodDialog = (status: boolean) => {
   <div class="parent-food-page">
     <!-- //////////////////////// -->
     <tools
-      @new="state.newOrEdit.status = true"
+      @new="(state.newOrEdit.status = true), foodPageStep(999)"
       @search="pinia.requestGetFood"
       :loading="state.loading"
     />
@@ -170,16 +183,15 @@ const handleRemoveFoodDialog = (status: boolean) => {
               <div class="flex items-center gap-x-[10px] justify-center">
                 <img
                   src="@/assets/image/table/remove.svg"
-                  @click="
-                    (state.removeFood.food = { ...food }),
-                      (state.removeFood.status = true)
-                  "
+                  @click="handleRemoveFood(food)"
                   class="cursor-pointer"
+                  id="remove"
                 />
                 <img
                   @click="handleSetFoodSelected(food)"
                   src="@/assets/image/table/edit.svg"
                   class="cursor-pointer"
+                  id="edit"
                 />
               </div>
             </td>
@@ -203,16 +215,15 @@ const handleRemoveFoodDialog = (status: boolean) => {
               <div class="flex items-center gap-x-[10px] justify-center">
                 <img
                   src="@/assets/image/table/remove.svg"
-                  @click="
-                    (state.removeFood.food = { ...food }),
-                      (state.removeFood.status = true)
-                  "
+                  @click="handleRemoveFood(food)"
                   class="cursor-pointer"
+                  id="remove"
                 />
                 <img
                   @click="handleSetFoodSelected(food)"
                   src="@/assets/image/table/edit.svg"
                   class="cursor-pointer"
+                  id="edit"
                 />
               </div>
             </div>
@@ -243,14 +254,16 @@ const handleRemoveFoodDialog = (status: boolean) => {
       :status="state.removeFood.status"
       :btnCancelText="'بازگشت'"
       :btnAcceptText="'تایید'"
-      :loading="false"
       :btnAccept="true"
       :btnCancel="true"
+      :loading="false"
       :header="false"
       :footer="true"
       :width="300"
     >
-      <div class="p-1">{{ state.removeFood.food.name }} حذف شود؟</div>
+      <div class="p-1 text-center">
+        {{ state.removeFood.food.name }} حذف شود؟
+      </div>
     </Dialog>
     <!-- /////////////////////// -->
   </div>

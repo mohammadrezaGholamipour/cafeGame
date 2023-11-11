@@ -138,6 +138,7 @@ const props = defineProps<home>();
         </div>
       </div>
       <button
+ 
         @click="
           emit(
             'status',

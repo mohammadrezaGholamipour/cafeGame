@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { billFood, alarmInLocalStorage } from "@/types/index";
+import type { billFood, alarmInLocalStorage, home } from "@/types/index";
+import { computed, reactive, watch, nextTick, onMounted } from "vue";
+import { homePageStep, highlighter } from "@/utils/highlight.js";
 import localStorageService from "@/utils/local-storage-service";
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
@@ -11,11 +13,10 @@ import Factor from "./components/factor.vue";
 import tools from "./components/tools.vue";
 import Alarm from "./components/alarm.vue";
 import { usePinia } from "@/store/pinia";
-import { computed, reactive } from "vue";
 import Food from "./components/food.vue";
 import { useRouter } from "vue-router";
 import billApi from "@/api/bill.js";
-///////////////////////////////
+///////////////////////////////////
 const router = useRouter();
 const pinia = usePinia();
 const state = reactive({
@@ -42,10 +43,26 @@ const state = reactive({
 });
 ////////////////////////////////
 const homeData = computed(() => {
-  if (Array.isArray(pinia.state.home)) {
-    return pinia.state.home;
+  if (Array.isArray(pinia.state.home) && Array.isArray(pinia.state.hourRate)) {
+    if (pinia.state.home.length && pinia.state.hourRate.length) {
+      return pinia.state.home;
+    } else {
+      return [];
+    }
   }
 });
+/////////////////////////////////////////////////
+// onMounted(() => homePageStep());
+/////////////////////////////////////////////////
+watch(
+  () => homeData.value,
+  async (newValue: home[] | [] | undefined, oldValue) => {
+    if (!oldValue?.length && newValue?.length) {
+      await nextTick();
+      homePageStep();
+    }
+  }
+);
 /////////////////////////////////////////////////
 const requestStartBill = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
@@ -222,20 +239,10 @@ const handleRemoveBill = (
 };
 //////////////////////////////////////
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
-  if (Array.isArray(pinia.state.hourRate) && pinia.state.hourRate.length) {
-    state.consoleSelected.consoleId = info.consoleId;
-    state.dialog.name = "startBill";
-    state.dialog.status = true;
-  } else {
-    router.push("/money");
-    pinia.handleNotification({
-      ...pinia.state.notification,
-      name: "info",
-      status: true,
-      textHeader: "توجه",
-      textMain: "حداقل یک قیمت واحد ایجاد کنید",
-    });
-  }
+  homePageStep(9999);
+  state.consoleSelected.consoleId = info.consoleId;
+  state.dialog.name = "startBill";
+  state.dialog.status = true;
 };
 ///////////////////////////////////////////////
 const handleFactor = (
@@ -412,11 +419,31 @@ const getTimeStartOrEndBill = () => {
           :name="item.name"
         />
       </div>
-      <img
-        src="@/assets/image/noData.svg"
-        class="w-full h-full"
-        v-else-if="homeData"
-      />
+      <div class="parent-no-data" v-else-if="homeData">
+        <div class="card-no-data">
+          <p>برای استفاده از برنامه باید حداقل یک</p>
+          <button
+            class="button bg-[#7CC078] text-white p-1"
+            @click="router.push('/console')"
+          >
+            <div class="flex items-center gap-x-[5px]">
+              <p class="text-white font-[kalameh]">دستگاه</p>
+              <img src="/assets/console.svg" />
+            </div>
+          </button>
+          <p>و</p>
+          <button
+            class="button bg-[#7CC078] text-white p-1"
+            @click="router.push('/money')"
+          >
+            <div class="flex items-center gap-x-[5px]">
+              <p class="text-white font-[kalameh]">قیمت واحد</p>
+              <img src="/assets/money.svg" />
+            </div>
+          </button>
+          <p>ایجاد کنید.</p>
+        </div>
+      </div>
       <loading v-else />
     </transition-fade>
     <!-- //////////////////////////////////// -->
@@ -493,5 +520,11 @@ const getTimeStartOrEndBill = () => {
 <style scoped>
 .parent-home-page {
   @apply w-full h-full flex flex-col justify-start items-start;
+}
+.parent-no-data {
+  @apply w-full h-full flex justify-center items-center;
+}
+.card-no-data {
+  @apply p-3 flex max-w-[300px] flex-wrap justify-start font-[kalameh] items-center gap-[5px] rounded-md shadow-lg bg-[#1d5b79] text-white;
 }
 </style>

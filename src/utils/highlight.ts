@@ -159,7 +159,35 @@ export const moneyPageStep = (step?: number) => {
     });
     highlighter.destroy();
     highlighter.setSteps(pageStep);
-    console.log(pageStep);
+    highlighter.drive(step);
+  }
+};
+///////////////////////////////
+export const homePageStep = (step?: number) => {
+  const highlight = localStorageService.getHighlight();
+  if (!highlight.includes("home")) {
+    const elementList = new Set();
+    const pageStep: DriveStep[] = [];
+    const addStep = (element: string, popover: highlight) => {
+      if (
+        document.querySelector(element) !== null &&
+        !elementList.has(element)
+      ) {
+        elementList.add(element);
+        pageStep.push({
+          element,
+          popover,
+        });
+      }
+    };
+    addStep("#start", {
+      title: "برای شروع کلیک کنید",
+      description:
+        "برای شروع تایمر دستگاه کافیست بر روی دکمه شروع کلیک کنید و قیمت واحد را انتخاب کنید",
+      showButtons: [],
+    });
+    highlighter.destroy();
+    highlighter.setSteps(pageStep);
     highlighter.drive(step);
   }
 };

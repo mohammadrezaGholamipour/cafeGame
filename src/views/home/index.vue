@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { billFood, alarmInLocalStorage, home } from "@/types/index";
-import { computed, reactive, watch, nextTick, onMounted } from "vue";
-import { homePageStep, highlighter } from "@/utils/highlight.js";
+import type { billFood, alarmInLocalStorage } from "@/types/index";
 import localStorageService from "@/utils/local-storage-service";
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
@@ -14,6 +12,7 @@ import tools from "./components/tools.vue";
 import Alarm from "./components/alarm.vue";
 import { usePinia } from "@/store/pinia";
 import Food from "./components/food.vue";
+import { computed, reactive } from "vue";
 import { useRouter } from "vue-router";
 import billApi from "@/api/bill.js";
 ///////////////////////////////////
@@ -51,18 +50,6 @@ const homeData = computed(() => {
     }
   }
 });
-/////////////////////////////////////////////////
-// onMounted(() => homePageStep());
-/////////////////////////////////////////////////
-watch(
-  () => homeData.value,
-  async (newValue: home[] | [] | undefined, oldValue) => {
-    if (!oldValue?.length && newValue?.length) {
-      await nextTick();
-      homePageStep();
-    }
-  }
-);
 /////////////////////////////////////////////////
 const requestStartBill = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
@@ -239,7 +226,6 @@ const handleRemoveBill = (
 };
 //////////////////////////////////////
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
-  homePageStep(9999);
   state.consoleSelected.consoleId = info.consoleId;
   state.dialog.name = "startBill";
   state.dialog.status = true;

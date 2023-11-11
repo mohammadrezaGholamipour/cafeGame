@@ -114,7 +114,7 @@ const props = defineProps<home>();
       <p v-else class="text-[#565656] font-[kalameh]">دستگاه خالی میباشد :(</p>
     </transition-slide>
     <!-- //////////////////////// -->
-    <transition-scale group>
+    <transition-scale  id="start" group>
       <div v-if="props.status" class="console-footer">
         <button
           class="button bg-[#EF6262] text-white"

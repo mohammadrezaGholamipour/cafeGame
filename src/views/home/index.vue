@@ -3,6 +3,7 @@ import type { billFood, alarmInLocalStorage } from "@/types/index";
 import localStorageService from "@/utils/local-storage-service";
 import consoleLine from "./components/console-line.vue";
 import consoleBox from "./components/console-box.vue";
+import InputRadio from "./components/input-radio.vue";
 import StartBill from "./components/start-bill.vue";
 import StartTime from "./components/start-time.vue";
 import HourRate from "./components/hour-rate.vue";
@@ -23,6 +24,7 @@ const state = reactive({
   consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
+    paymentMethod: 0,
     billFoods: [] as billFood[] | [],
     foodSelected: [] as { foodId: number; count: number }[] | [],
     consoleId: 0,
@@ -36,6 +38,8 @@ const state = reactive({
     header: false,
     footer: true,
     headerText: "",
+    btnCancelText: "بازگشت",
+    btnAcceptText: "تایید",
     name: "",
     width: 330,
   },
@@ -72,26 +76,43 @@ const requestStartBill = (): void => {
     });
 };
 /////////////////////////////////////////////////
-const requestCloseBill = (info: {
-  billId: number;
-  consoleId: number;
-}): void => {
-  handleConsoleLoading(info.consoleId, true);
+const requestCloseBill = (): void => {
   billApi
-    .close(info.billId, getTimeStartOrEndBill())
+    .close(state.consoleSelected.billId, getTimeStartOrEndBill())
     .then(() => {
       pinia.requestGetOpenBill(),
         pinia.requestGetAllBill(),
-        handleRemoveAlarm(info.consoleId);
+        handleRemoveAlarm(state.consoleSelected.consoleId);
+      handleCloseDialog();
     })
     .catch(() => {
-      handleConsoleLoading(info.consoleId, false);
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
         textMain: "فاکتور مورد نظر بسته نشد",
+      });
+    });
+};
+//////////////////////////////////////////
+const requestPaymentMethod = (): void => {
+  handleConsoleLoading(state.consoleSelected.consoleId, true);
+  billApi
+    .changePaymentMethod(
+      state.consoleSelected.billId,
+      state.consoleSelected.paymentMethod
+    )
+    .then(() => requestCloseBill())
+    .catch(() => {
+      handleConsoleLoading(state.consoleSelected.consoleId, false);
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "error",
+        status: true,
+        textHeader: "خطا",
+        textMain: "روش پرداخت تکمیل نشد لطفا مجدد امتحان کنید",
       });
     });
 };
@@ -189,7 +210,16 @@ const handleConsoleStatus = (
   info: { billId: number; consoleId: number },
   status: boolean
 ) => {
-  (status ? handleStartBill : requestCloseBill)(info);
+  (status ? handleStartBill : handleHadFood)(info);
+};
+//////////////////////////////////////
+const handleHadFood = (info: { billId: number; consoleId: number }) => {
+  state.consoleSelected.billId = info.billId;
+  state.consoleSelected.consoleId = info.consoleId;
+  state.dialog.name = "had-food";
+  state.dialog.btnAcceptText = "بله";
+  state.dialog.btnCancelText = "خیر";
+  state.dialog.status = true;
 };
 //////////////////////////////////////
 const handleSetFood = (
@@ -336,10 +366,38 @@ const handleDialogStatus = (status: boolean) => {
       requestSetFood();
     } else if (state.dialog.name === "hourRate") {
       requestChangeHourRate();
+    } else if (state.dialog.name === "had-food") {
+      state.dialog.status = false;
+      setTimeout(() => {
+        state.dialog.btnAcceptText = "تایید";
+        state.dialog.btnCancelText = "بازگشت";
+        state.dialog.name = "payment-method";
+        state.dialog.header = true;
+        state.dialog.headerText = "روش پرداخت";
+        state.dialog.status = true;
+      }, 501);
+    } else if (state.dialog.name === "payment-method") {
+      state.dialog.status = false;
+      requestPaymentMethod();
+      handleCloseDialog();
     }
     ////////////////////////////////////////
   } else {
-    handleCloseDialog();
+    if (state.dialog.name === "had-food") {
+      state.dialog.status = false;
+      setTimeout(() => {
+        const billFood: billFood[] | [] | undefined = homeData.value?.find(
+          ({ billId }) => billId === state.consoleSelected.billId
+        )?.billFood;
+        state.consoleSelected.billFoods = billFood ?? [];
+        state.dialog.btnAcceptText = "تایید";
+        state.dialog.btnCancelText = "بازگشت";
+        state.dialog.name = "food";
+        state.dialog.status = true;
+      }, 501);
+    } else {
+      handleCloseDialog();
+    }
   }
 };
 ///////////////////////////////////////////////
@@ -353,6 +411,9 @@ const handleCloseDialog = () => {
     state.consoleSelected.consoleId = 0;
     state.consoleSelected.billId = 0;
     state.consoleSelected.alarm = {};
+    state.dialog.btnCancelText = "بازگشت";
+    state.dialog.btnAcceptText = "تایید";
+    state.dialog.headerText = "";
     state.dialog.header = false;
     state.dialog.footer = true;
     state.dialog.width = 330;
@@ -434,6 +495,8 @@ const getTimeStartOrEndBill = () => {
     </transition-fade>
     <!-- //////////////////////////////////// -->
     <Dialog
+      :btnCancelText="state.dialog.btnCancelText"
+      :btnAcceptText="state.dialog.btnAcceptText"
       :headerText="state.dialog.headerText"
       @changeStatus="handleDialogStatus"
       :loading="state.dialog.loading"
@@ -441,8 +504,6 @@ const getTimeStartOrEndBill = () => {
       :status="state.dialog.status"
       :footer="state.dialog.footer"
       :width="state.dialog.width"
-      :btnCancelText="'بازگشت'"
-      :btnAcceptText="'تایید'"
       :btnAccept="true"
       :btnCancel="true"
     >
@@ -498,6 +559,24 @@ const getTimeStartOrEndBill = () => {
         :loading="state.dialog.loading"
         @setAlarm="handleSetAlarm"
       />
+      <!-- /////////////////////////// -->
+      <p
+        class="p-1 text-center text-[1rem]"
+        v-if="state.dialog.name === 'had-food'"
+      >
+        خوراکی ها ثبت شده است؟
+      </p>
+      <!-- /////////////////////////// -->
+      <div
+        class="w-full flex justify-center items-center"
+        v-if="state.dialog.name === 'payment-method'"
+      >
+        <InputRadio
+          @payment-method="
+            (value) => (state.consoleSelected.paymentMethod = value)
+          "
+        />
+      </div>
       <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->

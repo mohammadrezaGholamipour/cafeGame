@@ -12,7 +12,13 @@ import Time from "./components/time.vue";
 ///////////////////////////////////////
 const pinia = usePinia();
 const state = reactive({
-  headerTable: ["ردیف", "شروع و پایان", "شماره دستگاه", "مبلغ کل"],
+  headerTable: [
+    "ردیف",
+    "شروع و پایان",
+    "شماره دستگاه",
+    "روش پرداخت",
+    "مبلغ کل",
+  ],
   dialog: {
     status: false,
     name: "",
@@ -74,6 +80,15 @@ const handleDialogStatus = (status: boolean) => {
             </td>
             <td>{{ bill.systemName }}</td>
             <td>
+              {{
+                bill.finalCost
+                  ? bill.paymentMethod === 0
+                    ? "کارت"
+                    : "نقد"
+                  : "-"
+              }}
+            </td>
+            <td>
               <div class="flex justify-center">
                 <button
                   v-if="bill.finalCost && bill.billFoods.length"
@@ -113,6 +128,15 @@ const handleDialogStatus = (status: boolean) => {
                 </button>
               </div>
               <div>{{ bill.systemId }}</div>
+              <div>
+                {{
+                  bill.finalCost
+                    ? bill.paymentMethod === 0
+                      ? "کارت"
+                      : "نقد"
+                    : "-"
+                }}
+              </div>
               <div>
                 <button
                   @click="handleDialogCostAndTimer(bill, 'cost')"

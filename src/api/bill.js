@@ -6,6 +6,7 @@ export default {
   close: (billId, endTime) => HttpClient.put(`api/bill/${billId}/close`, endTime),
   delete: (consoleId) => HttpClient.delete(`api/bill/${consoleId}`),
   changeMoney: (billId, moneyId) => HttpClient.put(`api/bill/${billId}/change-rate`, moneyId),
+  changePaymentMethod: (billId, PaymentMethod) => HttpClient.put(`api/bill/${billId}/change-payment`, PaymentMethod),
   changeStartTime: (billId, startTime) => HttpClient.put(`api/bill/${billId}/adjust-start-time`, startTime),
   open: () => HttpClient.get('opens'),
 };

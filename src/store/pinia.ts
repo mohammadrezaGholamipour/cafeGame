@@ -138,7 +138,7 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////
-  const handleHomeData = async () => {
+  const handleHomeData = () => {
     if (
       Array.isArray(state.console) &&
       Array.isArray(state.openBill) &&

@@ -138,7 +138,6 @@ const props = defineProps<home>();
         </div>
       </div>
       <button
- 
         @click="
           emit(
             'status',
@@ -176,19 +175,19 @@ const props = defineProps<home>();
             @click="emit('changeHourRate', props.billId, props.hourRate)"
             class="option-box"
           >
-            <img src="@/assets/image/home/money-option.svg" />
             <p>قیمت واحد</p>
           </div>
           <div
             @click="emit('changeStartTime', props.billId)"
             class="option-box"
           >
-            <img src="@/assets/image/home/bill-time-option.svg" />
             <p>زمان شروع</p>
           </div>
           <div @click="emit('alarm', props.consoleId)" class="option-box">
-            <img src="@/assets/image/home/alarm-option.svg" />
             <p>یادآور</p>
+          </div>
+          <div class="option-box">
+            <p>تغییر قیمت</p>
           </div>
         </div>
       </div>
@@ -246,13 +245,13 @@ const props = defineProps<home>();
   @apply cursor-pointer hover:scale-110 transition-all;
 }
 .parent-console-option {
-  @apply absolute flex justify-between items-center px-[10px] rounded-[5px] w-full h-full backdrop-blur-md;
+  @apply absolute flex justify-between items-center px-[10px] gap-x-[10px] rounded-[5px] w-full h-full backdrop-blur-md;
 }
-.parent-console-option > div {
-  @apply flex items-center gap-x-[10px];
+.parent-console-option > div:nth-child(2) {
+  @apply flex items-center justify-start flex-wrap gap-[10px];
 }
 .option-box {
-  @apply w-[70px] hover:opacity-80 transition-all h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
+  @apply min-w-[80px] flex-grow hover:opacity-80 transition-all h-[30px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
 }
 .option-box p {
   @apply text-[#1C274C] font-bold font-[kalameh] text-[13px];
@@ -269,8 +268,12 @@ const props = defineProps<home>();
   @apply border-2 border-[#f8b806];
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
+.option-box:nth-child(4) {
+  @apply border-2 border-[#f6743e];
+  background: linear-gradient(95deg, #f6743e -6.96%, #d42525 108.25%);
+}
 .close-option {
-  @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 shadow-md flex justify-center items-center;
+  @apply min-w-[40px] min-h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 shadow-md flex justify-center items-center;
 }
 .parent-show-alarm {
   @apply w-full h-full absolute flex left-0 justify-center top-0 backdrop-blur-lg items-center rounded-[5px];

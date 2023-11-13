@@ -89,7 +89,7 @@ const handleAddOrSubtract = (status: string, food: foodStore) => {
       <input
         class="input !min-w-[200px] w-full bg-white"
         placeholder="دنبال چی هستی؟"
-        v-model="state.search"
+        v-model.trim="state.search"
         inputmode="search"
         type="text"
         autofocus

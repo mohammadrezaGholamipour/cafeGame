@@ -13,7 +13,8 @@ const emit = defineEmits<{
       billId: number;
       cost: number;
       name: string;
-    }[]
+    }[],
+    customMoney: number
   ];
   removeBill: [
     billId: number,
@@ -44,6 +45,12 @@ const emit = defineEmits<{
   changeStartTime: [billId: number];
   alarm: [consoleId: number];
   removeAlarm: [consoleId: number];
+  changeMoney: [
+    consoleId: number,
+    costFood: number,
+    costPlayed: number,
+    customMoney: number
+  ];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -100,12 +107,24 @@ const props = defineProps<home>();
             "
             class="flex items-center justify-center gap-x-[3px]"
             @click="
-              emit('factor', props.billId, props.consoleId, props.billFood)
+              emit(
+                'factor',
+                props.billId,
+                props.consoleId,
+                props.billFood,
+                props.customMoney
+              )
             "
             v-else
           >
             <p>
-              {{ (props.costPlayed + props.costFood).toLocaleString() }}
+              {{
+                (
+                  props.costPlayed +
+                  props.costFood +
+                  props.customMoney
+                ).toLocaleString()
+              }}
             </p>
             <p class="!font-[400]">تومان</p>
           </div>
@@ -114,7 +133,7 @@ const props = defineProps<home>();
       <p v-else class="text-[#565656] font-[kalameh]">دستگاه خالی میباشد :(</p>
     </transition-slide>
     <!-- //////////////////////// -->
-    <transition-scale  id="start" group>
+    <transition-scale id="start" group>
       <div v-if="props.status" class="console-footer">
         <button
           class="button bg-[#EF6262] text-white"
@@ -187,6 +206,21 @@ const props = defineProps<home>();
             <img src="@/assets/image/home/alarm-option.svg" />
             <p>یادآور</p>
           </div>
+          <div
+            @click="
+              emit(
+                'changeMoney',
+                props.consoleId,
+                props.costFood,
+                props.costPlayed,
+                props.customMoney
+              )
+            "
+            class="option-box"
+          >
+            <img src="@/assets/image/home/change-money-option.svg" />
+            <p>تغییر قیمت</p>
+          </div>
         </div>
       </div>
     </transition-slide>
@@ -240,7 +274,7 @@ const props = defineProps<home>();
   @apply absolute top-0 flex flex-col justify-center items-center gap-y-[10px] rounded-[10px] w-full h-full backdrop-blur-md;
 }
 .parent-console-option > div {
-  @apply flex items-center gap-x-[10px];
+  @apply flex items-center gap-x-[4px];
 }
 .option-box {
   @apply w-[70px] hover:opacity-80 transition-all h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
@@ -259,6 +293,10 @@ const props = defineProps<home>();
 .option-box:nth-child(3) {
   @apply border-2 border-[#f8b806];
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
+}
+.option-box:nth-child(4) {
+  @apply border-2 border-[#f6743e];
+  background: linear-gradient(95deg, #f6743e -6.96%, #d42525 108.25%);
 }
 .close-option {
   @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 top-[-22px] shadow-md absolute flex justify-center items-center;

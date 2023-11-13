@@ -52,6 +52,7 @@ export interface home {
   loading: boolean;
   billFood: billFood[];
   optionStatus: boolean;
+  customMoney: number;
   alarmStatus: boolean;
   timer: { hours: number; minutes: number; seconds: number };
 }
@@ -63,6 +64,10 @@ export interface alarmInLocalStorage {
   hour: number;
   consoleId: number;
   minute: number;
+}
+export interface CustomMoneyInLocalStorage {
+  money: number;
+  consoleId: number;
 }
 
 export interface consolePage {

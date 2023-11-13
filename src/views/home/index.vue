@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import type { billFood, alarmInLocalStorage } from "@/types/index";
+import type {
+  billFood,
+  alarmInLocalStorage,
+  CustomMoneyInLocalStorage,
+} from "@/types/index";
 import localStorageService from "@/utils/local-storage-service";
 import consoleLine from "./components/console-line.vue";
+import ChangeMoney from "./components/change-money.vue";
 import consoleBox from "./components/console-box.vue";
 import InputRadio from "./components/input-radio.vue";
 import StartBill from "./components/start-bill.vue";
@@ -30,6 +35,9 @@ const state = reactive({
     consoleId: 0,
     hourRate: 0,
     alarm: {} as alarmInLocalStorage | {},
+    costFood: 0,
+    costPlayed: 0,
+    customMoney: 0,
     billId: 0,
   },
   dialog: {
@@ -264,12 +272,14 @@ const handleStartBill = (info: { billId: number; consoleId: number }): void => {
 const handleFactor = (
   billId: number,
   consoleId: number,
-  billFood: billFood[]
+  billFood: billFood[],
+  customMoney: number
 ) => {
-  if (billFood.length) {
+  if (billFood.length || customMoney) {
     state.consoleSelected.billId = billId;
     state.consoleSelected.consoleId = consoleId;
     state.consoleSelected.billFoods = billFood;
+    state.consoleSelected.customMoney = customMoney;
     state.dialog.name = "factor";
     state.dialog.footer = false;
     state.dialog.header = true;
@@ -328,6 +338,48 @@ const handleRemoveAlarm = (consoleId: number) => {
     consoleSelected.alarmStatus = false;
     pinia.handleAlarmSound();
   }
+};
+///////////////////////////////////////////////
+const handleSetCustomMoney = (inputMoney: number): void => {
+  const money = localStorageService.getCustomMoney();
+  money.push({ money: inputMoney, consoleId: state.consoleSelected.consoleId });
+  localStorageService.setCustomMoney(money);
+  const consoleSelected = homeData.value?.find(
+    (item) => item.consoleId === state.consoleSelected.consoleId
+  );
+  if (consoleSelected) consoleSelected.customMoney = inputMoney;
+  handleCloseDialog();
+};
+///////////////////////////////////////////////
+const handleChangeMoney = (
+  consoleId: number,
+  costFood: number,
+  costPlayed: number,
+  customMoney: number
+) => {
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.costFood = costFood;
+  state.consoleSelected.costPlayed = costPlayed;
+  state.consoleSelected.customMoney = customMoney;
+  state.dialog.headerText = "تغییر قیمت";
+  state.dialog.name = "change-money";
+  state.dialog.header = true;
+  state.dialog.footer = false;
+  state.dialog.status = true;
+};
+///////////////////////////////////////////////
+const handleRemoveMoney = () => {
+  const moneyList: CustomMoneyInLocalStorage[] =
+    localStorageService.getCustomMoney();
+  const money = moneyList.filter(
+    (item) => item.consoleId !== state.consoleSelected.consoleId
+  );
+  localStorageService.setCustomMoney(money);
+  state.consoleSelected.customMoney = 0;
+  const consoleSelected = homeData.value?.find(
+    (item) => item.consoleId === state.consoleSelected.consoleId
+  );
+  if (consoleSelected) consoleSelected.customMoney = 0;
 };
 ///////////////////////////////////////////////
 const handleConsoleLoading = (consoleId: number, status: boolean) => {
@@ -411,6 +463,9 @@ const handleCloseDialog = () => {
     state.consoleSelected.consoleId = 0;
     state.consoleSelected.billId = 0;
     state.consoleSelected.alarm = {};
+    state.consoleSelected.costFood = 0;
+    state.consoleSelected.costPlayed = 0;
+    state.consoleSelected.customMoney = 0;
     state.dialog.btnCancelText = "بازگشت";
     state.dialog.btnAcceptText = "تایید";
     state.dialog.headerText = "";
@@ -446,7 +501,9 @@ const getTimeStartOrEndBill = () => {
           @changeStartTime="handleStartTime"
           :optionStatus="item.optionStatus"
           @removeAlarm="handleRemoveAlarm"
+          @changeMoney="handleChangeMoney"
           :alarmStatus="item.alarmStatus"
+          :customMoney="item.customMoney"
           @removeBill="handleRemoveBill"
           @status="handleConsoleStatus"
           :costPlayed="item.costPlayed"
@@ -577,6 +634,16 @@ const getTimeStartOrEndBill = () => {
           "
         />
       </div>
+      <!-- /////////////////////////// -->
+      <ChangeMoney
+        :customMoney="state.consoleSelected.customMoney"
+        :costPlayed="state.consoleSelected.costPlayed"
+        :consoleId="state.consoleSelected.consoleId"
+        v-if="state.dialog.name === 'change-money'"
+        :costFood="state.consoleSelected.costFood"
+        @removeMoney="handleRemoveMoney"
+        @money="handleSetCustomMoney"
+      />
       <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->

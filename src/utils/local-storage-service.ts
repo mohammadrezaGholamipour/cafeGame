@@ -1,4 +1,7 @@
-import type { alarmInLocalStorage } from "@/types/index";
+import type {
+  alarmInLocalStorage,
+  CustomMoneyInLocalStorage,
+} from "@/types/index";
 export default {
   ///////////////////////////
   getToken: (): string | null => {
@@ -35,4 +38,15 @@ export default {
     window.localStorage.setItem("highlight", JSON.stringify(highlight));
   },
   ///////////////////////////
+  getCustomMoney: () => {
+    const money = window.localStorage.getItem("money");
+    if (money) {
+      return JSON.parse(money);
+    } else {
+      return [];
+    }
+  },
+  setCustomMoney: (money: CustomMoneyInLocalStorage[]): void => {
+    window.localStorage.setItem("money", JSON.stringify(money));
+  },
 };

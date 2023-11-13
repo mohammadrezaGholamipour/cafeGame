@@ -25,7 +25,8 @@ const emit = defineEmits<{
       billId: number;
       cost: number;
       name: string;
-    }[]
+    }[],
+    customMoney: number
   ];
   food: [
     billId: number,
@@ -44,6 +45,12 @@ const emit = defineEmits<{
   changeStartTime: [billId: number];
   alarm: [consoleId: number];
   removeAlarm: [consoleId: number];
+  changeMoney: [
+    consoleId: number,
+    costFood: number,
+    costPlayed: number,
+    customMoney: number
+  ];
 }>();
 const props = defineProps<home>();
 /////////////////////
@@ -82,7 +89,13 @@ const props = defineProps<home>();
             </p>
             <div
               @click="
-                emit('factor', props.billId, props.consoleId, props.billFood)
+                emit(
+                  'factor',
+                  props.billId,
+                  props.consoleId,
+                  props.billFood,
+                  props.customMoney
+                )
               "
               :class="
                 props.billFood.length ? 'cursor-pointer' : 'cursor-not-allowed'
@@ -90,7 +103,15 @@ const props = defineProps<home>();
               class="flex items-center gap-x-[5px]"
               v-else
             >
-              <p>{{ (props.costPlayed + props.costFood).toLocaleString() }}</p>
+              <p>
+                {{
+                  (
+                    props.costPlayed +
+                    props.costFood +
+                    props.customMoney
+                  ).toLocaleString()
+                }}
+              </p>
               <p class="!font-[400]">تومان</p>
             </div>
           </transition-fade>
@@ -186,7 +207,18 @@ const props = defineProps<home>();
           <div @click="emit('alarm', props.consoleId)" class="option-box">
             <p>یادآور</p>
           </div>
-          <div class="option-box">
+          <div
+            @click="
+              emit(
+                'changeMoney',
+                props.consoleId,
+                props.costFood,
+                props.costPlayed,
+                props.customMoney
+              )
+            "
+            class="option-box"
+          >
             <p>تغییر قیمت</p>
           </div>
         </div>

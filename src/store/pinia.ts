@@ -8,6 +8,7 @@ import type {
   hourRate,
   billFood,
   alarmInLocalStorage,
+  CustomMoneyInLocalStorage,
 } from "@/types/index";
 import hourRateApi from "@/api/hourRate.js";
 import consoleApi from "@/api/console.js";
@@ -155,6 +156,7 @@ export const usePinia = defineStore("pinia", () => {
         loading: false,
         billFood: [],
         optionStatus: false,
+        customMoney: 0,
         alarmStatus: false,
         billId: 0,
         consoleId,
@@ -177,6 +179,13 @@ export const usePinia = defineStore("pinia", () => {
             console.hourRate = hourRateSelected?.name
               ? hourRateSelected?.name
               : 0;
+            ////////////////////////////////////////
+            const money: CustomMoneyInLocalStorage[] =
+              localStorageService.getCustomMoney();
+            const moneySelected = money.find(
+              (item) => item.consoleId === console.consoleId
+            );
+            if (moneySelected) console.customMoney = moneySelected.money;
             ////////////////////////////////////////
             handleConsoleTimer(console);
             let delta =

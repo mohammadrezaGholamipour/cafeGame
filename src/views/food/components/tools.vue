@@ -37,7 +37,7 @@ watch(
     <input
       class="input !min-w-[200px] w-[220px]"
       placeholder="دنبال چی هستی؟"
-      v-model="search.trim"
+      v-model.trim="search"
       inputmode="search"
       type="text"
     />

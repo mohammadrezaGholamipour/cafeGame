@@ -91,7 +91,7 @@ const requestCloseBill = (): void => {
       pinia.requestGetOpenBill(),
         pinia.requestGetAllBill(),
         handleRemoveAlarm(state.consoleSelected.consoleId);
-      handleCloseDialog();
+      handleRemoveMoney(state.consoleSelected.consoleId);
     })
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
@@ -102,7 +102,8 @@ const requestCloseBill = (): void => {
         textHeader: "خطا",
         textMain: "فاکتور مورد نظر بسته نشد",
       });
-    });
+    })
+    .finally(() => handleCloseDialog());
 };
 //////////////////////////////////////////
 const requestPaymentMethod = (): void => {
@@ -115,6 +116,7 @@ const requestPaymentMethod = (): void => {
     .then(() => requestCloseBill())
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
+      handleCloseDialog();
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
@@ -133,6 +135,7 @@ const requestRemoveBill = () => {
       pinia.requestGetOpenBill();
       pinia.requestGetAllBill();
       handleRemoveAlarm(state.consoleSelected.consoleId);
+      handleRemoveMoney(state.consoleSelected.consoleId);
     })
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
@@ -368,16 +371,14 @@ const handleChangeMoney = (
   state.dialog.status = true;
 };
 ///////////////////////////////////////////////
-const handleRemoveMoney = () => {
+const handleRemoveMoney = (consoleId: number) => {
   const moneyList: CustomMoneyInLocalStorage[] =
     localStorageService.getCustomMoney();
-  const money = moneyList.filter(
-    (item) => item.consoleId !== state.consoleSelected.consoleId
-  );
+  const money = moneyList.filter((item) => item.consoleId !== consoleId);
   localStorageService.setCustomMoney(money);
   state.consoleSelected.customMoney = 0;
   const consoleSelected = homeData.value?.find(
-    (item) => item.consoleId === state.consoleSelected.consoleId
+    (item) => item.consoleId === consoleId
   );
   if (consoleSelected) consoleSelected.customMoney = 0;
 };
@@ -431,7 +432,6 @@ const handleDialogStatus = (status: boolean) => {
     } else if (state.dialog.name === "payment-method") {
       state.dialog.status = false;
       requestPaymentMethod();
-      handleCloseDialog();
     }
     ////////////////////////////////////////
   } else {
@@ -587,6 +587,7 @@ const getTimeStartOrEndBill = () => {
       />
       <!-- /////////////////////////// -->
       <Factor
+        :customMoney="state.consoleSelected.customMoney"
         :consoleId="state.consoleSelected.consoleId"
         :billFoods="state.consoleSelected.billFoods"
         :bill-id="state.consoleSelected.billId"

@@ -282,9 +282,10 @@ export const usePinia = defineStore("pinia", () => {
       }
       if (timer.hours > 0) {
         const minutesMoney = (hourRate / 60) * timer.minutes;
-        console.costPlayed = Math.round(timer.hours * hourRate + minutesMoney);
+        console.costPlayed =
+          Math.ceil((timer.hours * hourRate + minutesMoney) / 1000) * 1000;
       } else {
-        console.costPlayed = Math.round(hourRate);
+        console.costPlayed = hourRate;
       }
       /////////////////////////////////
     }, 1000);

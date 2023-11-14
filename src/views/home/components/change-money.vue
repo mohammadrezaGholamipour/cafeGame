@@ -5,7 +5,7 @@ import { reactive, watch } from "vue";
 ///////////////////////////////////////
 const emit = defineEmits<{
   money: [number];
-  removeMoney: [];
+  removeMoney: [number];
 }>();
 const props = defineProps<{
   consoleId: number;
@@ -60,7 +60,7 @@ const handleDecrease = () => {
       <p>
         {{
           props.customMoney > 0
-            ? `${props.customMoney.toLocaleString()} هزار تومان افزایش یافته است`
+            ? `${props.customMoney.toLocaleString()}  تومان افزایش یافته است`
             : `${String(props.customMoney.toLocaleString()).replace(
                 "-",
                 ""
@@ -69,7 +69,7 @@ const handleDecrease = () => {
       </p>
       <img
         src="@/assets/image/close.svg"
-        @click="emit('removeMoney')"
+        @click="emit('removeMoney', props.consoleId)"
         class="cursor-pointer"
       />
     </div>

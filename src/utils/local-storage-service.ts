@@ -49,4 +49,16 @@ export default {
   setCustomMoney: (money: CustomMoneyInLocalStorage[]): void => {
     window.localStorage.setItem("money", JSON.stringify(money));
   },
+  ///////////////////////////
+  getDisplayMood: () => {
+    const displayMood = window.localStorage.getItem("displayMood");
+    if (displayMood) {
+      return JSON.parse(displayMood);
+    } else {
+      return 1;
+    }
+  },
+  setDisplayMood: (displayMood: number): void => {
+    window.localStorage.setItem("displayMood", JSON.stringify(displayMood));
+  },
 };

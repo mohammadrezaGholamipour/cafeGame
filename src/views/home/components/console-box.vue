@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { home } from "@/types/index";
+import { computed } from "vue";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
@@ -53,7 +54,19 @@ const emit = defineEmits<{
   ];
 }>();
 const props = defineProps<home>();
-/////////////////////
+/////////////////////////////////
+const totalMoney = computed(() => {
+  const money =
+    (props.costFood || 0) + (props.costPlayed || 0) + (props.customMoney || 0);
+  if (money > 0) {
+    return `${money.toLocaleString()} تومان`;
+  } else if (money < 0) {
+    return `${money.toLocaleString().replace("-", "")} تومان طلب کار`;
+  } else if (money === 0) {
+    return "تسویه شده";
+  }
+});
+/////////////////////////////////
 </script>
 <template>
   <div :class="['console', props.status ? 'active-color' : 'disable-color']">
@@ -103,7 +116,9 @@ const props = defineProps<home>();
           </p>
           <div
             :class="
-              props.billFood.length ? 'cursor-pointer' : 'cursor-not-allowed'
+              props.billFood.length || props.customMoney
+                ? 'cursor-pointer'
+                : 'cursor-not-allowed'
             "
             class="flex items-center justify-center gap-x-[3px]"
             @click="
@@ -117,16 +132,7 @@ const props = defineProps<home>();
             "
             v-else
           >
-            <p>
-              {{
-                (
-                  props.costPlayed +
-                  props.costFood +
-                  props.customMoney
-                ).toLocaleString()
-              }}
-            </p>
-            <p class="!font-[400]">تومان</p>
+            <p>{{ totalMoney }}</p>
           </div>
         </transition-fade>
       </div>

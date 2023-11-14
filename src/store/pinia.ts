@@ -34,12 +34,18 @@ export const usePinia = defineStore("pinia", () => {
     allBill: false as boolean | bill[],
     openBill: false as boolean | bill[],
     home: false as boolean | home[],
+    displayMood: 2 as number,
   });
   ////////////////////////////
   watch(
     () => state.openBill,
     () => handleHomeData()
   );
+  ////////////////////////////
+  const handleChangeDisplayMood = (displayMood: number) => {
+    localStorageService.setDisplayMood(displayMood);
+    state.displayMood = displayMood;
+  };
   ////////////////////////////
   const handleNotification = (data: Notification): void => {
     state.notification = data;
@@ -282,9 +288,10 @@ export const usePinia = defineStore("pinia", () => {
       }
       if (timer.hours > 0) {
         const minutesMoney = (hourRate / 60) * timer.minutes;
-        console.costPlayed = Math.round(timer.hours * hourRate + minutesMoney);
+        console.costPlayed =
+          Math.ceil((timer.hours * hourRate + minutesMoney) / 1000) * 1000;
       } else {
-        console.costPlayed = Math.round(hourRate);
+        console.costPlayed = hourRate;
       }
       /////////////////////////////////
     }, 1000);
@@ -302,6 +309,7 @@ export const usePinia = defineStore("pinia", () => {
   };
   //////////////////////////
   return {
+    handleChangeDisplayMood,
     handleNotification,
     requestGetOpenBill,
     requestGetHourRate,

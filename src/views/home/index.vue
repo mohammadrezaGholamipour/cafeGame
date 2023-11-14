@@ -25,7 +25,6 @@ import billApi from "@/api/bill.js";
 const router = useRouter();
 const pinia = usePinia();
 const state = reactive({
-  displayMode: 2,
   consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
@@ -489,12 +488,12 @@ const getTimeStartOrEndBill = () => {
 <template>
   <div class="parent-home-page">
     <!-- //////////////////////////////////// -->
-    <tools @displayMode="state.displayMode = $event" />
+    <tools @displayMode="pinia.handleChangeDisplayMood($event)" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
       <div v-if="homeData?.length" class="parent-console">
         <component
-          :is="state.displayMode === 1 ? consoleLine : consoleBox"
+          :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox"
           @changeHourRate="handleChangeHourRate"
           :dropListStatus="item.dropListStatus"
           @optionStatus="handleOptionStatus"

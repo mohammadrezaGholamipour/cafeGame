@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import localStorageService from "@/utils/local-storage-service";
 import Header from "@/components/header/index.vue";
 import Menu from "../components/menu.vue";
 import { usePinia } from "@/store/pinia";
@@ -6,6 +7,7 @@ import { onMounted } from "vue";
 /////////////////////////////////
 const pinia = usePinia();
 onMounted(async () => {
+  pinia.handleChangeDisplayMood(localStorageService.getDisplayMood());
   await pinia.requestGetConsole(),
     await pinia.requestGetHourRate(),
     await pinia.requestGetFood(),

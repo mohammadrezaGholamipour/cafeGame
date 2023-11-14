@@ -13,7 +13,6 @@ import { usePinia } from "@/store/pinia";
 const pinia = usePinia();
 const state = reactive({
   requestLoading: false,
-  displayMode: 2,
   removeConsole: {
     consoleSelected: {
       id: 0,
@@ -165,7 +164,7 @@ const handleRemoveConsole = (console: consoleTypeApi) => {
   <div class="parent-console-page">
     <!-- /////////////////////////////////////// -->
     <tools
-      @displayMode="state.displayMode = $event"
+      @displayMode="pinia.handleChangeDisplayMood($event)"
       :loading="state.requestLoading"
       @new="requestNewConsole"
     />
@@ -173,7 +172,7 @@ const handleRemoveConsole = (console: consoleTypeApi) => {
     <transition-fade group class="w-full overflow-y-auto h-full">
       <div v-if="consoleData?.length" class="parent-console">
         <component
-          :is="state.displayMode === 1 ? ConsoleLine : ConsoleBox"
+          :is="pinia.state.displayMood === 1 ? ConsoleLine : ConsoleBox"
           @remove="handleRemoveConsole(console)"
           :playedCost="console.playedCost"
           :playedTime="console.playedTime"

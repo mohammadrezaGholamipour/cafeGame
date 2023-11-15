@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { filterNumbers } from "@/utils/convert-number";
+import { filterNumbersWithSep } from "@/utils/convert-number";
 import { usePinia } from "@/store/pinia";
 import { reactive, watch } from "vue";
 ///////////////////////////////////////
@@ -15,19 +15,19 @@ const props = defineProps<{
 }>();
 const pinia = usePinia();
 const state = reactive({
-  inputMoney: "" as number | string,
+  inputMoney: "" ,
 });
 /////////////////////////
 watch(
   () => state.inputMoney,
   (value) => {
-    state.inputMoney = filterNumbers(value);
+    state.inputMoney = filterNumbersWithSep(value);
   }
 );
 /////////////////////////////
 const handleIncrease = () => {
   if (state.inputMoney) {
-    emit("money", Number(state.inputMoney));
+    emit("money", Number(state.inputMoney.replace(/,/g, "")));
   } else {
     pinia.handleNotification({
       ...pinia.state.notification,
@@ -41,7 +41,7 @@ const handleIncrease = () => {
 /////////////////////////////
 const handleDecrease = () => {
   if (state.inputMoney) {
-    emit("money", -Number(state.inputMoney));
+    emit("money", -Number(state.inputMoney.replace(/,/g, "")));
   } else {
     pinia.handleNotification({
       ...pinia.state.notification,

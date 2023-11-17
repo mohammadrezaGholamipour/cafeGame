@@ -31,15 +31,15 @@ watch(
   () => state.minute,
   (value) => {
     state.minute = filterNumbers(value);
-    if (Number(state.minute) > 60) state.minute = "";
+    if (Number(state.minute) > 59) state.minute = "";
   }
 );
 ///////////////////////////////////////////////
 const handleAlarm = () => {
-  if (state.minute) {
+  const inputMinute = Number(state.hour) * 60 + Number(state.minute);
+  if (inputMinute) {
     const timer = handleGetConsoleTimer();
     const consoleMinute = Number(timer?.hours) * 60 + Number(timer?.minutes);
-    const inputMinute = Number(state.hour) * 60 + Number(state.minute);
     if (Number(consoleMinute) < Number(inputMinute)) {
       emit("setAlarm", {
         minute: Number(state.minute),

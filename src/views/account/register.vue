@@ -123,7 +123,6 @@ const handleRegister = () => {
           v-model="mobile"
           inputmode="tel"
           class="input"
-          type="tel"
         />
       </div>
     </div>

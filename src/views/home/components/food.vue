@@ -85,27 +85,25 @@ const handleAddOrSubtract = (status: string, food: foodStore) => {
 </script>
 <template>
   <div class="parent-food">
-    <div class="parent-search-food">
-      <input
-        class="input !min-w-[200px] w-full bg-white"
-        placeholder="دنبال چی هستی؟"
-        v-model.trim="state.search"
-        inputmode="search"
-        type="text"
-        autofocus
-      />
-      <img
-        @click="pinia.requestGetFood(), (state.search = '')"
-        src="@/assets/image/close.svg"
-        class="cursor-pointer"
-      />
-    </div>
+    <input
+      class="input !min-w-[200px] w-full bg-white"
+      placeholder="دنبال چی هستی؟"
+      v-model.trim="state.search"
+      inputmode="search"
+      type="text"
+      autofocus
+    />
+
     <transition-fade
       class="w-full overflow-hidden overflow-y-auto h-full"
       group
     >
       <!-- //////////////////////// -->
-      <Table v-if="state.foodList.length" :header="state.headerTable">
+      <Table
+        v-if="state.foodList.length"
+        :header="state.headerTable"
+        :largTable="true"
+      >
         <template v-slot:Larg>
           <tr v-for="(food, index) in state.foodList" :key="food.id">
             <td class="w-[55px]">{{ index + 1 }}</td>
@@ -167,8 +165,5 @@ const handleAddOrSubtract = (status: string, food: foodStore) => {
 <style scoped>
 .parent-food {
   @apply w-full transition-all h-[220px] overflow-hidden flex flex-col items-center justify-start gap-y-[10px];
-}
-.parent-search-food {
-  @apply w-full bg-white pl-2 rounded-md flex items-center justify-between gap-x-[10px];
 }
 </style>

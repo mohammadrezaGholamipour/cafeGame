@@ -20,7 +20,7 @@ const props = defineProps(["header"]);
   @apply w-full p-[10px] shadow-sm text-center rounded-[5px] overflow-y-auto;
 }
 .table-larg thead tr td {
-  @apply font-[dana] text-white font-bold text-[15px];
+  @apply font-[dana] text-white font-bold text-[15px] whitespace-nowrap;
   background-color: rgba(29, 91, 121, 1);
 }
 .table-larg thead tr td:last-child{
@@ -30,7 +30,7 @@ const props = defineProps(["header"]);
   @apply rounded-tr-lg
 }
 .table-larg td {
-  @apply p-[10px] text-[13px] font-[kalameh];
+  @apply px-[5px] py-[10px] text-[13px] font-[kalameh];
 }
 .table-larg tr {
   @apply border-b border-dashed;

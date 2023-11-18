@@ -419,15 +419,11 @@ const handleDialogStatus = (status: boolean) => {
     } else if (state.dialog.name === "hourRate") {
       requestChangeHourRate();
     } else if (state.dialog.name === "had-food") {
-      state.dialog.status = false;
-      setTimeout(() => {
-        state.dialog.btnAcceptText = "تایید";
-        state.dialog.btnCancelText = "بازگشت";
-        state.dialog.name = "payment-method";
-        state.dialog.header = true;
-        state.dialog.headerText = "روش پرداخت";
-        state.dialog.status = true;
-      }, 501);
+      state.dialog.btnAcceptText = "تایید";
+      state.dialog.btnCancelText = "بازگشت";
+      state.dialog.name = "payment-method";
+      state.dialog.header = true;
+      state.dialog.headerText = "روش پرداخت";
     } else if (state.dialog.name === "payment-method") {
       state.dialog.status = false;
       requestPaymentMethod();
@@ -435,17 +431,13 @@ const handleDialogStatus = (status: boolean) => {
     ////////////////////////////////////////
   } else {
     if (state.dialog.name === "had-food") {
-      state.dialog.status = false;
-      setTimeout(() => {
-        const billFood: billFood[] | [] | undefined = homeData.value?.find(
-          ({ billId }) => billId === state.consoleSelected.billId
-        )?.billFood;
-        state.consoleSelected.billFoods = billFood ?? [];
-        state.dialog.btnAcceptText = "تایید";
-        state.dialog.btnCancelText = "بازگشت";
-        state.dialog.name = "food";
-        state.dialog.status = true;
-      }, 501);
+      const billFood: billFood[] | [] | undefined = homeData.value?.find(
+        ({ billId }) => billId === state.consoleSelected.billId
+      )?.billFood;
+      state.consoleSelected.billFoods = billFood ?? [];
+      state.dialog.btnAcceptText = "تایید";
+      state.dialog.btnCancelText = "بازگشت";
+      state.dialog.name = "food";
     } else {
       handleCloseDialog();
     }
@@ -579,11 +571,7 @@ const getTimeStartOrEndBill = () => {
         فاکتور مورد نظر حذف شود؟
       </p>
       <!-- /////////////////////////// -->
-      <Food
-        @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
-        :billFood="state.consoleSelected.billFoods"
-        v-if="state.dialog.name === 'food'"
-      />
+
       <!-- /////////////////////////// -->
       <Factor
         :customMoney="state.consoleSelected.customMoney"
@@ -617,23 +605,31 @@ const getTimeStartOrEndBill = () => {
         @setAlarm="handleSetAlarm"
       />
       <!-- /////////////////////////// -->
-      <p
-        class="p-1 text-center text-[1rem]"
-        v-if="state.dialog.name === 'had-food'"
-      >
-        خوراکی ها ثبت شده است؟
-      </p>
-      <!-- /////////////////////////// -->
-      <div
-        class="w-full flex justify-center items-center"
-        v-if="state.dialog.name === 'payment-method'"
-      >
-        <InputRadio
-          @payment-method="
-            (value) => (state.consoleSelected.paymentMethod = value)
-          "
+      <transition-expand group>
+        <p
+          class="p-1 text-center text-[1rem]"
+          v-if="state.dialog.name === 'had-food'"
+        >
+          خوراکی ها ثبت شده است؟
+        </p>
+        <!-- /////////////////////////// -->
+        <Food
+          @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
+          :billFood="state.consoleSelected.billFoods"
+          v-if="state.dialog.name === 'food'"
         />
-      </div>
+        <!-- /////////////////////////// -->
+        <div
+          class="w-full flex justify-center items-center"
+          v-if="state.dialog.name === 'payment-method'"
+        >
+          <InputRadio
+            @payment-method="
+              (value) => (state.consoleSelected.paymentMethod = value)
+            "
+          />
+        </div>
+      </transition-expand>
       <!-- /////////////////////////// -->
       <ChangeMoney
         :customMoney="state.consoleSelected.customMoney"

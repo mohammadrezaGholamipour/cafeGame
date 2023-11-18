@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 const pinia = usePinia();
 const state = reactive({
-  headerTable: ["ردیف", "نام محصول", "قیمت واحد", "تعداد", "مبلغ کل"],
+  headerTable: ["نام محصول", "قیمت واحد", "تعداد", "مبلغ کل"],
 });
 ////////////////////////////////////
 const billSelected = computed(() => {
@@ -51,10 +51,13 @@ const totalMoney = computed(() => {
 <template>
   <div class="parent-bill-cost">
     <!-- ///////////////////////// -->
-    <Table v-if="props.billFoods.length" :header="state.headerTable">
+    <Table
+      v-if="props.billFoods.length"
+      :header="state.headerTable"
+      :largTable="true"
+    >
       <template v-slot:Larg>
-        <tr v-for="(food, index) in props.billFoods" :key="food.id">
-          <td>{{ index + 1 }}</td>
+        <tr v-for="food in props.billFoods" :key="food.id">
           <td>{{ food.name }}</td>
           <td>{{ food.cost?.toLocaleString() }} تومان</td>
           <td>{{ food.count }}</td>

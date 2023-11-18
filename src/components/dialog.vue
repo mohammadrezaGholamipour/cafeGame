@@ -60,10 +60,8 @@ const handleDialogStatus = (status: boolean) => {
             ]"
             @click="handleDialogStatus(true)"
           >
-            <transition-fade class="flex" group>
-              <span v-if="props.loading" class="btn-loader"></span>
-              <p v-else>{{ props.btnAcceptText }}</p>
-            </transition-fade>
+            <span v-if="props.loading" class="btn-loader"></span>
+            <p v-else>{{ props.btnAcceptText }}</p>
           </button>
           <button
             class="button bg-white text-black"

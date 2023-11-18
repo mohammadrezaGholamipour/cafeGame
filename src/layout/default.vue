@@ -24,9 +24,10 @@ window.onfocus = () => {
 <template>
   <div class="parent-layout">
     <!-- ///////////////// -->
-    <Header></Header>
+    <Header />
     <!-- ///////////////// -->
     <main id="main">
+      <!-- ///////////////////////// -->
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
@@ -34,16 +35,17 @@ window.onfocus = () => {
       </router-view>
     </main>
     <!-- ///////////////// -->
-    <Menu id="menu" />
-    <!-- ///////////////// -->
+    <Menu />
+    <!-- ///////////////////////// -->
   </div>
 </template>
 <style scoped>
 .parent-layout {
-  @apply w-screen overflow-hidden h-[100lvh] flex flex-col justify-start items-center bg-slate-50;
+  @apply w-screen overflow-hidden h-[100vh] flex flex-col justify-start items-center bg-slate-50;
 }
 main {
-  @apply flex justify-start items-start w-full h-full overflow-hidden pb-[5px];
+  @apply flex justify-start items-start w-full  overflow-hidden pb-[5px];
+  height: calc(100vh - 85px);
 }
 .fade-enter-active,
 .fade-leave-active {

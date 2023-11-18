@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import Small from "./components/small.vue";
+import type { Table } from "@/types/index";
 import Larg from "./components/larg.vue";
 import { usePinia } from "@/store/pinia";
 ////////////////////////////////////////
-const props = defineProps(["header"]);
+const props = defineProps<Table>();
 const pinia = usePinia();
 </script>
 <template>
   <transition-fade class="parent-table" group>
-    <Larg v-if="pinia.state.appWidth > 600" :header="props.header">
+    <Larg
+      v-if="pinia.state.appWidth > 600 || props.largTable"
+      :header="props.header"
+    >
       <slot name="Larg" />
     </Larg>
-    <Small v-else >
+    <Small v-else>
       <slot name="small" />
     </Small>
   </transition-fade>

@@ -130,3 +130,7 @@ export interface highlightStep {
     showButtons?: ("open" | "close" | "next")[];
   };
 }
+export interface Table {
+  largTable?: boolean;
+  header: string[];
+}

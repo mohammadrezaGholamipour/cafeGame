@@ -27,6 +27,7 @@ const handleDialogStatus = (status: boolean) => {
 </script>
 
 <template>
+  <transition name="fade-scale">
     <div class="dialog-back-ground" v-show="props.status" ref="dialog">
       <div
         :style="{ width: `${props.width}px` }"
@@ -73,6 +74,7 @@ const handleDialogStatus = (status: boolean) => {
         <!-- /////////////////////////// -->
       </div>
     </div>
+  </transition>
 </template>
 <style scoped>
 .dialog-back-ground {
@@ -87,7 +89,7 @@ const handleDialogStatus = (status: boolean) => {
   width: 100vw;
 }
 .dialog-card {
-  @apply flex flex-col font-[dana] text-white bg-[#1d5b79] rounded-md p-[10px] gap-y-3 min-w-[300px];
+  @apply flex flex-col font-[dana] text-white bg-[#1d5b79] rounded-md shadow-lg p-[10px] gap-y-3 min-w-[300px];
 }
 .dialog-header {
   @apply flex w-full justify-between items-center;
@@ -103,5 +105,15 @@ const handleDialogStatus = (status: boolean) => {
   flex: none;
   align-self: stretch;
   flex-grow: 0;
+}
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  transition: opacity 0.5s, transform 0.5s;
+  opacity: 0;
 }
 </style>

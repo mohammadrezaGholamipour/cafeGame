@@ -18,8 +18,8 @@ export interface Notification {
   timer: number;
 }
 export interface AccountResponse {
-  userState: number;
-  token: string;
+  access_token: string;
+  token_type: string;
 }
 export interface DropList {
   id: number;
@@ -50,15 +50,17 @@ export interface home {
   costPlayed: number;
   costFood: number;
   loading: boolean;
-  billFood: billFood[];
+  bill_foods: billFood[];
   optionStatus: boolean;
   customMoney: number;
   alarmStatus: boolean;
   timer: { hours: number; minutes: number; seconds: number };
+  isDeleted: boolean;
 }
 export interface consoleTypeApi {
   id: number;
   name: string;
+  is_deleted: boolean;
 }
 export interface alarmInLocalStorage {
   hour: number;
@@ -76,6 +78,7 @@ export interface consolePage {
   playedCost: number;
   loading: boolean;
   playedTime: { hours: number; minutes: number; seconds: number };
+  isDeleted: boolean;
 }
 export interface food {
   id: number;
@@ -95,22 +98,23 @@ export interface hourRate {
 export interface billFood {
   id: number;
   count: number;
-  foodId: number;
+  food_id: number;
   billId: number;
-  cost: number;
+  price: number;
   name: string;
 }
 export interface bill {
-  billFoods: billFood[];
-  endTime: Date;
-  finalCost: number;
+  bill_foods: billFood[];
+  end_time: Date;
+  total_price: number;
   hourRateId: number;
   id: number;
-  paymentMethod: number;
+  unit_price_amount: number;
+  payment_method: number;
   foodCost: number;
-  startTime: Date;
-  systemId: number;
-  systemName: string;
+  start_time: Date;
+  console_id: number;
+  console: consoleTypeApi;
 }
 export interface StartBillProps {
   dropListStatus: boolean;

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { home } from "@/types/index";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 //////////////////////////////
 const emit = defineEmits<{
   status: [info: { billId: number; consoleId: number }, status: boolean];
   factor: [
     billId: number,
     consoleId: number,
-    billFood: {
+    bill_foods: {
       id: number;
       count: number;
       foodId: number;
@@ -15,7 +15,7 @@ const emit = defineEmits<{
       cost: number;
       name: string;
     }[],
-    customMoney: number
+    customMoney: number,
   ];
   removeBill: [
     billId: number,
@@ -27,7 +27,7 @@ const emit = defineEmits<{
       billId: number;
       cost: number;
       name: string;
-    }[]
+    }[],
   ];
   food: [
     billId: number,
@@ -39,7 +39,7 @@ const emit = defineEmits<{
       billId: number;
       cost: number;
       name: string;
-    }[]
+    }[],
   ];
   optionStatus: [status: boolean, consoleId: number];
   changeHourRate: [billId: number, hourRate: number];
@@ -50,7 +50,7 @@ const emit = defineEmits<{
     consoleId: number,
     costFood: number,
     costPlayed: number,
-    customMoney: number
+    customMoney: number,
   ];
 }>();
 const props = defineProps<home>();
@@ -69,16 +69,21 @@ const totalMoney = computed(() => {
 /////////////////////////////////
 </script>
 <template>
-  <div :class="['console', props.status ? 'active-color' : 'disable-color']">
+  <div
+    v-if="!props.isDeleted"
+    :class="['console', props.status ? 'active-color' : 'disable-color']"
+  >
     <!-- ///////////////////////// -->
     <img
-      @click="emit('removeBill', props.billId, props.consoleId, props.billFood)"
+      @click="
+        emit('removeBill', props.billId, props.consoleId, props.bill_foods)
+      "
       src="@/assets/image/home/remove-bill.svg"
       class="icon-change-bill left-[10px]"
       v-if="props.status"
     />
     <img
-      @click="emit('food', props.billId, props.consoleId, props.billFood)"
+      @click="emit('food', props.billId, props.consoleId, props.bill_foods)"
       src="@/assets/image/home/food-bill.svg"
       class="icon-change-bill right-[10px]"
       v-if="props.status"
@@ -107,7 +112,7 @@ const totalMoney = computed(() => {
               `${props.timer.hours}:${props.timer.minutes}:${props.timer.seconds}`
             }}
           </p>
-          <img src="@/assets/image/home/timer.svg" />
+          <img class="animate-pulse" src="@/assets/image/home/timer.svg" />
         </div>
         <!-- //////////////////////// -->
         <transition-fade group class="console-money">
@@ -116,7 +121,7 @@ const totalMoney = computed(() => {
           </p>
           <div
             :class="
-              props.billFood.length || props.customMoney
+              props?.bill_foods?.length || props.customMoney
                 ? 'cursor-pointer'
                 : 'cursor-not-allowed'
             "
@@ -126,8 +131,8 @@ const totalMoney = computed(() => {
                 'factor',
                 props.billId,
                 props.consoleId,
-                props.billFood,
-                props.customMoney
+                props.bill_foods,
+                props.customMoney,
               )
             "
             v-else
@@ -147,7 +152,7 @@ const totalMoney = computed(() => {
             emit(
               'status',
               { billId: props.billId, consoleId: props.consoleId },
-              false
+              false,
             )
           "
         >
@@ -166,7 +171,7 @@ const totalMoney = computed(() => {
           emit(
             'status',
             { billId: props.billId, consoleId: props.consoleId },
-            true
+            true,
           )
         "
         v-else
@@ -219,7 +224,7 @@ const totalMoney = computed(() => {
                 props.consoleId,
                 props.costFood,
                 props.costPlayed,
-                props.customMoney
+                props.customMoney,
               )
             "
             class="option-box"
@@ -249,64 +254,84 @@ const totalMoney = computed(() => {
   @apply relative transition-all pb-[10px] pt-[25px] gap-y-[3px] w-[300px] h-[130px] rounded-[10px] flex flex-col justify-start items-center;
   box-shadow: 0px 0px 5px 0px rgba(56, 56, 56, 0.25);
 }
+
 .console-number {
   @apply w-[40px] shadow-md transition-all flex justify-center absolute top-[-20px] items-center h-[40px] rounded-full;
 }
+
 .console-number p {
   @apply text-white font-[kalameh];
 }
+
 .console-main {
   @apply w-full flex flex-col gap-y-[3px] justify-center items-center;
 }
+
 .console-timer {
   @apply w-full flex items-center justify-center gap-x-[5px];
+  
 }
+
 .console-timer p {
   @apply text-black mt-1 font-[dana];
 }
+
 .console-money {
   @apply w-full justify-center flex items-center gap-x-[3px] h-[30px];
 }
+
 .console-money p {
   @apply font-[dana] font-bold text-[15px];
 }
+
 .console-footer {
   @apply flex gap-x-[7px] items-center;
 }
+
 .icon-change-bill {
   @apply cursor-pointer hover:scale-110 transition-all absolute top-[10px];
 }
+
 .parent-console-option {
   @apply absolute top-0 flex flex-col justify-center items-center gap-y-[10px] rounded-[10px] w-full h-full backdrop-blur-md;
 }
+
 .parent-console-option > div {
   @apply flex items-center gap-x-[4px];
 }
+
 .option-box {
   @apply w-[70px] hover:opacity-80 transition-all h-[70px] gap-y-[5px] cursor-pointer shadow-md flex flex-col items-center justify-center rounded-[5px];
 }
+
 .option-box p {
   @apply text-[#1C274C] font-bold font-[kalameh] text-[13px];
 }
+
 .option-box:nth-child(1) {
   @apply border-2 border-[#32bb71];
   background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
 }
+
 .option-box:nth-child(2) {
   @apply border-2 border-[#2d82b2];
   background: linear-gradient(94deg, #2d82b2 -6.52%, #329abb 108.61%);
 }
+
 .option-box:nth-child(3) {
   @apply border-2 border-[#f8b806];
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
+
 .option-box:nth-child(4) {
   @apply border-2 border-[#f6743e];
   background: linear-gradient(95deg, #f6743e -6.96%, #d42525 108.25%);
 }
+
 .close-option {
   @apply w-[40px] h-[40px] border-2 border-[#ef6262] rounded-full cursor-pointer bg-slate-300 top-[-22px] shadow-md absolute flex justify-center items-center;
 }
+
 .parent-show-alarm {
   @apply w-full h-full absolute flex justify-center top-0 backdrop-blur-lg items-center rounded-[10px];
   background: linear-gradient(92deg, #f8b8069a -30.82%, #ff8e04ab 126.36%);

@@ -15,7 +15,7 @@
   @apply flex flex-col gap-y-[10px] font-[dana] items-start font-bold text-[15px];
 }
 .small-table-left {
-  @apply flex flex-col gap-y-[10px] font-[kalameh] items-end text-[13px];
+  @apply flex flex-col gap-y-[10px] font-[kalameh] items-center text-[13px];
 }
 .small-table > div > div {
   @apply h-[30px];

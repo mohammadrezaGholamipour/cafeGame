@@ -1,6 +1,6 @@
 import HttpClient from '@/utils/axios-base'
 export default {
-  get: (data) => HttpClient.get('api/hourRate', data),
-  new: (money) => HttpClient.post('api/hourRate', money),
-  delete: (moneyId) => HttpClient.delete(`api/hourRate/${moneyId}`),
+  get: (data) => HttpClient.get('unit-price/my-unit-price', data),
+  new: (unitPrice) => HttpClient.post('unit-price/create', unitPrice),
+  delete: (unitPriceId) => HttpClient.delete(`unit-price/${unitPriceId}`),
 };

@@ -23,7 +23,7 @@ watch(
       :disabled="props.loading"
       id="new"
       :class="[
-        'button h-[40px] bg-[#75ca71] text-white',
+        'button h-[40px] bg-[#75ca71] text-white ',
         { 'bg-gray-400 !cursor-not-allowed': props.loading },
       ]"
       @click="emit('new')"

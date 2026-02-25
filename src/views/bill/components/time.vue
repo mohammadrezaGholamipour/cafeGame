@@ -1,25 +1,46 @@
 <script setup lang="ts">
 import { handleDate, handleTime } from "@/utils/handleDateAndTime";
 import type { bill } from "@/types/index";
+import JalaliDate from "jalali-date";
+import { computed } from "vue";
 ////////////////////////////////////
 const props = defineProps<{ bill: bill }>();
 ///////////////////////////////////////////
+const startDate = computed(() => {
+  const dateObj = new Date(props.bill.start_time);
+
+  const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(dateObj);
+
+  return formatted;
+});
+const endDate = computed(() => {
+  const dateObj = new Date(props.bill.end_time);
+
+  const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tehran",
+  }).format(dateObj);
+
+  return formatted;
+});
 </script>
 <template>
   <div class="parent-bill-time">
     <div>
       <p>اطلاعات شروع :</p>
-      {{
-        ` ${handleDate(props.bill.startTime)} --
-        ${handleTime(props.bill.startTime)} `
-      }}
+      {{ `${startDate}  --${handleTime(props.bill.start_time)} ` }}
     </div>
     <div>
       <p>اطلاعات پایان :</p>
       {{
-        props.bill.endTime
-          ? ` ${handleDate(props.bill.endTime)} --
-        ${handleTime(props.bill.endTime)} `
+        props.bill.end_time
+          ? ` ${endDate} -- ${handleTime(props.bill.end_time)} `
           : "درحال اجرا"
       }}
     </div>

@@ -28,7 +28,7 @@ const state = reactive({
   consoleSelected: {
     dropListStatus: false,
     hourRateSelected: { id: 0, name: 0 },
-    paymentMethod: 0,
+    payment_method: 0,
     billFoods: [] as billFood[] | [],
     foodSelected: [] as { foodId: number; count: number }[] | [],
     consoleId: 0,
@@ -66,11 +66,11 @@ const requestStartBill = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
     .start(
-      state.consoleSelected.consoleId,
-      state.consoleSelected.hourRateSelected.id,
-      getTimeStartOrEndBill()
+      { console_id: state.consoleSelected.consoleId, unit_price_amount: state.consoleSelected.hourRateSelected.name }
     )
-    .then(() => pinia.requestGetOpenBill(), pinia.requestGetAllBill())
+    .then(() => {
+      pinia.requestGetOpenBill(), pinia.requestGetAllBill()
+    })
     .catch(() => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
@@ -85,7 +85,8 @@ const requestStartBill = (): void => {
 /////////////////////////////////////////////////
 const requestCloseBill = (): void => {
   billApi
-    .close(state.consoleSelected.billId, getTimeStartOrEndBill())
+    .close(state.consoleSelected.billId)
+
     .then(() => {
       pinia.requestGetOpenBill(),
         pinia.requestGetAllBill(),
@@ -108,9 +109,9 @@ const requestCloseBill = (): void => {
 const requestPaymentMethod = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
-    .changePaymentMethod(
+    .update(
       state.consoleSelected.billId,
-      state.consoleSelected.paymentMethod
+      { payment_method: state.consoleSelected.payment_method }
     )
     .then(() => requestCloseBill())
     .catch(() => {
@@ -130,9 +131,10 @@ const requestRemoveBill = () => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
     .delete(state.consoleSelected.billId)
+
     .then(() => {
       pinia.requestGetOpenBill();
-      pinia.requestGetAllBill();
+      pinia.requestGetAllBill()
       handleRemoveAlarm(state.consoleSelected.consoleId);
       handleRemoveMoney(state.consoleSelected.consoleId);
     })
@@ -151,9 +153,9 @@ const requestRemoveBill = () => {
 const requestChangeHourRate = () => {
   state.dialog.loading = true;
   billApi
-    .changeMoney(
+    .update(
       state.consoleSelected.billId,
-      state.consoleSelected.hourRateSelected.id
+      { unit_price_amount: state.consoleSelected.hourRateSelected.name }
     )
     .then(() => {
       pinia.requestGetOpenBill();
@@ -175,7 +177,7 @@ const requestChangeHourRate = () => {
 const requestChangeStartTime = (time: number) => {
   state.dialog.loading = true;
   billApi
-    .changeStartTime(state.consoleSelected.billId, time)
+    .update(state.consoleSelected.billId, { start_time_offset_minutes: time })
     .then(() => {
       pinia.requestGetOpenBill();
       pinia.requestGetAllBill();
@@ -198,7 +200,7 @@ const requestSetFood = () => {
   state.dialog.loading = true;
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
-    .setFood(state.consoleSelected.billId, state.consoleSelected.foodSelected)
+    .update(state.consoleSelected.billId, { foods: state.consoleSelected.foodSelected })
     .then(() => {
       pinia.requestGetOpenBill();
       handleCloseDialog();
@@ -235,10 +237,10 @@ const handleHadFood = (info: { billId: number; consoleId: number }) => {
 const handleSetFood = (
   billId: number,
   consoleId: number,
-  billFood: billFood[] | []
+  bill_foods: billFood[] | []
 ) => {
   state.consoleSelected.consoleId = consoleId;
-  state.consoleSelected.billFoods = billFood;
+  state.consoleSelected.billFoods = bill_foods??[];
   state.consoleSelected.billId = billId;
   state.dialog.name = "food";
   state.dialog.status = true;
@@ -247,9 +249,9 @@ const handleSetFood = (
 const handleRemoveBill = (
   billId: number,
   consoleId: number,
-  billFood: billFood[]
+  bill_foods: billFood[]
 ): void => {
-  if (billFood.length) {
+  if (bill_foods.length) {
     pinia.handleNotification({
       ...pinia.state.notification,
       name: "error",
@@ -274,13 +276,13 @@ const handleStartBill = (info: { billId: number; consoleId: number }): void => {
 const handleFactor = (
   billId: number,
   consoleId: number,
-  billFood: billFood[],
+  bill_foods: billFood[],
   customMoney: number
 ) => {
-  if (billFood.length || customMoney) {
+  if (bill_foods.length || customMoney) {
     state.consoleSelected.billId = billId;
     state.consoleSelected.consoleId = consoleId;
-    state.consoleSelected.billFoods = billFood;
+    state.consoleSelected.billFoods = bill_foods;
     state.consoleSelected.customMoney = customMoney;
     state.dialog.name = "factor";
     state.dialog.footer = false;
@@ -431,10 +433,10 @@ const handleDialogStatus = (status: boolean) => {
     ////////////////////////////////////////
   } else {
     if (state.dialog.name === "had-food") {
-      const billFood: billFood[] | [] | undefined = homeData.value?.find(
+      const bill_foods: billFood[] | [] | undefined = homeData.value?.find(
         ({ billId }) => billId === state.consoleSelected.billId
-      )?.billFood;
-      state.consoleSelected.billFoods = billFood ?? [];
+      )?.bill_foods;
+      state.consoleSelected.billFoods = bill_foods ?? [];
       state.dialog.btnAcceptText = "تایید";
       state.dialog.btnCancelText = "بازگشت";
       state.dialog.name = "food";
@@ -483,54 +485,29 @@ const getTimeStartOrEndBill = () => {
     <tools @displayMode="pinia.handleChangeDisplayMood($event)" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
+
       <div v-if="homeData?.length" class="parent-console">
-        <component
-          :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox"
-          @changeHourRate="handleChangeHourRate"
-          :dropListStatus="item.dropListStatus"
-          @optionStatus="handleOptionStatus"
-          @changeStartTime="handleStartTime"
-          :optionStatus="item.optionStatus"
-          @removeAlarm="handleRemoveAlarm"
-          @changeMoney="handleChangeMoney"
-          :alarmStatus="item.alarmStatus"
-          :customMoney="item.customMoney"
-          @removeBill="handleRemoveBill"
-          @status="handleConsoleStatus"
-          :costPlayed="item.costPlayed"
-          :consoleId="item.consoleId"
-          :hourRate="item.hourRate"
-          :billFood="item.billFood"
-          :costFood="item.costFood"
-          v-for="item in homeData"
-          :loading="item.loading"
-          @factor="handleFactor"
-          :status="item.status"
-          @food="handleSetFood"
-          :billId="item.billId"
-          :key="item.consoleId"
-          @alarm="handleAlarm"
-          :timer="item.timer"
-          :name="item.name"
-        />
+        <component :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox" @changeHourRate="handleChangeHourRate"
+          :dropListStatus="item.dropListStatus" @optionStatus="handleOptionStatus" @changeStartTime="handleStartTime"
+          :optionStatus="item.optionStatus" @removeAlarm="handleRemoveAlarm" @changeMoney="handleChangeMoney"
+          :alarmStatus="item.alarmStatus" :customMoney="item.customMoney" @removeBill="handleRemoveBill"
+          @status="handleConsoleStatus" :costPlayed="item.costPlayed" :consoleId="item.consoleId"
+          :hourRate="item.hourRate" :bill_foods="item.bill_foods" :costFood="item.costFood"
+          v-for="item in homeData.slice().sort((a, b) => a.name.localeCompare(b.name))" :loading="item.loading"
+          @factor="handleFactor" :status="item.status" @food="handleSetFood" :billId="item.billId" :key="item.consoleId"
+          @alarm="handleAlarm" :timer="item.timer" :name="item.name" :isDeleted="item.isDeleted" />
       </div>
       <div class="parent-no-data" v-else-if="homeData">
         <div class="card-no-data">
           <p>برای استفاده از برنامه باید حداقل یک</p>
-          <button
-            class="button bg-[#7CC078] text-white p-1"
-            @click="router.push('/console')"
-          >
+          <button class="button bg-[#7CC078] text-white p-1" @click="router.push('/console')">
             <div class="flex items-center gap-x-[5px]">
               <p class="text-white font-[kalameh]">دستگاه</p>
               <img src="/assets/console.svg" />
             </div>
           </button>
           <p>و</p>
-          <button
-            class="button bg-[#7CC078] text-white p-1"
-            @click="router.push('/money')"
-          >
+          <button class="button bg-[#7CC078] text-white p-1" @click="router.push('/money')">
             <div class="flex items-center gap-x-[5px]">
               <p class="text-white font-[kalameh]">قیمت واحد</p>
               <img src="/assets/money.svg" />
@@ -542,30 +519,16 @@ const getTimeStartOrEndBill = () => {
       <loading v-else />
     </transition-fade>
     <!-- //////////////////////////////////// -->
-    <Dialog
-      :btnCancelText="state.dialog.btnCancelText"
-      :btnAcceptText="state.dialog.btnAcceptText"
-      :headerText="state.dialog.headerText"
-      @changeStatus="handleDialogStatus"
-      :loading="state.dialog.loading"
-      :header="state.dialog.header"
-      :status="state.dialog.status"
-      :footer="state.dialog.footer"
-      :width="state.dialog.width"
-      :btnAccept="true"
-      :btnCancel="true"
-    >
+    <Dialog :btnCancelText="state.dialog.btnCancelText" :btnAcceptText="state.dialog.btnAcceptText"
+      :headerText="state.dialog.headerText" @changeStatus="handleDialogStatus" :loading="state.dialog.loading"
+      :header="state.dialog.header" :status="state.dialog.status" :footer="state.dialog.footer"
+      :width="state.dialog.width" :btnAccept="true" :btnCancel="true">
       <!-- /////////////////////////// -->
-      <StartBill
-        @hourRate="
-          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
-        "
-        @drop-list-status="
-          (status) => (state.consoleSelected.dropListStatus = status)
-        "
-        v-if="state.dialog.name === 'startBill'"
-        :start-bill="state.consoleSelected"
-      />
+      <StartBill @hourRate="
+        (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+      " @drop-list-status="
+        (status) => (state.consoleSelected.dropListStatus = status)
+      " v-if="state.dialog.name === 'startBill'" :start-bill="state.consoleSelected" />
       <!-- /////////////////////////// -->
       <p v-if="state.dialog.name === 'removeBill'" class="p-1 text-center">
         فاکتور مورد نظر حذف شود؟
@@ -573,73 +536,39 @@ const getTimeStartOrEndBill = () => {
       <!-- /////////////////////////// -->
 
       <!-- /////////////////////////// -->
-      <Factor
-        :customMoney="state.consoleSelected.customMoney"
-        :consoleId="state.consoleSelected.consoleId"
-        :billFoods="state.consoleSelected.billFoods"
-        :bill-id="state.consoleSelected.billId"
-        v-if="state.dialog.name === 'factor'"
-      />
+      <Factor :customMoney="state.consoleSelected.customMoney" :consoleId="state.consoleSelected.consoleId"
+        :billFoods="state.consoleSelected.billFoods" :bill-id="state.consoleSelected.billId"
+        v-if="state.dialog.name === 'factor'" />
       <!-- /////////////////////////// -->
-      <HourRate
-        @hourRate="
-          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
-        "
-        v-if="state.dialog.name === 'hourRate'"
-        :hourRate="state.consoleSelected.hourRate"
-      />
+      <HourRate @hourRate="
+        (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+      " v-if="state.dialog.name === 'hourRate'" :hourRate="state.consoleSelected.hourRate" />
       <!-- /////////////////////////// -->
-      <StartTime
-        v-if="state.dialog.name === 'startTime'"
-        :billId="state.consoleSelected.billId"
-        :loading="state.dialog.loading"
-        @time="requestChangeStartTime"
-      />
+      <StartTime v-if="state.dialog.name === 'startTime'" :billId="state.consoleSelected.billId"
+        :loading="state.dialog.loading" @time="requestChangeStartTime" />
       <!-- /////////////////////////// -->
-      <Alarm
-        :consoleId="state.consoleSelected.consoleId"
-        v-if="state.dialog.name === 'alarm'"
-        :alarm="state.consoleSelected.alarm"
-        @removeAlarm="handleRemoveAlarm"
-        :loading="state.dialog.loading"
-        @setAlarm="handleSetAlarm"
-      />
+      <Alarm :consoleId="state.consoleSelected.consoleId" v-if="state.dialog.name === 'alarm'"
+        :alarm="state.consoleSelected.alarm" @removeAlarm="handleRemoveAlarm" :loading="state.dialog.loading"
+        @setAlarm="handleSetAlarm" />
       <!-- /////////////////////////// -->
       <transition-expand group>
-        <p
-          class="p-1 text-center text-[1rem]"
-          v-if="state.dialog.name === 'had-food'"
-        >
+        <p class="p-1 text-center text-[1rem]" v-if="state.dialog.name === 'had-food'">
           خوراکی ها ثبت شده است؟
         </p>
         <!-- /////////////////////////// -->
-        <Food
-          @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
-          :billFood="state.consoleSelected.billFoods"
-          v-if="state.dialog.name === 'food'"
-        />
+        <Food @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
+          :billFood="state.consoleSelected.billFoods" v-if="state.dialog.name === 'food'" />
         <!-- /////////////////////////// -->
-        <div
-          class="w-full flex justify-center items-center"
-          v-if="state.dialog.name === 'payment-method'"
-        >
-          <InputRadio
-            @payment-method="
-              (value) => (state.consoleSelected.paymentMethod = value)
-            "
-          />
+        <div class="w-full flex justify-center items-center" v-if="state.dialog.name === 'payment-method'">
+          <InputRadio @payment-method="
+            (value) => (state.consoleSelected.payment_method = value)
+          " />
         </div>
       </transition-expand>
       <!-- /////////////////////////// -->
-      <ChangeMoney
-        :customMoney="state.consoleSelected.customMoney"
-        :costPlayed="state.consoleSelected.costPlayed"
-        :consoleId="state.consoleSelected.consoleId"
-        v-if="state.dialog.name === 'change-money'"
-        :costFood="state.consoleSelected.costFood"
-        @removeMoney="handleRemoveMoney"
-        @money="handleSetCustomMoney"
-      />
+      <ChangeMoney :customMoney="state.consoleSelected.customMoney" :costPlayed="state.consoleSelected.costPlayed"
+        :consoleId="state.consoleSelected.consoleId" v-if="state.dialog.name === 'change-money'"
+        :costFood="state.consoleSelected.costFood" @removeMoney="handleRemoveMoney" @money="handleSetCustomMoney" />
       <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->
@@ -649,9 +578,11 @@ const getTimeStartOrEndBill = () => {
 .parent-home-page {
   @apply w-full h-full flex flex-col justify-start items-start;
 }
+
 .parent-no-data {
   @apply w-full h-full flex justify-center items-center;
 }
+
 .card-no-data {
   @apply p-3 flex max-w-[300px] flex-wrap justify-start font-[kalameh] items-center gap-[5px] rounded-md shadow-lg bg-[#1d5b79] text-white;
 }

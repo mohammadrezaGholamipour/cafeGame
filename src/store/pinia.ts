@@ -39,7 +39,7 @@ export const usePinia = defineStore("pinia", () => {
   ////////////////////////////
   watch(
     () => state.openBill,
-    () => handleHomeData()
+    () => handleHomeData(),
   );
   ////////////////////////////
   const handleChangeDisplayMood = (displayMood: number) => {
@@ -70,7 +70,8 @@ export const usePinia = defineStore("pinia", () => {
   const requestGetHourRate = async (): Promise<void> => {
     try {
       const response: [] = await hourRateApi.get();
-      state.hourRate = response.map(({ id, rate }) => ({ id, name: rate }));
+      state.hourRate = response.map(({ id, price }) => ({ id, name: price }));
+      handleHomeData();
     } catch (error) {
       handleNotification({
         ...state.notification,
@@ -86,7 +87,11 @@ export const usePinia = defineStore("pinia", () => {
     const query = { ...(name && { name }) };
     try {
       const response: food[] = await foodApi.get(query);
-      state.food = response;
+      state.food = response.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        cost: item.price,
+      }));
     } catch {
       handleNotification({
         ...state.notification,
@@ -100,7 +105,7 @@ export const usePinia = defineStore("pinia", () => {
   //////////////////////////////////////////////////
   const requestGetAllBill = async (
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<void> => {
     const query = {
       ...(startDate && { startDate }),
@@ -111,8 +116,7 @@ export const usePinia = defineStore("pinia", () => {
       state.allBill = response
         .map((bill) => ({
           ...bill,
-          systemName: handleGetSystmeNameById(bill.systemId),
-          foodCost: handleFoodCost(bill.billFoods),
+          foodCost: handleFoodCostForAllBill(bill.bill_foods),
         }))
         .sort(sortBills);
     } catch (error) {
@@ -131,8 +135,7 @@ export const usePinia = defineStore("pinia", () => {
       const response: bill[] = await billApi.open();
       state.openBill = response.map((bill) => ({
         ...bill,
-        systemName: handleGetSystmeNameById(bill.systemId),
-        foodCost: handleFoodCost(bill.billFoods),
+        foodCost: handleFoodCostForOpenBill(bill.bill_foods),
       }));
     } catch (error) {
       handleNotification({
@@ -151,7 +154,7 @@ export const usePinia = defineStore("pinia", () => {
       Array.isArray(state.openBill) &&
       Array.isArray(state.hourRate)
     ) {
-      state.home = state.console.map(({ id: consoleId, name }) => ({
+      state.home = state.console.map(({ id: consoleId, name, is_deleted }) => ({
         timer: { hours: 0, minutes: 0, seconds: 0 },
         dropListStatus: false,
         hourRate: 0,
@@ -160,56 +163,67 @@ export const usePinia = defineStore("pinia", () => {
         costFood: 0,
         status: false,
         loading: false,
-        billFood: [],
+        bill_foods: [],
         optionStatus: false,
         customMoney: 0,
         alarmStatus: false,
         billId: 0,
         consoleId,
         name,
+        isDeleted: is_deleted,
       }));
       ////////////////////////////////////////////////////////////////
       for (let {
-        hourRateId,
-        startTime,
-        systemId,
+        unit_price_amount,
+        start_time,
+        console_id,
         id,
-        billFoods,
+        bill_foods,
         foodCost,
       } of state.openBill) {
         for (let console of state.home) {
-          if (systemId === console.consoleId && !console.interval) {
+          if (console_id === console.consoleId && !console.interval) {
             const hourRateSelected = state.hourRate.find(
-              (item) => item.id === hourRateId
+              (item) => item.name === unit_price_amount,
             );
             console.hourRate = hourRateSelected?.name
-              ? hourRateSelected?.name
+              ? hourRateSelected.name
               : 0;
             ////////////////////////////////////////
             const money: CustomMoneyInLocalStorage[] =
               localStorageService.getCustomMoney();
             const moneySelected = money.find(
-              (item) => item.consoleId === console.consoleId
+              (item) => item.consoleId === console.consoleId,
             );
             if (moneySelected) console.customMoney = moneySelected.money;
             ////////////////////////////////////////
             handleConsoleTimer(console);
-            let delta =
-              Math.abs(new Date().getTime() - new Date(startTime).getTime()) /
-              1000;
-            let days = Math.floor(delta / 86400);
+            const start = new Date(start_time);
+
+            const nowUTC = new Date();
+
+            const tehranOffsetMs = 3.5 * 60 * 60 * 1000;
+
+            const startTehran = new Date(start.getTime() + tehranOffsetMs);
+
+            const nowTehran = new Date(nowUTC.getTime());
+
+            let delta = Math.floor(
+              (nowTehran.getTime() - startTehran.getTime()) / 1000,
+            );
+            const days = Math.floor(delta / 86400);
             delta -= days * 86400;
-            let hours = Math.floor(delta / 3600) % 24;
+            const hours = Math.floor(delta / 3600);
             delta -= hours * 3600;
-            let minutes = Math.floor(delta / 60) % 60;
+            const minutes = Math.floor(delta / 60);
             delta -= minutes * 60;
-            let seconds = Math.floor(delta % 60);
+            const seconds = delta;
             ////////////////////////
             console.costFood = foodCost;
             console.timer.seconds = seconds;
             console.timer.minutes = minutes;
             console.timer.hours = hours;
-            console.billFood = billFoods;
+            console.bill_foods = bill_foods;
             console.billId = id;
             console.status = true;
             /////////////////////////////////
@@ -219,18 +233,28 @@ export const usePinia = defineStore("pinia", () => {
     }
   };
   //////////////////////////////////
-  const handleFoodCost = (billFoods: billFood[]): number => {
+  const handleFoodCostForOpenBill = (billFoods: billFood[] | []): number => {
     let foodCost = 0;
     if (Array.isArray(state.food) && billFoods.length) {
       for (const foodBill of billFoods) {
         for (const food of state.food) {
-          if (foodBill.foodId === food.id) {
+          if (foodBill.food_id === food.id) {
             foodBill.name = food.name;
-            foodBill.cost = food.cost;
+            foodBill.price = food.cost;
             foodCost += foodBill.count * food.cost;
             break;
           }
         }
+      }
+    }
+    return foodCost;
+  };
+  //////////////////////////
+  const handleFoodCostForAllBill = (billFoods: billFood[] | []): number => {
+    let foodCost = 0;
+    if (billFoods.length) {
+      for (const foodBill of billFoods) {
+        foodCost += foodBill.count * foodBill.price;
       }
     }
     return foodCost;
@@ -245,16 +269,18 @@ export const usePinia = defineStore("pinia", () => {
   };
   //////////////////////////
   const sortBills = (a: bill, b: bill): number => {
-    if (!a.endTime && !b.endTime) {
-      return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+    if (!a.end_time && !b.end_time) {
+      return (
+        new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+      );
     }
-    if (!a.endTime) {
+    if (!a.end_time) {
       return -1;
     }
-    if (!b.endTime) {
+    if (!b.end_time) {
       return 1;
     }
-    return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
+    return new Date(b.end_time).getTime() - new Date(a.end_time).getTime();
   };
   //////////////////////////
   const handleConsoleTimer = (console: home): void => {
@@ -269,7 +295,7 @@ export const usePinia = defineStore("pinia", () => {
         /////////////////////
         const alarm: alarmInLocalStorage[] = localStorageService.getAlarm();
         const alarmSelected = alarm.find(
-          (item) => item.consoleId === consoleId
+          (item) => item.consoleId === consoleId,
         );
         if (alarmSelected) {
           const { hour, minute } = alarmSelected;

@@ -45,7 +45,7 @@ document.addEventListener("click", (event) => {
   @apply w-full flex gap-x-5 items-center justify-center cursor-pointer;
 }
 .item-drop-list p {
-  @apply w-full font-[kalameh] p-1 text-center text-[0.85rem] text-white;
+  @apply w-full font-[kalameh] p-2 text-center text-[1rem] text-white;
 }
 .item-drop-list p:hover {
   @apply text-slate-200 transition-all;

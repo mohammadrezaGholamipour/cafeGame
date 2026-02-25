@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import localStorageService from "@/utils/local-storage-service";
 import Exit from "./components/exit.vue";
+import VoiceCommand from "./components/voiceCommand.vue";
 import { ref } from "vue";
 ////////////////////////////////////
 const dialogStatus = ref<boolean>(false);
@@ -15,7 +16,8 @@ const handleDialogStatus = (status: boolean) => {
 </script>
 <template>
   <header class="parent-header">
-    <a class="animate-pulse" href="/">
+    <VoiceCommand />
+    <a href="/">
       <img width="100" src="@/assets/image/cafegame.png" />
     </a>
     <Exit @exit="dialogStatus = true" />
@@ -38,6 +40,6 @@ const handleDialogStatus = (status: boolean) => {
 </template>
 <style scoped>
 .parent-header {
-  @apply flex w-full justify-between items-center p-[10px] bg-[#1D5B79];
+  @apply flex w-full flex-wrap gap-3 justify-items-center justify-between items-center p-[10px] bg-[#1D5B79];
 }
 </style>

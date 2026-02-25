@@ -1,12 +1,9 @@
 import HttpClient from '@/utils/axios-base'
 export default {
-  get: (query) => HttpClient.get('api/bill', { params: query }),
-  start: (consoleId, rateId, startTime) => HttpClient.post(`api/bill/${consoleId}/${rateId}/0`, startTime),
-  setFood: (billId, food) => HttpClient.put(`api/bill/${billId}/set-foods`, food),
-  close: (billId, endTime) => HttpClient.put(`api/bill/${billId}/close`, endTime),
-  delete: (consoleId) => HttpClient.delete(`api/bill/${consoleId}`),
-  changeMoney: (billId, moneyId) => HttpClient.put(`api/bill/${billId}/change-rate`, moneyId),
-  changePaymentMethod: (billId, PaymentMethod) => HttpClient.put(`api/bill/${billId}/change-payment`, PaymentMethod),
-  changeStartTime: (billId, startTime) => HttpClient.put(`api/bill/${billId}/adjust-start-time`, startTime),
-  open: () => HttpClient.get('opens'),
+  get: (query) => HttpClient.get('bill/my-bills', { params: query }),
+  start: (data) => HttpClient.post(`bill/create`, data),
+  close: (billId) => HttpClient.patch(`bill/${billId}/close`),
+  delete: (billId) => HttpClient.delete(`bill/remove-bill/${billId}`),
+  update: (billId, data) => HttpClient.patch(`bill/update-bill/${billId}`, data),
+  open: () => HttpClient.get('bill/my-open-bills'),
 };

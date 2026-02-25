@@ -47,11 +47,11 @@ const handleTotallCost = computed(() => {
     0
   );
   const playCost = props.bills.reduce(
-    (total, item) => total + (item.finalCost - item.foodCost || 0),
+    (total, item) => total + (item.total_price),
     0
   );
   const finalCost = props.bills.reduce(
-    (total, item) => total + (item.finalCost || 0),
+    (total, item) => total + (item.total_price || 0),
     0
   );
   return { foodCost, playCost, finalCost, factorLength: props.bills.length };
@@ -64,41 +64,23 @@ const handleTotallCost = computed(() => {
     <div class="!p-0">
       <div class="flex items-center gap-x-[5px]">
         <p>تاریخ شروع :</p>
-        <date-picker
-          @close="startDateStatus = false"
-          v-model="inputDate.startDate"
-          :show="startDateStatus"
-          format="YYYY-MM-DD"
-          simple
-        />
-        <button
-          :disabled="false"
-          :class="[
-            'button bg-[#7CC078] p-2 text-white',
-            { 'bg-gray-400 !cursor-not-allowed': false },
-          ]"
-          @click="startDateStatus = !startDateStatus"
-        >
+        <date-picker @close="startDateStatus = false" v-model="inputDate.startDate" :show="startDateStatus"
+          format="YYYY-MM-DD" simple />
+        <button :disabled="false" :class="[
+          'button bg-[#7CC078] p-2 text-white',
+          { 'bg-gray-400 !cursor-not-allowed': false },
+        ]" @click="startDateStatus = !startDateStatus">
           <p>{{ handleShowDate.startDate }}</p>
         </button>
       </div>
       <div class="flex items-center gap-x-[5px]">
         <p>تاریخ پایان :</p>
-        <date-picker
-          @close="endDateDateStatus = false"
-          v-model="inputDate.endDate"
-          :show="endDateDateStatus"
-          format="YYYY-MM-DD"
-          simple
-        />
-        <button
-          :disabled="false"
-          :class="[
-            'button bg-[#EF6262] p-2 text-white',
-            { 'bg-gray-400 !cursor-not-allowed': false },
-          ]"
-          @click="endDateDateStatus = !endDateDateStatus"
-        >
+        <date-picker @close="endDateDateStatus = false" v-model="inputDate.endDate" :show="endDateDateStatus"
+          format="YYYY-MM-DD" simple />
+        <button :disabled="false" :class="[
+          'button bg-[#EF6262] p-2 text-white',
+          { 'bg-gray-400 !cursor-not-allowed': false },
+        ]" @click="endDateDateStatus = !endDateDateStatus">
           <p>{{ handleShowDate.endDate }}</p>
         </button>
       </div>
@@ -125,7 +107,7 @@ const handleTotallCost = computed(() => {
     <!-- ////////////////////////////// -->
     <div>
       <p>جمع کل :</p>
-      <p>{{ handleTotallCost.finalCost.toLocaleString() }} تومان</p>
+      <p>{{ (handleTotallCost.finalCost + handleTotallCost.foodCost).toLocaleString() }} تومان</p>
     </div>
     <!-- ////////////////////////////// -->
   </div>
@@ -134,39 +116,50 @@ const handleTotallCost = computed(() => {
 .parent-report {
   @apply w-full p-2 flex flex-col justify-center items-center;
 }
-.parent-report > div {
+
+.parent-report>div {
   @apply w-full flex justify-between items-center p-2.5 flex-wrap whitespace-nowrap gap-[10px];
 }
+
 .vpd-input-group {
   display: none !important;
 }
+
 .vpd-body {
   @apply p-2.5 !important;
 }
+
 .vpd-container {
   @apply rounded-md overflow-hidden !important;
 }
+
 .vpd-actions {
   @apply text-center mt-2 !important;
 }
+
 .vpd-simple-content .vpd-column {
   @apply gap-y-[10px] !important;
 }
+
 .vpd-simple-content .vpd-column .vpd-column-content:after,
 .vpd-simple-content .vpd-column .vpd-column-content:before {
   @apply !hidden !important;
 }
-.parent-report > div:nth-child(2) {
-  @apply mt-3  rounded-t-md;
+
+.parent-report>div:nth-child(2) {
+  @apply mt-3 rounded-t-md;
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
-.parent-report > div:nth-child(4) {
+
+.parent-report>div:nth-child(4) {
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
-.parent-report > div:nth-child(6) {
+
+.parent-report>div:nth-child(6) {
   background: linear-gradient(92deg, #f8b806 -30.82%, #ff8c04 126.36%);
 }
-.parent-report > div:nth-child(7) {
+
+.parent-report>div:nth-child(7) {
   @apply rounded-b-md;
   background: linear-gradient(95deg, #32bb71 15.3%, #2a9d8f 113.45%);
 }

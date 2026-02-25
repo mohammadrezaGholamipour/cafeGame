@@ -34,7 +34,7 @@
 }
 @layer components {
   .button {
-    @apply flex justify-center items-center hover:opacity-80 rounded-[3px] min-w-[70px] min-h-[30px] font-[dana] hover:shadow-md transition-all duration-300;
+    @apply flex justify-center items-center hover:opacity-80 rounded-[3px] min-w-[70px] min-h-[30px] font-[dana]  hover:shadow-md transition-all duration-300;
   }
   .input {
     @apply min-w-[300px] w-full flex justify-center items-center text-[#656565] rounded-[5px] caret-blue-600 h-[40px] min-h-[40px] px-[18px] bg-[#DEDEDE] font-[kalameh] outline-none;

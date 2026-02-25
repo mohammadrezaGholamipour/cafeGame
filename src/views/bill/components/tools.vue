@@ -6,16 +6,16 @@ const props = defineProps<{ loading: boolean }>();
   <div class="parent-tools">
     <!-- /////////////////////// -->
     <button
-      :disabled="props.loading"
+      :disabled="true"
       @click="emit('report')"
       :class="[
-        { 'bg-gray-400 !cursor-not-allowed': props.loading },
-        'button bg-[#3ea6da] text-white',
+        { 'bg-gray-400 !cursor-not-allowed': true },
+        'button bg-[#3ea6da] text-white px-5',
       ]"
     >
       <transition-fade class="flex" group>
         <span v-if="props.loading" class="btn-loader"></span>
-        <p v-else>گزارش</p>
+        <p v-else>گزارشات</p>
       </transition-fade>
     </button>
     <!-- /////////////////////// -->

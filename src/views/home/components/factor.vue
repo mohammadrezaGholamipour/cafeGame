@@ -59,9 +59,9 @@ const totalMoney = computed(() => {
       <template v-slot:Larg>
         <tr v-for="food in props.billFoods" :key="food.id">
           <td>{{ food.name }}</td>
-          <td>{{ food.cost?.toLocaleString() }} تومان</td>
+          <td>{{ food.price?.toLocaleString() }} تومان</td>
           <td>{{ food.count }}</td>
-          <td>{{ (food.cost * food.count).toLocaleString() }} تومان</td>
+          <td>{{ (food.price * food.count).toLocaleString() }} تومان</td>
         </tr>
       </template>
       <template v-slot:small>
@@ -78,9 +78,9 @@ const totalMoney = computed(() => {
           <div class="small-table-left">
             <div>{{ index + 1 }}</div>
             <div>{{ food.name }}</div>
-            <div>{{ food.cost.toLocaleString() }} تومان</div>
+            <div>{{ food.price.toLocaleString() }} تومان</div>
             <div>{{ food.count }}</div>
-            <div>{{ (food.cost * food.count).toLocaleString() }} تومان</div>
+            <div>{{ (food.price * food.count).toLocaleString() }} تومان</div>
           </div>
         </div>
       </template>

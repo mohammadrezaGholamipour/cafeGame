@@ -6,7 +6,7 @@ import { usePinia } from "@/store/pinia";
 ////////////////////////////////////////
 const props = defineProps<{ billFood: billFood[] | [] }>();
 const emit = defineEmits<{
-  foodSelected: [food: { foodId: number; count: number }[]];
+  foodSelected: [food: { food_id: number; count: number }[]];
 }>();
 ////////////////////////////////////////
 let timer: ReturnType<typeof setTimeout>;
@@ -14,7 +14,7 @@ const pinia = usePinia();
 const state = reactive({
   headerTable: ["ردیف", "نام محصول", "تعداد"],
   foodList: [] as foodStore[],
-  foodSelected: [] as { foodId: number; count: number }[],
+  foodSelected: [] as { food_id: number; count: number }[],
   search: "",
 });
 //////////////////
@@ -25,10 +25,10 @@ onMounted(() => {
       ...food,
       count: 0,
     }));
-    props.billFood.forEach(({ foodId, count }) => {
-      const foodList = state.foodList.find((food) => food.id === foodId);
+    props?.billFood?.forEach(({ food_id, count }) => {
+      const foodList = state.foodList.find((food) => food.id === food_id);
       if (foodList) foodList.count = count;
-      state.foodSelected.push({ foodId, count });
+      state.foodSelected.push({ food_id, count });
     });
   }
 });
@@ -39,8 +39,8 @@ const handleSetFoodData = () => {
       ...food,
       count: 0,
     }));
-    state.foodSelected.forEach(({ foodId, count }) => {
-      const foodList = state.foodList.find((food) => food.id === foodId);
+    state.foodSelected.forEach(({ food_id, count }) => {
+      const foodList = state.foodList.find((food) => food.id === food_id);
       if (foodList) foodList.count = count;
     });
   }
@@ -76,10 +76,10 @@ const handleAddOrSubtract = (status: string, food: foodStore) => {
   else if (food.count) food.count--;
   /////////////////////////////
   const foodSelected = state.foodSelected.find(
-    (item) => item.foodId === food.id
+    (item) => item.food_id === food.id
   );
   if (foodSelected) foodSelected.count = food.count;
-  else state.foodSelected.push({ foodId: food.id, count: food.count });
+  else state.foodSelected.push({ food_id: food.id, count: food.count });
 };
 //////////////////////////////////////////
 </script>

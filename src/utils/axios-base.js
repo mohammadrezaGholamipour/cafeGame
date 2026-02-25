@@ -2,7 +2,7 @@
 import axios from 'axios';
 ////////////////////////////////
 const HttpClient = axios.create({
-  baseURL: 'https://cafegamev.iran.liara.run/',
+  baseURL: 'https://intelligent-pascal.retunnel.net/cafe-game-api/v1',
   timeout: 0,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -13,7 +13,9 @@ const HttpClient = axios.create({
 ///////////////////////////////////
 HttpClient.interceptors.request.use(
   (config) => {
-    config.headers['authorization'] = `Bearer ${localStorageService.getToken()}`;
+    if (localStorageService.getToken()) {
+      config.headers['authorization'] = `Bearer ${localStorageService.getToken()}`;;
+    }
     return config;
   },
   (error) => {
@@ -33,8 +35,8 @@ HttpClient.interceptors.response.use(
         case 400:
           break;
         case 401:
-          localStorageService.removeToken()
-          window.location.href = "/account"
+          // localStorageService.removeToken()
+          // window.location.href = "/account"
           break;
         case 403:
           break;

@@ -8,7 +8,7 @@ const props = defineProps<consolePage>();
 /////////////////////
 </script>
 <template>
-  <div class="console active-color">
+  <div v-if="!props.isDeleted" class="console active-color">
     <div class="console-right">
       <div class="console-number bg-[#1D5B79]">
         <p>{{ props.name }}</p>

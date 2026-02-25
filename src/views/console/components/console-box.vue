@@ -8,7 +8,8 @@ const props = defineProps<consolePage>();
 /////////////////////
 </script>
 <template>
-  <div class="console active-color">
+
+  <div v-if="!props.isDeleted" class="console active-color">
     <!-- ///////////////////////// -->
     <transition-scale>
       <div class="console-number bg-[#1D5B79]">
@@ -29,7 +30,7 @@ const props = defineProps<consolePage>();
       <div class="console-money">
         <div class="w-full flex items-center justify-center gap-x-[3px]">
           <p>
-            {{ props.playedCost.toLocaleString() }}
+            {{ Math.round(props.playedCost).toLocaleString() }}
           </p>
           <p class="!font-[400]">تومان</p>
         </div>
@@ -37,15 +38,10 @@ const props = defineProps<consolePage>();
     </div>
     <!-- //////////////////////// -->
     <div class="console-footer">
-      <button
-        id="remove-console"
-        :disabled="props.loading"
-        :class="[
-          'button bg-[#EF6262] text-white',
-          { 'bg-gray-400 !cursor-not-allowed': props.loading },
-        ]"
-        @click="emit('remove')"
-      >
+      <button id="remove-console" :disabled="props.loading" :class="[
+        'button bg-[#EF6262] text-white',
+        { 'bg-gray-400 !cursor-not-allowed': props.loading },
+      ]" @click="emit('remove')">
         <transition-fade class="flex" group>
           <span v-if="props.loading" class="btn-loader"></span>
           <p v-else>حذف</p>
@@ -60,27 +56,35 @@ const props = defineProps<consolePage>();
   @apply relative transition-all pb-[10px] pt-[25px] gap-y-[3px] w-[300px] h-[130px] rounded-[10px] flex flex-col justify-start items-center;
   box-shadow: 0px 0px 5px 0px rgba(56, 56, 56, 0.25);
 }
+
 .console-number {
   @apply w-[40px] shadow-md transition-all flex justify-center absolute top-[-20px] items-center h-[40px] rounded-full;
 }
+
 .console-number p {
   @apply text-white font-[kalameh];
 }
+
 .console-main {
   @apply w-full flex flex-col gap-y-[3px] justify-center items-center;
 }
+
 .console-timer {
   @apply w-full flex items-center justify-center gap-x-[5px];
 }
+
 .console-timer p {
   @apply text-black mt-1 font-[dana];
 }
+
 .console-money {
   @apply w-full justify-center flex items-center gap-x-[3px] h-[30px];
 }
+
 .console-money p {
   @apply font-[dana] font-bold text-[15px];
 }
+
 .console-footer {
   @apply flex gap-x-[7px] items-center;
 }

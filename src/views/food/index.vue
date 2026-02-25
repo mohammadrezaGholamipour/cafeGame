@@ -42,16 +42,19 @@ const foodData = computed(() => {
 const requestUpdateFood = (food: food) => {
   state.loading = true;
   foodApi
-    .update(food.id, food)
+    .update(food.id, {
+      ...food,
+      price: food.cost,
+    })
     .then(() => {
-      pinia.requestGetFood(),
-        pinia.handleNotification({
-          ...pinia.state.notification,
-          name: "success",
-          status: true,
-          textHeader: "موفق",
-          textMain: "با موفقیت تغییر کرد",
-        });
+      pinia.requestGetFood()
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        name: "success",
+        status: true,
+        textHeader: "موفق",
+        textMain: "با موفقیت تغییر کرد",
+      });
     })
     .catch(() => {
       pinia.handleNotification({
@@ -70,7 +73,10 @@ const requestUpdateFood = (food: food) => {
 const requestNewFood = (food: food) => {
   state.loading = true;
   foodApi
-    .new(food)
+    .new({
+      ...food,
+      price: food.cost,
+    })
     .then(() => {
       pinia.requestGetFood(),
         pinia.handleNotification({
@@ -165,14 +171,12 @@ const handleRemoveFoodDialog = (status: boolean) => {
 <template>
   <div class="parent-food-page">
     <!-- //////////////////////// -->
-    <tools
-      @new="(state.newOrEdit.status = true), foodPageStep(999)"
-      @search="pinia.requestGetFood"
-      :loading="state.loading"
-    />
+    <tools @new="(state.newOrEdit.status = true), foodPageStep(999)" @search="pinia.requestGetFood"
+      :loading="state.loading" />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
+
       <Table v-if="foodData?.length" :header="state.headerTable">
         <template v-slot:Larg>
           <tr v-for="(food, index) in foodData" :key="food.id">
@@ -181,28 +185,16 @@ const handleRemoveFoodDialog = (status: boolean) => {
             <td>{{ food.cost.toLocaleString() }} تومان</td>
             <td>
               <div class="flex items-center gap-x-[10px] justify-center">
-                <img
-                  src="@/assets/image/table/remove.svg"
-                  @click="handleRemoveFood(food)"
-                  class="cursor-pointer"
-                  id="remove"
-                />
-                <img
-                  @click="handleSetFoodSelected(food)"
-                  src="@/assets/image/table/edit.svg"
-                  class="cursor-pointer"
-                  id="edit"
-                />
+                <img src="@/assets/image/table/remove.svg" @click="handleRemoveFood(food)" class="cursor-pointer"
+                  id="remove" />
+                <img @click="handleSetFoodSelected(food)" src="@/assets/image/table/edit.svg" class="cursor-pointer"
+                  id="edit" />
               </div>
             </td>
           </tr>
         </template>
         <template v-slot:small>
-          <div
-            v-for="(food, index) in foodData"
-            class="small-table"
-            :key="food.id"
-          >
+          <div v-for="(food, index) in foodData" class="small-table" :key="food.id">
             <div class="small-table-right">
               <div v-for="(header, index) in state.headerTable" :key="index">
                 {{ header }} :
@@ -213,54 +205,28 @@ const handleRemoveFoodDialog = (status: boolean) => {
               <div>{{ food.name }}</div>
               <div>{{ food.cost.toLocaleString() }} تومان</div>
               <div class="flex items-center gap-x-[10px] justify-center">
-                <img
-                  src="@/assets/image/table/remove.svg"
-                  @click="handleRemoveFood(food)"
-                  class="cursor-pointer"
-                  id="remove"
-                />
-                <img
-                  @click="handleSetFoodSelected(food)"
-                  src="@/assets/image/table/edit.svg"
-                  class="cursor-pointer"
-                  id="edit"
-                />
+                <img src="@/assets/image/table/remove.svg" @click="handleRemoveFood(food)" class="cursor-pointer"
+                  id="remove" />
+                <img @click="handleSetFoodSelected(food)" src="@/assets/image/table/edit.svg" class="cursor-pointer"
+                  id="edit" />
               </div>
             </div>
           </div>
         </template>
       </Table>
       <!-- //////////////////////// -->
-      <img
-        src="@/assets/image/noData.svg"
-        class="w-full h-full"
-        v-else-if="foodData"
-      />
+      <img src="@/assets/image/noData.svg" class="w-full h-full" v-else-if="foodData" />
       <!-- //////////////////////// -->
       <loading v-else />
       <!-- //////////////////////// -->
     </transition-fade>
     <!-- /////////////////////// -->
-    <NewOrEdit
-      @close="handleCloseNewOrEditDialog"
-      @update="requestUpdateFood"
-      :loading="state.loading"
-      :data="state.newOrEdit"
-      @new="requestNewFood"
-    />
+    <NewOrEdit @close="handleCloseNewOrEditDialog" @update="requestUpdateFood" :loading="state.loading"
+      :data="state.newOrEdit" @new="requestNewFood" />
     <!-- /////////////////////// -->
-    <Dialog
-      @changeStatus="handleRemoveFoodDialog"
-      :status="state.removeFood.status"
-      :btnCancelText="'بازگشت'"
-      :btnAcceptText="'تایید'"
-      :btnAccept="true"
-      :btnCancel="true"
-      :loading="false"
-      :header="false"
-      :footer="true"
-      :width="300"
-    >
+    <Dialog @changeStatus="handleRemoveFoodDialog" :status="state.removeFood.status" :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'" :btnAccept="true" :btnCancel="true" :loading="false" :header="false" :footer="true"
+      :width="300">
       <div class="p-1 text-center">
         {{ state.removeFood.food.name }} حذف شود؟
       </div>

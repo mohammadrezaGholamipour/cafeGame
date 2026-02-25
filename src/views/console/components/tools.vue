@@ -23,7 +23,7 @@ const state = reactive({
       ]"
       @click="emit('new')"
     >
-      <transition-fade class="flex" group>
+      <transition-fade class="flex px-5" group>
         <span v-if="props.loading" class="btn-loader"></span>
         <p v-else>افزودن</p>
       </transition-fade>

@@ -10,10 +10,11 @@ onMounted(async () => {
   pinia.handleChangeDisplayMood(localStorageService.getDisplayMood());
   await pinia.requestGetConsole(),
     await pinia.requestGetHourRate(),
-    await pinia.requestGetFood(),
-    await pinia.requestGetOpenBill();
-  await pinia.requestGetAllBill();
+    await pinia.requestGetFood()
+  await pinia.requestGetOpenBill()
+  await pinia.requestGetAllBill()
 });
+
 ///////////////////////////////
 window.onfocus = () => {
   pinia.state.home = false;
@@ -43,10 +44,12 @@ window.onfocus = () => {
 .parent-layout {
   @apply w-screen overflow-hidden h-[100vh] flex flex-col justify-start items-center bg-slate-50;
 }
+
 main {
-  @apply flex justify-start items-start w-full  overflow-hidden pb-[5px];
+  @apply flex justify-start items-start w-full overflow-hidden pb-[5px];
   height: calc(100vh - 85px);
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.1s;

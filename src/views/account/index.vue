@@ -22,16 +22,16 @@ const requestLogin = (data: object): void => {
   state.requestLoading = true;
   AccountApi.login(data)
     .then((response: AccountResponse) => {
-      localStorageService.setToken(response.token);
+      localStorageService.setToken(response.access_token);
       router.push("/");
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "مجوز ورود ندارید",
+        textMain: `${errors?.response?.data?.error[0]?.message || 'ورودامکان پذیر نمیباشد'}`,
       });
     })
     .finally(() => {
@@ -42,17 +42,14 @@ const requestLogin = (data: object): void => {
 const requestRegister = (data: register): void => {
   state.requestLoading = true;
   AccountApi.register(data)
-    .then((response: AccountResponse) => {
-      localStorageService.setToken(response.token);
-      router.push("/");
-    })
-    .catch(() => {
+    .then(() => requestLogin({ email: data.email, password: data.password }))
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "ثبت نام انجام نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || 'خطای نامشخص'}`,
       });
     })
     .finally(() => {
@@ -67,16 +64,8 @@ const requestRegister = (data: register): void => {
       <Title />
       <AccountTab @changeTab="state.tabSelected = $event" />
       <transition-scale group>
-        <Login
-          v-if="state.tabSelected === 'login'"
-          :loading="state.requestLoading"
-          @login="requestLogin"
-        />
-        <Register
-          :loading="state.requestLoading"
-          @register="requestRegister"
-          v-else
-        />
+        <Login v-if="state.tabSelected === 'login'" :loading="state.requestLoading" @login="requestLogin" />
+        <Register :loading="state.requestLoading" @register="requestRegister" v-else />
       </transition-scale>
     </div>
     <!-- ///////////////////////// -->
@@ -86,8 +75,9 @@ const requestRegister = (data: register): void => {
 </template>
 <style scoped>
 .parent-account {
-  @apply w-screen h-screen  flex p-[20px] justify-center items-center;
+  @apply w-screen h-screen flex p-[20px] justify-center items-center;
 }
+
 .right {
   @apply flex flex-col h-full justify-center w-full gap-y-[20px] items-start overflow-x-auto sm:items-center;
 }

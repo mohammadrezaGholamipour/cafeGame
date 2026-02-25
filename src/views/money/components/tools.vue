@@ -9,7 +9,7 @@ const props = defineProps<{ loading: boolean }>();
       id="new"
       :disabled="props.loading"
       :class="[
-        'button bg-[#75ca71] text-white',
+        'button bg-[#75ca71] text-white px-5',
         { 'bg-gray-400 !cursor-not-allowed': props.loading },
       ]"
       @click="emit('new')"

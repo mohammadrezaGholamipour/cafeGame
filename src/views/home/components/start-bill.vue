@@ -44,42 +44,28 @@ const animateNumber = () => {
   <div class="parent-start-bill">
     <div>
       <div class="flex items-center gap-x-[3px]">
-        <p>قیمت واحد</p>
-        <p class="text-[12px] text-[#ffd54a]">(اجباری)</p>
+        <p class="text-lg font-bold">قیمت واحد</p>
+        <img src="@/assets/image/home/start-bill-money.svg" class="animate-pulse" />
       </div>
-      <div
-        @click="emit('dropListStatus', !props.startBill.dropListStatus)"
-        class="relative cursor-pointer flex justify-center"
-        id="start-bill"
-      >
-        <div
-          v-if="!props.startBill.hourRateSelected.id"
-          class="flex items-center gap-x-[5px]"
-        >
-          <p class="text-[12px] font-bold">انتخاب کنید</p>
-          <img
-            src="@/assets/image/home/start-bill-money.svg"
-            class="animate-pulse"
-          />
+      <div @click="emit('dropListStatus', !props.startBill.dropListStatus)"
+        class="relative cursor-pointer flex justify-center" id="start-bill">
+        <div v-if="!props.startBill.hourRateSelected.id" class="flex items-center gap-x-[5px]">
+          <p class="text-md font-bold text-gray-600 bg-amber-400 p-2 rounded-full px-5 shadow-lg">نمایش لیست قیمت ها</p>
+
         </div>
-        <p v-show="props.startBill.hourRateSelected.id" id="money"></p>
-        <DropList
-          :status="props.startBill.dropListStatus"
-          @close="emit('dropListStatus', false)"
-          @selected="handleHourRateSelected"
-          :data="pinia.state.hourRate"
-          element="start-bill"
-          :space="'32px'"
-        />
+        <p class="text-lg" v-show="props.startBill.hourRateSelected.id" id="money"></p>
+        <DropList :status="props.startBill.dropListStatus" @close="emit('dropListStatus', false)"
+          @selected="handleHourRateSelected" :data="pinia.state.hourRate" element="start-bill" :space="'32px'" />
       </div>
     </div>
   </div>
 </template>
 <style scoped>
 .parent-start-bill {
-  @apply flex w-full flex-col items-center justify-center;
+  @apply flex w-full flex-col items-center justify-center pt-4;
 }
-.parent-start-bill > div {
+
+.parent-start-bill>div {
   @apply flex w-full items-center justify-between;
 }
 </style>

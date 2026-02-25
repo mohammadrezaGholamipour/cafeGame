@@ -22,7 +22,7 @@ watch(
 /////////////////////////////
 const handleIncrease = () => {
   if (state.minute) {
-    emit("time", -state.minute);
+    emit("time", Number(state.minute));
   } else {
     pinia.handleNotification({
       ...pinia.state.notification,
@@ -39,7 +39,7 @@ const handleDecrease = () => {
     const timer = handleGetBillTimer();
     const minute = Number(timer?.hours) * 60 + Number(timer?.minutes);
     if (minute >= Number(state.minute)) {
-      emit("time", Number(state.minute));
+      emit("time", Number(-state.minute));
     } else {
       pinia.handleNotification({
         ...pinia.state.notification,

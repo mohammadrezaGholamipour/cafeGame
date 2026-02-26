@@ -28,10 +28,11 @@ const requestLogin = (data: object): void => {
     .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: `${errors?.response?.data?.error[0]?.message || 'ورودامکان پذیر نمیباشد'}`,
+        textMain: `${errors?.response?.data?.error[0]?.message || "ورودامکان پذیر نمیباشد"}`,
       });
     })
     .finally(() => {
@@ -46,10 +47,11 @@ const requestRegister = (data: register): void => {
     .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: `${errors?.response?.data?.error[0]?.message || 'خطای نامشخص'}`,
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -64,8 +66,16 @@ const requestRegister = (data: register): void => {
       <Title />
       <AccountTab @changeTab="state.tabSelected = $event" />
       <transition-scale group>
-        <Login v-if="state.tabSelected === 'login'" :loading="state.requestLoading" @login="requestLogin" />
-        <Register :loading="state.requestLoading" @register="requestRegister" v-else />
+        <Login
+          v-if="state.tabSelected === 'login'"
+          :loading="state.requestLoading"
+          @login="requestLogin"
+        />
+        <Register
+          :loading="state.requestLoading"
+          @register="requestRegister"
+          v-else
+        />
       </transition-scale>
     </div>
     <!-- ///////////////////////// -->

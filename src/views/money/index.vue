@@ -34,25 +34,26 @@ const requestNewHourRate = (): void => {
   hourRateApi
     .new({ price: state.dialog.newHourRate.replace(/,/g, "") })
     .then(() => {
-      pinia.requestGetHourRate(),
+      (pinia.requestGetHourRate(),
         pinia.handleNotification({
           ...pinia.state.notification,
           name: "success",
           status: true,
           textHeader: "موفق",
           textMain: "با موفقیت افزوده شد",
-        });
+        }));
       setTimeout(() => {
         moneyPageStep(1);
       }, 1000);
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
-        textHeader: "خطا",
-        textMain: "قیمت جدید اضافه نشد",
+       textHeader: "خطا",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -74,13 +75,14 @@ const requestRemoveHourRate = (): void => {
         textMain: "قیمت مورد نظر حذف شد",
       });
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "قیمت مورد نظر حذف نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -131,7 +133,7 @@ watch(
   () => state.dialog.newHourRate,
   (value) => {
     state.dialog.newHourRate = filterNumbersWithSep(value);
-  }
+  },
 );
 ////////////////////////////
 const handleRemoveMoney = (hourRateId: number) => {
@@ -146,11 +148,14 @@ const handleRemoveMoney = (hourRateId: number) => {
 <template>
   <div class="parent-money-page">
     <!-- //////////////////////// -->
-    <tools @new="
-      (state.dialog.name = 'new'),
-      (state.dialog.status = true),
-      moneyPageStep(999)
-      " :loading="state.loading" />
+    <tools
+      @new="
+        ((state.dialog.name = 'new'),
+        (state.dialog.status = true),
+        moneyPageStep(999))
+      "
+      :loading="state.loading"
+    />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
@@ -161,13 +166,21 @@ const handleRemoveMoney = (hourRateId: number) => {
             <td>{{ hourRate.name.toLocaleString() }}</td>
             <td>{{ PersianNumberToString(hourRate.name) }} تومان</td>
             <td class="flex justify-center">
-              <img @click="handleRemoveMoney(hourRate.id)" src="@/assets/image/table/remove.svg" class="cursor-pointer"
-                id="remove" />
+              <img
+                @click="handleRemoveMoney(hourRate.id)"
+                src="@/assets/image/table/remove.svg"
+                class="cursor-pointer"
+                id="remove"
+              />
             </td>
           </tr>
         </template>
         <template v-slot:small>
-          <div v-for="(hourRate, index) in hourRateData" :key="hourRate.id" class="small-table">
+          <div
+            v-for="(hourRate, index) in hourRateData"
+            :key="hourRate.id"
+            class="small-table"
+          >
             <div class="small-table-right">
               <div v-for="(header, index) in state.headerTable" :key="index">
                 {{ header }} :
@@ -178,31 +191,54 @@ const handleRemoveMoney = (hourRateId: number) => {
               <div>{{ hourRate.name.toLocaleString() }}</div>
               <div>{{ PersianNumberToString(hourRate.name) }} تومان</div>
               <div class="flex justify-center">
-                <img @click="handleRemoveMoney(hourRate.id)" src="@/assets/image/table/remove.svg"
-                  class="cursor-pointer" id="remove" />
+                <img
+                  @click="handleRemoveMoney(hourRate.id)"
+                  src="@/assets/image/table/remove.svg"
+                  class="cursor-pointer"
+                  id="remove"
+                />
               </div>
             </div>
           </div>
         </template>
       </Table>
       <!-- //////////////////////// -->
-      <img src="@/assets/image/noData.svg" v-else-if="hourRateData" class="w-full h-full" />
+      <img
+        src="@/assets/image/noData.svg"
+        v-else-if="hourRateData"
+        class="w-full h-full"
+      />
       <!-- //////////////////////// -->
       <loading v-else />
       <!-- //////////////////////// -->
     </transition-fade>
     <!-- /////////////////////// -->
-    <Dialog @changeStatus="handleDialogStatus" :status="state.dialog.status" :btnCancelText="'بازگشت'"
-      :btnAcceptText="'تایید'" :btnAccept="true" :btnCancel="true" :loading="false" :header="false" :footer="true"
-      :width="300">
+    <Dialog
+      @changeStatus="handleDialogStatus"
+      :status="state.dialog.status"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :loading="false"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
       <!-- ////////////////////////// -->
       <div v-if="state.dialog.name === 'remove'" class="p-1 text-center">
         قیمت مورد نظر حذف شود؟
       </div>
       <!-- ////////////////////////// -->
       <div v-if="state.dialog.name === 'new'" class="p-1 w-full">
-        <input placeholder="قیمت را به تومان وارد کنید" class="input min-w-full bg-white"
-          v-model="state.dialog.newHourRate" inputmode="numeric" type="text" autofocus />
+        <input
+          placeholder="قیمت را به تومان وارد کنید"
+          class="input min-w-full bg-white"
+          v-model="state.dialog.newHourRate"
+          inputmode="numeric"
+          type="text"
+          autofocus
+        />
       </div>
       <!-- ////////////////////////// -->
     </Dialog>

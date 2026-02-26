@@ -47,7 +47,7 @@ const requestUpdateFood = (food: food) => {
       price: food.cost,
     })
     .then(() => {
-      pinia.requestGetFood()
+      pinia.requestGetFood();
       pinia.handleNotification({
         ...pinia.state.notification,
         name: "success",
@@ -56,13 +56,14 @@ const requestUpdateFood = (food: food) => {
         textMain: "با موفقیت تغییر کرد",
       });
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "محصول مورد نظر تغییر نکرد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -78,25 +79,26 @@ const requestNewFood = (food: food) => {
       price: food.cost,
     })
     .then(() => {
-      pinia.requestGetFood(),
+      (pinia.requestGetFood(),
         pinia.handleNotification({
           ...pinia.state.notification,
           name: "success",
           status: true,
           textHeader: "موفق",
           textMain: "با موفقیت افزوده شد",
-        });
+        }));
       setTimeout(() => {
         foodPageStep(1);
       }, 500);
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
-        textHeader: "خطا",
-        textMain: "محصول جدید اضافه نشد",
+       textHeader: "خطا",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -109,22 +111,23 @@ const requestRemoveFood = () => {
   foodApi
     .delete(state.removeFood.food.id)
     .then(() => {
-      pinia.requestGetFood(),
+      (pinia.requestGetFood(),
         pinia.handleNotification({
           ...pinia.state.notification,
           name: "info",
           status: true,
           textHeader: "اعلان",
           textMain: "با موفقیت حذف شد",
-        });
+        }));
     })
-    .catch(() => {
+    .catch((errors: any) => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "محصول مورد نظر حذف نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => {
@@ -171,8 +174,11 @@ const handleRemoveFoodDialog = (status: boolean) => {
 <template>
   <div class="parent-food-page">
     <!-- //////////////////////// -->
-    <tools @new="(state.newOrEdit.status = true), foodPageStep(999)" @search="pinia.requestGetFood"
-      :loading="state.loading" />
+    <tools
+      @new="((state.newOrEdit.status = true), foodPageStep(999))"
+      @search="pinia.requestGetFood"
+      :loading="state.loading"
+    />
     <!-- //////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full px-[10px]">
       <!-- //////////////////////// -->
@@ -185,16 +191,28 @@ const handleRemoveFoodDialog = (status: boolean) => {
             <td>{{ food.cost.toLocaleString() }} تومان</td>
             <td>
               <div class="flex items-center gap-x-[10px] justify-center">
-                <img src="@/assets/image/table/remove.svg" @click="handleRemoveFood(food)" class="cursor-pointer"
-                  id="remove" />
-                <img @click="handleSetFoodSelected(food)" src="@/assets/image/table/edit.svg" class="cursor-pointer"
-                  id="edit" />
+                <img
+                  src="@/assets/image/table/remove.svg"
+                  @click="handleRemoveFood(food)"
+                  class="cursor-pointer"
+                  id="remove"
+                />
+                <img
+                  @click="handleSetFoodSelected(food)"
+                  src="@/assets/image/table/edit.svg"
+                  class="cursor-pointer"
+                  id="edit"
+                />
               </div>
             </td>
           </tr>
         </template>
         <template v-slot:small>
-          <div v-for="(food, index) in foodData" class="small-table" :key="food.id">
+          <div
+            v-for="(food, index) in foodData"
+            class="small-table"
+            :key="food.id"
+          >
             <div class="small-table-right">
               <div v-for="(header, index) in state.headerTable" :key="index">
                 {{ header }} :
@@ -205,28 +223,54 @@ const handleRemoveFoodDialog = (status: boolean) => {
               <div>{{ food.name }}</div>
               <div>{{ food.cost.toLocaleString() }} تومان</div>
               <div class="flex items-center gap-x-[10px] justify-center">
-                <img src="@/assets/image/table/remove.svg" @click="handleRemoveFood(food)" class="cursor-pointer"
-                  id="remove" />
-                <img @click="handleSetFoodSelected(food)" src="@/assets/image/table/edit.svg" class="cursor-pointer"
-                  id="edit" />
+                <img
+                  src="@/assets/image/table/remove.svg"
+                  @click="handleRemoveFood(food)"
+                  class="cursor-pointer"
+                  id="remove"
+                />
+                <img
+                  @click="handleSetFoodSelected(food)"
+                  src="@/assets/image/table/edit.svg"
+                  class="cursor-pointer"
+                  id="edit"
+                />
               </div>
             </div>
           </div>
         </template>
       </Table>
       <!-- //////////////////////// -->
-      <img src="@/assets/image/noData.svg" class="w-full h-full" v-else-if="foodData" />
+      <img
+        src="@/assets/image/noData.svg"
+        class="w-full h-full"
+        v-else-if="foodData"
+      />
       <!-- //////////////////////// -->
       <loading v-else />
       <!-- //////////////////////// -->
     </transition-fade>
     <!-- /////////////////////// -->
-    <NewOrEdit @close="handleCloseNewOrEditDialog" @update="requestUpdateFood" :loading="state.loading"
-      :data="state.newOrEdit" @new="requestNewFood" />
+    <NewOrEdit
+      @close="handleCloseNewOrEditDialog"
+      @update="requestUpdateFood"
+      :loading="state.loading"
+      :data="state.newOrEdit"
+      @new="requestNewFood"
+    />
     <!-- /////////////////////// -->
-    <Dialog @changeStatus="handleRemoveFoodDialog" :status="state.removeFood.status" :btnCancelText="'بازگشت'"
-      :btnAcceptText="'تایید'" :btnAccept="true" :btnCancel="true" :loading="false" :header="false" :footer="true"
-      :width="300">
+    <Dialog
+      @changeStatus="handleRemoveFoodDialog"
+      :status="state.removeFood.status"
+      :btnCancelText="'بازگشت'"
+      :btnAcceptText="'تایید'"
+      :btnAccept="true"
+      :btnCancel="true"
+      :loading="false"
+      :header="false"
+      :footer="true"
+      :width="300"
+    >
       <div class="p-1 text-center">
         {{ state.removeFood.food.name }} حذف شود؟
       </div>

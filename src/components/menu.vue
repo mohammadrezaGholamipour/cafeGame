@@ -67,7 +67,7 @@ const handleMenuClass = computed(() => {
 </template>
 <style scoped>
 .parent-menu {
-  @apply flex justify-between items-center w-[330px] bg-[#1D5B79] p-[10px] min-h-[74px];
+  @apply flex justify-between items-center fixed bottom-0 w-[330px] bg-[#1D5B79] p-[10px] min-h-[74px];
 }
 .menu-item {
   @apply flex flex-col transition-all gap-y-[6px] justify-center items-center cursor-pointer hover:opacity-70;

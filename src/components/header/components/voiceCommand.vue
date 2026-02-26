@@ -116,6 +116,15 @@ const handleVoiceCommand = () => {
       console.log(transcript);
       console.log(outPut);
       if (outPut) handleFood(outPut);
+      else {
+        pinia.handleNotification({
+          ...pinia.state.notification,
+          timer: 2000,
+          name: "error",
+          status: true,
+          textHeader: "خوراکی ثبت نشد",
+        });
+      }
     };
 
     recognition.onerror = (event: any) => {
@@ -148,9 +157,8 @@ const handleVoiceCommand = () => {
 
 const handleFood = (outPut: any) => {
   const bill = pinia.state.openBill.find(
-    (item: any) => item.console_id === outPut?.device,
+    (item: any) => Number(item.console.name) === outPut?.device,
   );
-
   let foodListSelected = bill?.bill_foods || [];
   if (Array.isArray(pinia.state.food)) {
     ///////////////////////////////
@@ -199,22 +207,23 @@ const requestSetFood = (billId: number, consoleId: number, food: foodStore) => {
     .update(billId, { foods: food })
     .then(() => {
       pinia.requestGetOpenBill();
-          pinia.handleNotification({
-      ...pinia.state.notification,
-      name: "success",
-      status: true,
-      timer: 2000,
-      textHeader: "موفق",
-      textMain: `خوراکی ها اضافه شدند`,
-    });
-    })
-    .catch(() => {
       pinia.handleNotification({
         ...pinia.state.notification,
+        name: "success",
+        status: true,
+        timer: 2000,
+        textHeader: "موفق",
+        textMain: `خوراکی ها اضافه شدند`,
+      });
+    })
+    .catch((errors: any) => {
+      pinia.handleNotification({
+        ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "خوراکی ثبت نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => handleConsoleLoading(consoleId, false));

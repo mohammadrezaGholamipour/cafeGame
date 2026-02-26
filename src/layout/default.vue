@@ -42,7 +42,7 @@ window.onfocus = () => {
 </template>
 <style scoped>
 .parent-layout {
-  @apply w-screen overflow-hidden h-[100vh] flex flex-col justify-start items-center bg-slate-50;
+  @apply w-screen overflow-hidden h-[100dvh] flex flex-col justify-start items-center bg-slate-50;
 }
 
 main {

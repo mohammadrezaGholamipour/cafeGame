@@ -17,7 +17,7 @@ watch(
   () => state.minute,
   (value) => {
     state.minute = filterNumbers(value);
-  }
+  },
 );
 /////////////////////////////
 const handleIncrease = () => {
@@ -43,6 +43,7 @@ const handleDecrease = () => {
     } else {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
@@ -63,7 +64,7 @@ const handleDecrease = () => {
 const handleGetBillTimer = () => {
   if (Array.isArray(pinia.state.home)) {
     const billSelected: home | undefined = pinia.state.home.find(
-      ({ billId }) => billId === props.billId
+      ({ billId }) => billId === props.billId,
     );
     if (billSelected) {
       return billSelected.timer;

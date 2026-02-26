@@ -47,6 +47,7 @@ const handleFood = () => {
   timer = setTimeout(
     handleSubmit((values: food) => {
       values.cost = values.cost.replace(/,/g, "");
+      values.name = values.name.trim();
       if (props.data.food.id) {
         values.id = props.data.food.id;
         emit("update", values);
@@ -56,7 +57,7 @@ const handleFood = () => {
       }
       emit("close");
     }, onInvalidSubmit),
-    1000
+    1000,
   );
 };
 ////////////////////////////////
@@ -75,50 +76,48 @@ watch(
     cost.value = props.data.food.cost;
     id.value = props.data.food.id;
   },
-  { deep: true }
+  { deep: true },
 );
 /////////////////////////////
 watch(
   () => cost.value,
   (value) => {
     cost.value = filterNumbersWithSep(value);
-  }
+  },
 );
 /////////////////////////////
 </script>
 <template>
-    <Dialog
-      @changeStatus="handleDialogStatus"
-      :status="props.data.status"
-      :btnCancelText="'بازگشت'"
-      :btnAcceptText="'تایید'"
-      :loading="props.loading"
-      :btnAccept="true"
-      :btnCancel="true"
-      :header="false"
-      :footer="true"
-      :width="300"
-    >
-      <!-- ///////////////////// -->
-      <div
-        class="w-full flex flex-col gap-y-[10px] items-center justify-center"
-      >
-        <input
-          class="input min-w-[200px] bg-white"
-          placeholder="نام محصول"
-          inputmode="text"
-          v-model="name"
-          type="text"
-          autofocus
-        />
-        <input
-          class="input min-w-[200px] bg-white"
-          placeholder="قیمت محصول"
-          inputmode="numeric"
-          v-model="cost"
-          type="text"
-        />
-      </div>
-      <!-- ///////////////////// -->
-    </Dialog>
+  <Dialog
+    @changeStatus="handleDialogStatus"
+    :status="props.data.status"
+    :btnCancelText="'بازگشت'"
+    :btnAcceptText="'تایید'"
+    :loading="props.loading"
+    :btnAccept="true"
+    :btnCancel="true"
+    :header="false"
+    :footer="true"
+    :width="300"
+  >
+    <!-- ///////////////////// -->
+    <div class="w-full flex flex-col gap-y-[10px] items-center justify-center">
+      <input
+        class="input min-w-[200px] bg-white"
+        placeholder="نام محصول"
+        inputmode="text"
+        v-model="name"
+        type="text"
+        autofocus
+      />
+      <input
+        class="input min-w-[200px] bg-white"
+        placeholder="قیمت محصول"
+        inputmode="numeric"
+        v-model="cost"
+        type="text"
+      />
+    </div>
+    <!-- ///////////////////// -->
+  </Dialog>
 </template>

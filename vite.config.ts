@@ -4,6 +4,16 @@ import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 //////////////////////////////////
 export default defineConfig({
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "https://intelligent-pascal.retunnel.net",
+  //       changeOrigin: true,
+  //       secure: false,
+  //       rewrite: (path) => path.replace(/^\/api/, "/cafe-game-api/v1"),
+  //     },
+  //   },
+  // },
   plugins: [
     vue(),
     VitePWA({

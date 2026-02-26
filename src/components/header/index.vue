@@ -35,7 +35,7 @@ const handleDialogStatus = (status: boolean) => {
     :header="false"
     :width="300"
   >
-    <p class="p-1 text-center">از برنامه خارج میشوید؟</p>
+    <p class="p-3 text-center text-lg font-bold ">از برنامه خارج میشوید؟</p>
   </Dialog>
 </template>
 <style scoped>

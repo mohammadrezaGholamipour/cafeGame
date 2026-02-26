@@ -25,14 +25,14 @@ watch(
   (value) => {
     state.hour = filterNumbers(value);
     if (Number(state.hour) > 24) state.hour = "";
-  }
+  },
 );
 watch(
   () => state.minute,
   (value) => {
     state.minute = filterNumbers(value);
     if (Number(state.minute) > 59) state.minute = "";
-  }
+  },
 );
 ///////////////////////////////////////////////
 const handleAlarm = () => {
@@ -49,6 +49,7 @@ const handleAlarm = () => {
     } else {
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
@@ -69,7 +70,7 @@ const handleAlarm = () => {
 const handleGetConsoleTimer = () => {
   if (Array.isArray(pinia.state.home)) {
     const consoleSelected: home | undefined = pinia.state.home.find(
-      ({ consoleId }) => consoleId === props.consoleId
+      ({ consoleId }) => consoleId === props.consoleId,
     );
     if (consoleSelected) {
       return consoleSelected.timer;

@@ -65,20 +65,22 @@ const homeData = computed(() => {
 const requestStartBill = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
-    .start(
-      { console_id: state.consoleSelected.consoleId, unit_price_amount: state.consoleSelected.hourRateSelected.name }
-    )
-    .then(() => {
-      pinia.requestGetOpenBill(), pinia.requestGetAllBill()
+    .start({
+      console_id: state.consoleSelected.consoleId,
+      unit_price_amount: state.consoleSelected.hourRateSelected.name,
     })
-    .catch(() => {
+    .then(() => {
+      (pinia.requestGetOpenBill(), pinia.requestGetAllBill());
+    })
+    .catch((errors: any) => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "شروع فاکتور انجام نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     });
 };
@@ -88,19 +90,20 @@ const requestCloseBill = (): void => {
     .close(state.consoleSelected.billId)
 
     .then(() => {
-      pinia.requestGetOpenBill(),
+      (pinia.requestGetOpenBill(),
         pinia.requestGetAllBill(),
-        handleRemoveAlarm(state.consoleSelected.consoleId);
+        handleRemoveAlarm(state.consoleSelected.consoleId));
       handleRemoveMoney(state.consoleSelected.consoleId);
     })
-    .catch(() => {
+    .catch((errors: any) => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "فاکتور مورد نظر بسته نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => handleCloseDialog());
@@ -109,20 +112,20 @@ const requestCloseBill = (): void => {
 const requestPaymentMethod = (): void => {
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
-    .update(
-      state.consoleSelected.billId,
-      { payment_method: state.consoleSelected.payment_method }
-    )
+    .update(state.consoleSelected.billId, {
+      payment_method: state.consoleSelected.payment_method,
+    })
     .then(() => requestCloseBill())
-    .catch(() => {
+    .catch((errors: any) => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       handleCloseDialog();
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "روش پرداخت تکمیل نشد لطفا مجدد امتحان کنید",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     });
 };
@@ -134,18 +137,19 @@ const requestRemoveBill = () => {
 
     .then(() => {
       pinia.requestGetOpenBill();
-      pinia.requestGetAllBill()
+      pinia.requestGetAllBill();
       handleRemoveAlarm(state.consoleSelected.consoleId);
       handleRemoveMoney(state.consoleSelected.consoleId);
     })
-    .catch(() => {
+    .catch((errors: any) => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "فاکتور مورد نظر حذف نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     });
 };
@@ -153,23 +157,23 @@ const requestRemoveBill = () => {
 const requestChangeHourRate = () => {
   state.dialog.loading = true;
   billApi
-    .update(
-      state.consoleSelected.billId,
-      { unit_price_amount: state.consoleSelected.hourRateSelected.name }
-    )
+    .update(state.consoleSelected.billId, {
+      unit_price_amount: state.consoleSelected.hourRateSelected.name,
+    })
     .then(() => {
       pinia.requestGetOpenBill();
       state.dialog.loading = false;
       handleCloseDialog();
     })
-    .catch(() => {
+    .catch((errors: any) => {
       state.dialog.loading = false;
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "قیمت واحد عوض نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     });
 };
@@ -184,14 +188,15 @@ const requestChangeStartTime = (time: number) => {
       state.dialog.loading = false;
       handleCloseDialog();
     })
-    .catch(() => {
+    .catch((errors: any) => {
       state.dialog.loading = false;
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "زمان تغییر نکرد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     });
 };
@@ -200,19 +205,22 @@ const requestSetFood = () => {
   state.dialog.loading = true;
   handleConsoleLoading(state.consoleSelected.consoleId, true);
   billApi
-    .update(state.consoleSelected.billId, { foods: state.consoleSelected.foodSelected })
+    .update(state.consoleSelected.billId, {
+      foods: state.consoleSelected.foodSelected,
+    })
     .then(() => {
       pinia.requestGetOpenBill();
       handleCloseDialog();
     })
-    .catch(() => {
+    .catch((errors: any) => {
       handleConsoleLoading(state.consoleSelected.consoleId, false);
       pinia.handleNotification({
         ...pinia.state.notification,
+        timer: 3000,
         name: "error",
         status: true,
         textHeader: "خطا",
-        textMain: "خوراکی ثبت نشد",
+        textMain: `${errors?.response?.data?.error[0]?.message || "خطای نامشخص"}`,
       });
     })
     .finally(() => (state.dialog.loading = false));
@@ -220,7 +228,7 @@ const requestSetFood = () => {
 //////////////////////////////////////////
 const handleConsoleStatus = (
   info: { billId: number; consoleId: number },
-  status: boolean
+  status: boolean,
 ) => {
   (status ? handleStartBill : handleHadFood)(info);
 };
@@ -237,10 +245,10 @@ const handleHadFood = (info: { billId: number; consoleId: number }) => {
 const handleSetFood = (
   billId: number,
   consoleId: number,
-  bill_foods: billFood[] | []
+  bill_foods: billFood[] | [],
 ) => {
   state.consoleSelected.consoleId = consoleId;
-  state.consoleSelected.billFoods = bill_foods??[];
+  state.consoleSelected.billFoods = bill_foods ?? [];
   state.consoleSelected.billId = billId;
   state.dialog.name = "food";
   state.dialog.status = true;
@@ -249,22 +257,12 @@ const handleSetFood = (
 const handleRemoveBill = (
   billId: number,
   consoleId: number,
-  bill_foods: billFood[]
+  bill_foods: billFood[],
 ): void => {
-  if (bill_foods.length) {
-    pinia.handleNotification({
-      ...pinia.state.notification,
-      name: "error",
-      status: true,
-      textHeader: "خطا",
-      textMain: "ابتدا خوراکی ها را حذف کنید",
-    });
-  } else {
-    state.consoleSelected.consoleId = consoleId;
-    state.consoleSelected.billId = billId;
-    state.dialog.name = "removeBill";
-    state.dialog.status = true;
-  }
+  state.consoleSelected.consoleId = consoleId;
+  state.consoleSelected.billId = billId;
+  state.dialog.name = "removeBill";
+  state.dialog.status = true;
 };
 //////////////////////////////////////
 const handleStartBill = (info: { billId: number; consoleId: number }): void => {
@@ -277,7 +275,7 @@ const handleFactor = (
   billId: number,
   consoleId: number,
   bill_foods: billFood[],
-  customMoney: number
+  customMoney: number,
 ) => {
   if (bill_foods.length || customMoney) {
     state.consoleSelected.billId = billId;
@@ -336,7 +334,7 @@ const handleRemoveAlarm = (consoleId: number) => {
   localStorageService.setAlarm(alarm);
   state.consoleSelected.alarm = {};
   const consoleSelected = homeData.value?.find(
-    (item) => item.consoleId === consoleId
+    (item) => item.consoleId === consoleId,
   );
   if (consoleSelected) {
     consoleSelected.alarmStatus = false;
@@ -349,7 +347,7 @@ const handleSetCustomMoney = (inputMoney: number): void => {
   money.push({ money: inputMoney, consoleId: state.consoleSelected.consoleId });
   localStorageService.setCustomMoney(money);
   const consoleSelected = homeData.value?.find(
-    (item) => item.consoleId === state.consoleSelected.consoleId
+    (item) => item.consoleId === state.consoleSelected.consoleId,
   );
   if (consoleSelected) consoleSelected.customMoney = inputMoney;
   handleCloseDialog();
@@ -359,7 +357,7 @@ const handleChangeMoney = (
   consoleId: number,
   costFood: number,
   costPlayed: number,
-  customMoney: number
+  customMoney: number,
 ) => {
   state.consoleSelected.consoleId = consoleId;
   state.consoleSelected.costFood = costFood;
@@ -379,7 +377,7 @@ const handleRemoveMoney = (consoleId: number) => {
   localStorageService.setCustomMoney(money);
   state.consoleSelected.customMoney = 0;
   const consoleSelected = homeData.value?.find(
-    (item) => item.consoleId === consoleId
+    (item) => item.consoleId === consoleId,
   );
   if (consoleSelected) consoleSelected.customMoney = 0;
 };
@@ -434,7 +432,7 @@ const handleDialogStatus = (status: boolean) => {
   } else {
     if (state.dialog.name === "had-food") {
       const bill_foods: billFood[] | [] | undefined = homeData.value?.find(
-        ({ billId }) => billId === state.consoleSelected.billId
+        ({ billId }) => billId === state.consoleSelected.billId,
       )?.bill_foods;
       state.consoleSelected.billFoods = bill_foods ?? [];
       state.dialog.btnAcceptText = "تایید";
@@ -473,7 +471,7 @@ const getTimeStartOrEndBill = () => {
   const currentDateTime = new Date();
   const tehranOffset = 3.5 * 60 * 60 * 1000;
   const tehranTime = new Date(
-    currentDateTime.getTime() + tehranOffset
+    currentDateTime.getTime() + tehranOffset,
   ).toISOString();
   return tehranTime;
 };
@@ -485,29 +483,57 @@ const getTimeStartOrEndBill = () => {
     <tools @displayMode="pinia.handleChangeDisplayMood($event)" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-
       <div v-if="homeData?.length" class="parent-console">
-        <component :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox" @changeHourRate="handleChangeHourRate"
-          :dropListStatus="item.dropListStatus" @optionStatus="handleOptionStatus" @changeStartTime="handleStartTime"
-          :optionStatus="item.optionStatus" @removeAlarm="handleRemoveAlarm" @changeMoney="handleChangeMoney"
-          :alarmStatus="item.alarmStatus" :customMoney="item.customMoney" @removeBill="handleRemoveBill"
-          @status="handleConsoleStatus" :costPlayed="item.costPlayed" :consoleId="item.consoleId"
-          :hourRate="item.hourRate" :bill_foods="item.bill_foods" :costFood="item.costFood"
-          v-for="item in homeData.slice().sort((a, b) => a.name.localeCompare(b.name))" :loading="item.loading"
-          @factor="handleFactor" :status="item.status" @food="handleSetFood" :billId="item.billId" :key="item.consoleId"
-          @alarm="handleAlarm" :timer="item.timer" :name="item.name" :isDeleted="item.isDeleted" />
+        <component
+          :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox"
+          @changeHourRate="handleChangeHourRate"
+          :dropListStatus="item.dropListStatus"
+          @optionStatus="handleOptionStatus"
+          @changeStartTime="handleStartTime"
+          :optionStatus="item.optionStatus"
+          @removeAlarm="handleRemoveAlarm"
+          @changeMoney="handleChangeMoney"
+          :alarmStatus="item.alarmStatus"
+          :customMoney="item.customMoney"
+          @removeBill="handleRemoveBill"
+          @status="handleConsoleStatus"
+          :costPlayed="item.costPlayed"
+          :consoleId="item.consoleId"
+          :hourRate="item.hourRate"
+          :bill_foods="item.bill_foods"
+          :costFood="item.costFood"
+          v-for="item in homeData
+            .slice()
+            .sort((a, b) => a.name.localeCompare(b.name))"
+          :loading="item.loading"
+          @factor="handleFactor"
+          :status="item.status"
+          @food="handleSetFood"
+          :billId="item.billId"
+          :key="item.consoleId"
+          @alarm="handleAlarm"
+          :timer="item.timer"
+          :name="item.name"
+          :isDeleted="item.isDeleted"
+        />
       </div>
       <div class="parent-no-data" v-else-if="homeData">
         <div class="card-no-data">
           <p>برای استفاده از برنامه باید حداقل یک</p>
-          <button class="button bg-[#7CC078] text-white p-1" @click="router.push('/console')">
+          <button
+            class="button bg-[#7CC078] text-white p-1"
+            @click="router.push('/console')"
+          >
             <div class="flex items-center gap-x-[5px]">
               <p class="text-white font-[kalameh]">دستگاه</p>
               <img src="/assets/console.svg" />
             </div>
           </button>
           <p>و</p>
-          <button class="button bg-[#7CC078] text-white p-1" @click="router.push('/money')">
+          <button
+            class="button bg-[#7CC078] text-white p-1"
+            @click="router.push('/money')"
+          >
             <div class="flex items-center gap-x-[5px]">
               <p class="text-white font-[kalameh]">قیمت واحد</p>
               <img src="/assets/money.svg" />
@@ -519,56 +545,107 @@ const getTimeStartOrEndBill = () => {
       <loading v-else />
     </transition-fade>
     <!-- //////////////////////////////////// -->
-    <Dialog :btnCancelText="state.dialog.btnCancelText" :btnAcceptText="state.dialog.btnAcceptText"
-      :headerText="state.dialog.headerText" @changeStatus="handleDialogStatus" :loading="state.dialog.loading"
-      :header="state.dialog.header" :status="state.dialog.status" :footer="state.dialog.footer"
-      :width="state.dialog.width" :btnAccept="true" :btnCancel="true">
+    <Dialog
+      :btnCancelText="state.dialog.btnCancelText"
+      :btnAcceptText="state.dialog.btnAcceptText"
+      :headerText="state.dialog.headerText"
+      @changeStatus="handleDialogStatus"
+      :loading="state.dialog.loading"
+      :header="state.dialog.header"
+      :status="state.dialog.status"
+      :footer="state.dialog.footer"
+      :width="state.dialog.width"
+      :btnAccept="true"
+      :btnCancel="true"
+    >
       <!-- /////////////////////////// -->
-      <StartBill @hourRate="
-        (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
-      " @drop-list-status="
-        (status) => (state.consoleSelected.dropListStatus = status)
-      " v-if="state.dialog.name === 'startBill'" :start-bill="state.consoleSelected" />
+      <StartBill
+        @hourRate="
+          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+        "
+        @drop-list-status="
+          (status) => (state.consoleSelected.dropListStatus = status)
+        "
+        v-if="state.dialog.name === 'startBill'"
+        :start-bill="state.consoleSelected"
+      />
       <!-- /////////////////////////// -->
-      <p v-if="state.dialog.name === 'removeBill'" class="p-1 text-center">
+      <p
+        v-if="state.dialog.name === 'removeBill'"
+        class="p-1 pt-4 text-lg font-bold text-center"
+      >
         فاکتور مورد نظر حذف شود؟
       </p>
       <!-- /////////////////////////// -->
 
       <!-- /////////////////////////// -->
-      <Factor :customMoney="state.consoleSelected.customMoney" :consoleId="state.consoleSelected.consoleId"
-        :billFoods="state.consoleSelected.billFoods" :bill-id="state.consoleSelected.billId"
-        v-if="state.dialog.name === 'factor'" />
+      <Factor
+        :customMoney="state.consoleSelected.customMoney"
+        :consoleId="state.consoleSelected.consoleId"
+        :billFoods="state.consoleSelected.billFoods"
+        :bill-id="state.consoleSelected.billId"
+        v-if="state.dialog.name === 'factor'"
+      />
       <!-- /////////////////////////// -->
-      <HourRate @hourRate="
-        (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
-      " v-if="state.dialog.name === 'hourRate'" :hourRate="state.consoleSelected.hourRate" />
+      <HourRate
+        @hourRate="
+          (hourRate) => (state.consoleSelected.hourRateSelected = hourRate)
+        "
+        v-if="state.dialog.name === 'hourRate'"
+        :hourRate="state.consoleSelected.hourRate"
+      />
       <!-- /////////////////////////// -->
-      <StartTime v-if="state.dialog.name === 'startTime'" :billId="state.consoleSelected.billId"
-        :loading="state.dialog.loading" @time="requestChangeStartTime" />
+      <StartTime
+        v-if="state.dialog.name === 'startTime'"
+        :billId="state.consoleSelected.billId"
+        :loading="state.dialog.loading"
+        @time="requestChangeStartTime"
+      />
       <!-- /////////////////////////// -->
-      <Alarm :consoleId="state.consoleSelected.consoleId" v-if="state.dialog.name === 'alarm'"
-        :alarm="state.consoleSelected.alarm" @removeAlarm="handleRemoveAlarm" :loading="state.dialog.loading"
-        @setAlarm="handleSetAlarm" />
+      <Alarm
+        :consoleId="state.consoleSelected.consoleId"
+        v-if="state.dialog.name === 'alarm'"
+        :alarm="state.consoleSelected.alarm"
+        @removeAlarm="handleRemoveAlarm"
+        :loading="state.dialog.loading"
+        @setAlarm="handleSetAlarm"
+      />
       <!-- /////////////////////////// -->
       <transition-expand group>
-        <p class="p-1 text-center text-[1rem]" v-if="state.dialog.name === 'had-food'">
+        <p
+          class="p-1 text-center text-[1rem]"
+          v-if="state.dialog.name === 'had-food'"
+        >
           خوراکی ها ثبت شده است؟
         </p>
         <!-- /////////////////////////// -->
-        <Food @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
-          :billFood="state.consoleSelected.billFoods" v-if="state.dialog.name === 'food'" />
+        <Food
+          @foodSelected="(food) => (state.consoleSelected.foodSelected = food)"
+          :billFood="state.consoleSelected.billFoods"
+          v-if="state.dialog.name === 'food'"
+        />
         <!-- /////////////////////////// -->
-        <div class="w-full flex justify-center items-center" v-if="state.dialog.name === 'payment-method'">
-          <InputRadio @payment-method="
-            (value) => (state.consoleSelected.payment_method = value)
-          " />
+        <div
+          class="w-full flex justify-center items-center"
+          v-if="state.dialog.name === 'payment-method'"
+        >
+          <InputRadio
+            @payment-method="
+              (value) => (state.consoleSelected.payment_method = value)
+            "
+          />
         </div>
       </transition-expand>
       <!-- /////////////////////////// -->
-      <ChangeMoney :customMoney="state.consoleSelected.customMoney" :costPlayed="state.consoleSelected.costPlayed"
-        :consoleId="state.consoleSelected.consoleId" v-if="state.dialog.name === 'change-money'"
-        :costFood="state.consoleSelected.costFood" @removeMoney="handleRemoveMoney" @money="handleSetCustomMoney" />
+      <ChangeMoney
+        :customMoney="state.consoleSelected.customMoney"
+        :costPlayed="state.consoleSelected.costPlayed"
+        :consoleId="state.consoleSelected.consoleId"
+        v-if="state.dialog.name === 'change-money'"
+        :costFood="state.consoleSelected.costFood"
+        @removeMoney="handleRemoveMoney"
+        @money="handleSetCustomMoney"
+      />
       <!-- /////////////////////////// -->
     </Dialog>
     <!-- //////////////////////////////////// -->

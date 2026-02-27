@@ -613,7 +613,7 @@ const getTimeStartOrEndBill = () => {
       <!-- /////////////////////////// -->
       <transition-expand group>
         <p
-          class="p-1 text-center text-[1rem]"
+          class="p-3 text-center text-lg font-bold text-[1rem]"
           v-if="state.dialog.name === 'had-food'"
         >
           خوراکی ها ثبت شده است؟

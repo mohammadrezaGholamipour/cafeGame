@@ -7,7 +7,7 @@ import { computed } from "vue";
 const props = defineProps<{ bill: bill }>();
 ///////////////////////////////////////////
 const startDate = computed(() => {
-  const dateObj = new Date(props.bill.start_time);
+  const dateObj = new Date(props.bill.start_time + "Z");
 
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
     year: "numeric",
@@ -18,7 +18,7 @@ const startDate = computed(() => {
   return formatted;
 });
 const endDate = computed(() => {
-  const dateObj = new Date(props.bill.end_time);
+  const dateObj = new Date(props.bill.end_time + "Z");
 
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
     year: "numeric",

@@ -55,16 +55,19 @@ const handleDialogStatus = (status: boolean) => {
   state.dialog.status = status;
 };
 //////////////////////////////////////////
-const endDate = (date) => {
-const d = new Date(date);
+const endDate = (date: string) => {
 
-const year = d.getUTCFullYear();
-const month = d.getUTCMonth();
-const day = d.getUTCDate();
+  const dateObj = new Date(date + "Z");
+  const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Tehran",
+  }).format(dateObj);
 
-return new JalaliDate(new Date(year, month, day))
-  .format("YYYY/MM/DD");
+  return formatted;
 };
+
 //////////////////////////////////////////
 </script>
 <template>
@@ -112,7 +115,9 @@ return new JalaliDate(new Date(year, month, day))
                 <p v-if="bill.total_price && !bill?.bill_foods?.length">
                   {{ bill.total_price.toLocaleString() }}
                 </p>
-                <p v-if="!bill.total_price" class="text-amber-200 text-lg">درحال اجرا</p>
+                <p v-if="!bill.total_price" class="text-amber-200 text-lg">
+                  درحال اجرا
+                </p>
               </div>
             </td>
           </tr>

@@ -64,7 +64,7 @@ export const consolePageStep = (step?: number) => {
     addStep("#remove-console", {
       title: "حذف دستگاه",
       description:
-        "لطفا توجه داشته باشید تنها در صورتی امکان حذف دستگاه وجود دارد که هیچ فاکتوری با ان ثبت نشده باشد به عبارتی ساده تر در صفحه اصلی از این دستگاه استفاده نشده باشد",
+        "میتوانید دستگاه خود را حذف کنید",
     });
     highlighter.destroy();
     highlighter.setSteps(pageStep);
@@ -112,7 +112,7 @@ export const foodPageStep = (step?: number) => {
     addStep("#remove", {
       title: "حذف خوراکی",
       description:
-        "شما میتوانید خوراکی مورد نظر خود را حذف کنید البته تنها در صورتی توانایی حذف ان را دارید که که در فاکتوری از ان استفاده نکرده باشید ",
+        "شما میتوانید خوراکی مورد نظر خود را حذف کنید",
     });
     highlighter.destroy();
     highlighter.setSteps(pageStep);
@@ -154,7 +154,7 @@ export const moneyPageStep = (step?: number) => {
     addStep("#remove", {
       title: "حذف قیمت واحد",
       description:
-        "میتواند قیمت ثبت شده را حذف کنید اما درصورتی امکان حذف وجود دارد که شما از این قیمت واحد در فاکتوری استفاده نکرده باشید",
+        "میتواند قیمت ثبت شده را حذف کنید",
       showButtons: ["next"],
     });
     highlighter.destroy();

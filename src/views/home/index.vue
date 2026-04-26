@@ -483,7 +483,7 @@ const getTimeStartOrEndBill = () => {
     <tools @displayMode="pinia.handleChangeDisplayMood($event)" />
     <!-- //////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="homeData?.length" class="parent-console">
+      <div v-if="homeData?.filter((item) => !item.isDeleted).length" class="parent-console">
         <component
           :is="pinia.state.displayMood === 1 ? consoleLine : consoleBox"
           @changeHourRate="handleChangeHourRate"

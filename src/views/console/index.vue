@@ -174,7 +174,10 @@ const handleRemoveConsole = (console: consoleTypeApi) => {
     />
     <!-- ////////////////////////////////////////// -->
     <transition-fade group class="w-full overflow-y-auto h-full">
-      <div v-if="consoleData?.length" class="parent-console">
+      <div
+        v-if="consoleData?.filter((item) => !item.isDeleted).length"
+        class="parent-console"
+      >
         <component
           :is="pinia.state.displayMood === 1 ? ConsoleLine : ConsoleBox"
           @remove="handleRemoveConsole(console)"

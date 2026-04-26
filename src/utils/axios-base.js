@@ -2,7 +2,7 @@
 import axios from 'axios';
 ////////////////////////////////
 const HttpClient = axios.create({
-  baseURL: 'https://intelligent-pascal.retunnel.net/cafe-game-api/v1/',
+  baseURL: 'http://localhost:8000/cafe-game-api/v1/',
   timeout: 0,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',

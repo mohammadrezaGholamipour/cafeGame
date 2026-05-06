@@ -57,7 +57,7 @@ const handleDialogStatus = (status: boolean) => {
 //////////////////////////////////////////
 const endDate = (date: string) => {
 
-  const dateObj = new Date(date + "Z");
+  const dateObj = new Date(date );
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
     year: "numeric",
     month: "2-digit",

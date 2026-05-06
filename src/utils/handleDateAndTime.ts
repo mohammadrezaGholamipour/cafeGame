@@ -2,10 +2,10 @@ export const handleDate = (isoString: string) => {
 
   const dateUTC = new Date(isoString);
 
-  const dateTehran = new Date(dateUTC.getTime() + 3.5 * 60 * 60 * 1000);
+  const dateTehran = new Date(dateUTC.getTime() );
 
   const now = new Date();
-  const nowTehran = new Date(now.getTime() + 3.5 * 60 * 60 * 1000);
+  const nowTehran = new Date(now.getTime());
 
 
   const dateDay = dateTehran.getDate();
@@ -30,7 +30,7 @@ export const handleDate = (isoString: string) => {
 
 export const handleTime = (isoString: string) => {
   const dateUTC = new Date(isoString);
-  const dateTehran = new Date(dateUTC.getTime() + 3.5 * 60 * 60 * 1000);
+  const dateTehran = new Date(dateUTC.getTime() );
 
   const hours = dateTehran.getHours().toString().padStart(2, "0");
   const minutes = dateTehran.getMinutes().toString().padStart(2, "0");

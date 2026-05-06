@@ -202,9 +202,7 @@ export const usePinia = defineStore("pinia", () => {
 
             const nowUTC = new Date();
 
-            const tehranOffsetMs = 3.5 * 60 * 60 * 1000;
-
-            const startTehran = new Date(start.getTime() + tehranOffsetMs);
+            const startTehran = new Date(start.getTime());
 
             const nowTehran = new Date(nowUTC.getTime());
 

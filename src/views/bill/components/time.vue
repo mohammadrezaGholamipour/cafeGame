@@ -7,18 +7,19 @@ import { computed } from "vue";
 const props = defineProps<{ bill: bill }>();
 ///////////////////////////////////////////
 const startDate = computed(() => {
-  const dateObj = new Date(props.bill.start_time + "Z");
+  const dateObj = new Date(props.bill.start_time);
 
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
+    timeZone: "Asia/Tehran",
   }).format(dateObj);
 
   return formatted;
 });
 const endDate = computed(() => {
-  const dateObj = new Date(props.bill.end_time + "Z");
+  const dateObj = new Date(props.bill.end_time);
 
   const formatted = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
     year: "numeric",
